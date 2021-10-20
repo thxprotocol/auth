@@ -1,0 +1,68 @@
+@media (min-width: map-get($grid-breakpoints, 'md')) {
+    .not-collapsed ~ .sidebar-sibling {
+        margin-left: 260px;
+    }
+}
+
+.b-sidebar {
+    width: 260px;
+}
+
+.sidebar {
+    display: flex;
+    height: 100%;
+    padding: 0;
+    padding-top: 4rem;
+    background-color: $darker;
+    flex-wrap: wrap;
+    flex-direction: column;
+
+    .navbar-nav,
+    .nav-item {
+        width: 100%;
+    }
+
+    .navbar-nav {
+        flex-direction: column;
+    }
+
+    .header-brand img {
+        width: 65px;
+    }
+}
+
+.navbar-light .navbar-nav .nav-link {
+    padding: 0.75rem 1rem 0.75rem 1rem;
+    @media (min-width: map-get($grid-breakpoints, 'md')) {
+    }
+}
+.navbar-light .navbar-nav .nav-link:hover {
+    color: white;
+    opacity: 0.9;
+}
+.navbar-light .navbar-nav .nav-link,
+.navbar-light .navbar-nav .nav-link i {
+    color: white;
+}
+
+.navbar-light .navbar-nav .nav-link i {
+    opacity: 0.5;
+}
+
+.navbar-light .navbar-nav .nav-link.router-link-active,
+.navbar-light .navbar-nav .nav-link.router-link-active i {
+    color: $secondary;
+    opacity: 1;
+}
+
+.navbar-expand-lg .navbar-collapse {
+    display: flex !important;
+    flex-direction: column;
+    width: 100%;
+}
+
+// @media (min-width: map-get($grid-breakpoints, 'md')) {
+//     .navbar-expand-lg .navbar-collapse {
+//         display: block !important;
+//     }
+// }

@@ -1,0 +1,50 @@
+version: '3.5'
+
+services:
+    auth_mongo:
+        container_name: thx_auth_mongo
+        image: mongo
+        env_file: .env
+        restart: always
+        networks:
+            - thx_network
+        ports:
+            - 27019:27017
+        environment:
+            MONGO_INITDB_ROOT_USERNAME: root
+            MONGO_INITDB_ROOT_PASSWORD: root
+            MONGO_INITDB_DATABASE: admin
+        volumes:
+            - ./cache/mongo-data:/data/db
+            - ./fixture/db:/docker-entrypoint-initdb.d/fixture/db
+            - ./scripts/mongo-init.sh:/docker-entrypoint-initdb.d/mongo-init.sh
+
+    auth_node:
+        container_name: thx_auth_node
+        image: node:12
+        env_file: .env
+        networks:
+            - thx_network
+        volumes:
+            - ./:/usr/src/service
+        working_dir: /usr/src/service
+        command: bash -c "npm run watch:debug"
+        environment:
+            - NODE_ENV=local
+        depends_on:
+            - mongo
+            - mainnet
+            - testnet
+        links:
+            - mongo
+            - mainnet
+            - testnet
+        ports:
+            - 3030:3000
+
+volumes:
+    mongo-data:
+
+networks:
+    thx_network:
+        name: thx_network

@@ -1,0 +1,211 @@
+{
+    "name": "@thxnetwork/api",
+    "version": "1.0.0-beta.27",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/thxprotocol/api"
+    },
+    "author": "Peter Polman",
+    "license": "AGPL-3.0",
+    "scripts": {
+        "preinstall": "npx npm-force-resolutions",
+        "serve:debug": "nodemon --inspect dist/server.js --legacy-watch",
+        "lint": "npx tsc --noEmit && npx eslint \"src/**/*.ts\" \"test/**/*.ts\" --quiet --fix",
+        "build": "npm run build:sass && npm run build:assets && npx tsc",
+        "build:assets": "mkdir -p dist/public && cp -R src/public/* dist/public/. && cp -R src/views dist/.",
+        "build:sass": "sass src/main.scss src/public/main.css",
+        "build:keys": "node ./scripts/generateKeys.js",
+        "watch": "concurrently -k -p \"[{name}]\" -n \"Sass,TypeScript,Node\" -c \"yellow.bold,cyan.bold,green.bold\" \"npm run watch:ts\" \"npm run watch:sass\" \"npm run watch:node\"",
+        "watch:ts": "tsc -w",
+        "watch:sass": "sass --watch src/main.scss dist/public/main.css",
+        "watch:node": "nodemon dist/server.js",
+        "watch:test": "npm run test -- --watchAll",
+        "watch:debug": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"yellow.bold,cyan.bold,green.bold\" \"npm run watch:ts\" \"npm run watch:sass\" \"npm run serve:debug\"",
+        "reset": "rm -rf ./cache && unzip cache.zip -d ./cache && rm -rf ./cache/__MACOSX",
+        "test": "docker compose -f docker-compose.ci.yml run --rm auth_ci_node npx jest --forceExit",
+        "migrate": "ts-node node_modules/migrate-mongo/bin/migrate-mongo up -f migrate-mongo-config.ts",
+        "migrate:create": "sh -c 'ts-node node_modules/migrate-mongo/bin/migrate-mongo create $0 -f migrate-mongo-config.ts' ",
+        "migrate:status": "ts-node node_modules/migrate-mongo/bin/migrate-mongo status -f migrate-mongo-config.ts",
+        "migrate:undo-last": "ts-node node_modules/migrate-mongo/bin/migrate-mongo down -f migrate-mongo-config.ts && npm run migrate:status"
+    },
+    "dependencies": {
+        "@sendgrid/mail": "^7.4.2",
+        "@snapshot-labs/snapshot.js": "^0.1.9",
+        "async": "^3.1.0",
+        "axios": "^0.21.3",
+        "bcrypt-nodejs": "^0.0.3",
+        "bluebird": "^3.5.5",
+        "compression": "^1.7.4",
+        "connect-mongo": "^3.0.0",
+        "cors": "^2.8.5",
+        "dotenv": "^8.2.0",
+        "ejs": "^3.1.6",
+        "ethers": "^5.4.7",
+        "express": "^4.17.1",
+        "express-jwt": "^6.0.0",
+        "express-jwt-authz": "^2.4.1",
+        "express-rate-limit": "^5.3.0",
+        "express-validator": "^6.12.1",
+        "jose": "^2.0.5",
+        "jwks-rsa": "^1.12.0",
+        "lodash": "^4.17.21",
+        "lusca": "^1.6.1",
+        "migrate-mongo": "^8.2.3",
+        "mongoose": "^5.13.9",
+        "morgan": "^1.10.0",
+        "nodemailer": "^6.6.1",
+        "oidc-provider": "^6.31.1",
+        "qrcode": "^1.4.4",
+        "web3": "^1.3.6",
+        "winston": "^3.2.1"
+    },
+    "devDependencies": {
+        "@thxnetwork/artifacts": "^1.0.1",
+        "@types/async": "^3.0.2",
+        "@types/bcrypt-nodejs": "^0.0.30",
+        "@types/bluebird": "^3.5.27",
+        "@types/body-parser": "^1.17.1",
+        "@types/chai": "^4.2.3",
+        "@types/compression": "^1.0.1",
+        "@types/concurrently": "^4.1.0",
+        "@types/connect-mongo": "^3.0.0",
+        "@types/ejs": "^3.1.0",
+        "@types/eslint": "^6.1.1",
+        "@types/express": "^4.17.1",
+        "@types/express-rate-limit": "^5.1.3",
+        "@types/jest": "^24.0.23",
+        "@types/lodash": "^4.14.141",
+        "@types/lusca": "^1.6.1",
+        "@types/mongoose": "^5.5.18",
+        "@types/node": "^12.7.8",
+        "@types/nodemailer": "^6.2.1",
+        "@types/request": "^2.48.3",
+        "@types/request-promise": "^4.1.44",
+        "@types/supertest": "^2.0.8",
+        "@types/web3": "^1.2.2",
+        "@types/winston": "^2.4.4",
+        "@typescript-eslint/eslint-plugin": "^2.3.1",
+        "@typescript-eslint/parser": "^2.3.1",
+        "babel-eslint": "^10.1.0",
+        "bootstrap": "^4.6.0",
+        "chai": "^4.2.0",
+        "concurrently": "^5.2.0",
+        "eslint": "^6.8.0",
+        "eslint-config-prettier": "^7.1.0",
+        "eslint-plugin-prettier": "^3.3.1",
+        "jest": "^24.9.0",
+        "morgan-json": "^1.1.0",
+        "nodemon": "^1.19.2",
+        "npm-force-resolutions": "0.0.10",
+        "prettier": "^2.2.1",
+        "sass": "^1.32.8",
+        "shelljs": "^0.8.4",
+        "supertest": "^6.1.1",
+        "swagger-jsdoc": "^4.2.0",
+        "swagger-ui-express": "^4.1.4",
+        "ts-jest": "^24.1.0",
+        "ts-node": "^8.4.1",
+        "typescript": "^3.6.3",
+        "winston-daily-rotate-file": "^4.5.5"
+    },
+    "resolutions": {
+        "color-string": "1.5.5",
+        "normalize-url": "4.5.1",
+        "ws": "7.4.6"
+    },
+    "prettier": {
+        "tabWidth": 4,
+        "singleQuote": true,
+        "bracketSpacing": true,
+        "printWidth": 120,
+        "trailingComma": "all",
+        "quoteProps": "consistent"
+    },
+    "eslintConfig": {
+        "parser": "@typescript-eslint/parser",
+        "root": true,
+        "env": {
+            "node": true,
+            "mocha": true,
+            "shelljs": true,
+            "jest": true,
+            "es6": true,
+            "amd": true
+        },
+        "extends": [
+            "eslint:recommended",
+            "plugin:@typescript-eslint/recommended",
+            "prettier/@typescript-eslint",
+            "plugin:prettier/recommended"
+        ],
+        "parserOptions": {
+            "ecmaVersion": 2020,
+            "sourceType": "module"
+        },
+        "rules": {
+            "semi": [
+                "error",
+                "always"
+            ],
+            "quotes": [
+                "error",
+                "single"
+            ],
+            "no-debugger": "off",
+            "no-sparse-arrays": "off",
+            "@typescript-eslint/explicit-function-return-type": "off",
+            "@typescript-eslint/no-unused-vars": "warn",
+            "@typescript-eslint/camelcase": "off",
+            "@typescript-eslint/no-explicit-any": "off",
+            "@typescript-eslint/interface-name-prefix": "off"
+        },
+        "ignorePatterns": [
+            "test/**/*.{j,t}s?(x)",
+            "dist/*",
+            "src/types/",
+            "contracts/**/*.{j,t}s?(x)",
+            "**/*.d.ts",
+            "node_modules"
+        ],
+        "overrides": [
+            {
+                "files": [
+                    "**/__tests__/*.{j,t}s?(x)",
+                    "**/tests/unit/**/*.spec.{j,t}s?(x)"
+                ],
+                "env": {
+                    "mocha": true
+                }
+            }
+        ]
+    },
+    "jest": {
+        "globals": {
+            "ts-jest": {
+                "tsConfig": "tsconfig.json"
+            }
+        },
+        "moduleFileExtensions": [
+            "ts",
+            "js",
+            "json"
+        ],
+        "transform": {
+            "^.+\\.(ts|tsx)$": "ts-jest"
+        },
+        "testMatch": [
+            "**/test/**/*.test.(ts|js)",
+            "**/controllers/**/*.test.(ts|js)"
+        ],
+        "testEnvironment": "node",
+        "setupFilesAfterEnv": [
+            "<rootDir>/test/e2e/lib/setup.ts"
+        ]
+    },
+    "nodemonConfig": {
+        "ignore": [
+            "logs/*",
+            "scripts/*"
+        ]
+    }
+}

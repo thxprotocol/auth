@@ -4,4 +4,6 @@ node_modules
 src/jwks.json
 dist
 cache
+ci-cache
 logs
+coverage

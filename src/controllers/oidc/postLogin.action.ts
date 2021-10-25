@@ -9,6 +9,12 @@ import MailService from '../../services/MailService';
 import { oidc } from '.';
 
 export default async function postLoginController(req: Request, res: Response, next: NextFunction) {
+    async function getAccount(sub: string) {
+        const { account, error } = await AccountService.get(sub);
+        if (error) throw new Error(error.message);
+        return account;
+    }
+
     try {
         const { sub, error } = await AccountService.getSubForCredentials(req.body.email, req.body.password);
         const alert = {
@@ -20,8 +26,7 @@ export default async function postLoginController(req: Request, res: Response, n
             alert.message = error.toString();
         }
 
-        const account = await AccountService.get(sub);
-
+        const account = await getAccount(sub);
         if (!account) {
             alert.message = ERROR_NO_ACCOUNT;
         }

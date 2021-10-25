@@ -4,7 +4,7 @@ import db from '../../src/util/database';
 
 const http = request(server);
 
-describe('OAuth2', () => {
+describe('OAuth2 Grants', () => {
     let authHeader: string, accessToken: string;
 
     beforeAll(async () => {

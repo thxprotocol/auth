@@ -19,7 +19,12 @@ const ERROR_PASSWORD_STRENGTH = 'Please enter a strong password.';
 
 export default class AccountService {
     static async get(sub: string) {
-        return await Account.findById(sub);
+        try {
+            const account = await Account.findById(sub);
+            return { account };
+        } catch (error) {
+            return { error };
+        }
     }
 
     static async getByEmail(email: string) {
@@ -52,7 +57,7 @@ export default class AccountService {
 
     static async isEmailDuplicate(email: string) {
         try {
-            const result = await Account.findOne({ email });
+            const result = await Account.findOne({ email, active: true });
             return { result };
         } catch (error) {
             return { error };
@@ -97,30 +102,42 @@ export default class AccountService {
         }
     }
 
-    static signup(email: string, password: string, acceptTermsPrivacy: boolean, acceptUpdates: boolean) {
-        return new Account({
-            active: false,
-            email,
-            password,
-            acceptTermsPrivacy: acceptTermsPrivacy || false,
-            acceptUpdates: acceptUpdates || false,
-            signupToken: createRandomToken(),
-            signupTokenExpires: DURATION_TWENTYFOUR_HOURS,
-        });
+    static async signup(email: string, password: string, acceptTermsPrivacy: boolean, acceptUpdates: boolean) {
+        let account = await Account.findOne({ email, active: false });
+
+        if (!account) {
+            account = new Account({
+                active: false,
+            });
+        }
+
+        account.email = email;
+        account.password = password;
+        account.acceptTermsPrivacy = acceptTermsPrivacy || false;
+        account.acceptUpdates = acceptUpdates || false;
+        account.signupToken = createRandomToken();
+        account.signupTokenExpires = DURATION_TWENTYFOUR_HOURS;
+
+        return account;
     }
 
-    static signupFor(email: string, password: string, address: string, poolAddress: string) {
-        const wallet = new Web3().eth.accounts.create();
-        const privateKey = address ? null : wallet.privateKey;
+    static async signupFor(email: string, secret: string, address: string, poolAddress: string) {
+        try {
+            const wallet = new Web3().eth.accounts.create();
+            const privateKey = address ? null : wallet.privateKey;
+            const account = new Account({
+                active: true,
+                address: address ? address : wallet.address,
+                privateKey: address ? privateKey : wallet.privateKey,
+                email,
+                secret,
+                memberships: poolAddress ? [poolAddress] : [],
+            });
 
-        return new Account({
-            active: true,
-            address: address ? address : wallet.address,
-            privateKey: address ? privateKey : wallet.privateKey,
-            email,
-            password,
-            memberships: poolAddress ? [poolAddress] : [],
-        });
+            return { account: await account.save() };
+        } catch (error) {
+            return { error };
+        }
     }
 
     static async verifySignupToken(signupToken: string) {

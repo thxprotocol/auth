@@ -3,20 +3,22 @@ import { HttpError, HttpRequest } from '../../models/Error';
 import AccountService from '../../services/AccountService';
 
 export const getAccount = async (req: HttpRequest, res: Response, next: NextFunction) => {
-    const sub = req.user.sub;
+    // TODO Check if the sub is for an account that has a membership to the pool defined in X-AssetPool header
+    // Only display the encrypted private key string on the /v1/me endpoint
 
     try {
-        const account = await AccountService.get(sub);
+        const { account, error } = await AccountService.get(req.params.id);
+
+        if (error) throw new Error(error.message);
 
         if (account) {
             res.send({
                 address: account.address,
-                erc20: account.erc20,
-                privateKey: account.privateKey,
+                // privateKey: account.privateKey, // TODO display this on /me endpoint
                 memberships: account.memberships,
-                burnProofs: account.burnProofs,
+                erc20: account.erc20,
                 registrationAccessTokens: account.registrationAccessTokens,
-                account,
+                burnProofs: account.burnProofs,
             });
         }
     } catch (e) {

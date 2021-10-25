@@ -37,8 +37,7 @@ export default {
             async claims() {
                 return {
                     sub: id,
-                    email: account.email,
-                    address: account.address,
+                    ...account,
                 };
             },
         };
@@ -52,13 +51,26 @@ export default {
         'password_reset_token',
         'prompt',
     ],
+    scopes: [
+        'account:read', // admin
+        'account:write', // admin (only active and signupped users)
+        'asset_pools:read', // user, dashboard, admin
+        'asset_pools:write', // user, dashboard, admin
+        'rewards:read', // user, dashboard, admin
+        'rewards:write', // dashboard
+        'members:read', // admin
+        'members:write', // admin
+        'withdrawals:read', // user
+        'withdrawals:write', // admin
+        'metrics:read', // cms
+    ],
     claims: {
-        openid: ['sub'],
-        admin: ['admin'],
-        cms: ['cms'],
-        dashboard: ['dashboard'],
-        user: ['user'],
-        widget: ['widget', 'address'],
+        openid: ['sub', 'email', 'address'],
+        admin: ['admin'], // Deprecates soon and will move to permissions scheme
+        cms: ['cms'], // Deprecates soon and will move to permissions scheme
+        dashboard: ['dashboard'], // Deprecates soon and will move to permissions scheme
+        user: ['user'], // Deprecates soon and will move to permissions scheme
+        widget: ['widget', 'address'], // Deprecates soon and will move to permissions scheme
         email: ['email'],
     },
     ttl: {
@@ -74,7 +86,7 @@ export default {
     interactions: {
         policy: basePolicy,
         url(ctx: any) {
-            return `/interaction/${ctx.oidc.uid}`;
+            return `/oidc/${ctx.oidc.uid}`;
         },
     },
     features: {

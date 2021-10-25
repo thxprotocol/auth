@@ -44,7 +44,7 @@
                                             &#x1f973; <strong>We are in beta!</strong> Try the full version for free -
                                             no creditcard required or other hidden charges - testing is free forever.
                                         </p>
-                                        <form autocomplete="off" action="/interaction/<%= uid %>/create" method="post">
+                                        <form autocomplete="off" action="/oidc/<%= uid %>/create" method="post">
                                             <div class="form-group">
                                                 <label>E-mail:</label>
                                                 <% if (params.signup_email) { %>
@@ -95,7 +95,7 @@
                                                         Sign-up
                                                     </button>
                                                     <a class="btn btn-block btn-link"
-                                                       href="/interaction/<%= uid %>/abort">Already have an account?
+                                                       href="/oidc/<%= uid %>/abort">Already have an account?
                                                         Sign in.</a>
                                                 </div>
                                             </div>

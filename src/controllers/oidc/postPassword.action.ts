@@ -46,7 +46,7 @@ export default async function postPasswordController(req: Request, res: Response
                 gtm: GTM,
             });
         } else {
-            const account = await AccountService.get(sub);
+            const { account } = await AccountService.get(sub);
             const updates: IAccountUpdates = {
                 acceptTermsPrivacy: req.body.acceptTermsPrivacy,
                 acceptUpdates: req.body.acceptUpdates,

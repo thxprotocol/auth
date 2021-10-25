@@ -1,3 +1,3 @@
 #!/bin/bash
-npx migrate-mongo up
+npm run migrate
 pm2 reload auth --update-env

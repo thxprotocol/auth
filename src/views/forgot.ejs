@@ -32,7 +32,7 @@
                                 <%= alert.message %>
                             </div>
                             <% } %>
-                                <form autocomplete="off" action="/interaction/<%= uid %>/forgot" method="post">
+                                <form autocomplete="off" action="/oidc/<%= uid %>/forgot" method="post">
                                     <h2>Forgot your password?</h2>
                                     <p>
 
@@ -50,7 +50,7 @@
                                             Send password reset link
                                             <i class="fas fa-chevron-right" aria-hidden="true"></i>
                                         </button>
-                                        <a class="btn btn-block btn-link" href="/interaction/<%= uid %>/abort">
+                                        <a class="btn btn-block btn-link" href="/oidc/<%= uid %>/abort">
                                             Back to sign in</a>
                                         <% } %>
                                 </form>

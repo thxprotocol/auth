@@ -33,7 +33,7 @@
                             </div>
                             <% } %>
                                 <% if (params.authentication_token && params.secure_key) { %>
-                                    <form autocomplete="off" action="/interaction/<%= uid %>/password" method="post">
+                                    <form autocomplete="off" action="/oidc/<%= uid %>/password" method="post">
                                         <strong class="h2 d-block text-dark text-center mb-4">Set a password</strong>
                                         <div class="form-group">
                                             <label>Password:</label>
@@ -79,7 +79,7 @@
                                         </button>
                                     </form>
                                     <% } else { %>
-                                        <form autocomplete="off" action="/interaction/<%= uid %>/login" method="post"
+                                        <form autocomplete="off" action="/oidc/<%= uid %>/login" method="post"
                                               class="mb-4">
                                             <strong class="h2 d-block text-dark text-center mb-4">
                                                 Login
@@ -100,7 +100,7 @@
                                         </form>
                                         <hr>
                                         <div class="text-center">
-                                            <a class="btn btn-link" href="/interaction/<%= uid %>/forgot">
+                                            <a class="btn btn-link" href="/oidc/<%= uid %>/forgot">
                                                 Can't sign in?
                                             </a>
                                             <span class="text-muted">|</span>

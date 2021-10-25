@@ -1,3 +1,15 @@
-import { body, check } from 'express-validator';
+import { isAddress } from 'web3-utils';
+import { body } from 'express-validator';
 
-export const validations = {};
+function checkIsAddress(value: string) {
+    return isAddress(value);
+}
+
+export const validations = {
+    postAccount: [
+        body('email').exists().isEmail(),
+        body('secret').exists().isString().isLength({ min: 6 }),
+        body('address').optional().custom(checkIsAddress),
+        body('poolAddress').exists().custom(checkIsAddress),
+    ],
+};

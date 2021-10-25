@@ -10,13 +10,13 @@ import postResetController from './postReset.action';
 
 const router = express.Router();
 
-router.get('/interaction/:uid', getController);
-router.post('/interaction/:uid/create', urlencoded({ extended: false }), postCreateController);
-router.post('/interaction/:uid/password', urlencoded({ extended: false }), postPasswordController);
-router.post('/interaction/:uid/login', urlencoded({ extended: false }), postLoginController);
-router.get('/interaction/:uid/abort', getAbortController);
-router.get('/interaction/:uid/forgot', getForgotController);
-router.post('/interaction/:uid/forgot', urlencoded({ extended: false }), postForgotController);
-router.post('/interaction/:uid/reset', urlencoded({ extended: false }), postResetController);
+router.get('/oidc/:uid', getController);
+router.post('/oidc/:uid/create', urlencoded({ extended: false }), postCreateController);
+router.post('/oidc/:uid/password', urlencoded({ extended: false }), postPasswordController);
+router.post('/oidc/:uid/login', urlencoded({ extended: false }), postLoginController);
+router.get('/oidc/:uid/abort', getAbortController);
+router.get('/oidc/:uid/forgot', getForgotController);
+router.post('/oidc/:uid/forgot', urlencoded({ extended: false }), postForgotController);
+router.post('/oidc/:uid/reset', urlencoded({ extended: false }), postResetController);
 
 export default router;

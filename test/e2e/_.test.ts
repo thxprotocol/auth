@@ -12,4 +12,4 @@ afterAll(async () => {
 });
 
 require('./account.ts');
-// require('./grants.ts');
+require('./grants.ts');

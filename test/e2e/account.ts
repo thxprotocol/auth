@@ -8,18 +8,11 @@ const http = request(server);
 describe('Account Controller', () => {
     const poolAddress = '0x287aAa0f0089069A115AF9D25f0adeB295b52964';
     const accountEmail = 'test@test.com';
-    const accountPassword = 'mellon';
+    const accountSecret = 'mellon';
     let authHeader: string, basicAuthHeader: string, accountId: string;
 
-    beforeAll(async () => {
+    afterAll(async () => {
         await db.truncate();
-
-        // const account = await (await AccountService.signup('test@test.com', 'mellon', true, true)).save();
-        // sub = account.id;
-        // console.log(sub);
-    });
-
-    afterAll(() => {
         server.close();
     });
 
@@ -69,7 +62,7 @@ describe('Account Controller', () => {
                 })
                 .send({
                     email: accountEmail,
-                    secret: accountPassword,
+                    secret: accountSecret,
                     poolAddress,
                 });
             expect(res.status).toBe(201);
@@ -96,14 +89,14 @@ describe('Account Controller', () => {
         });
     });
 
-    describe('PATCH /account/:id', () => {
-        it('HTTP 200', async (done) => {
-            const res = await http.patch(`/account/${accountId}`).set({
-                Authorization: authHeader,
-            });
-            console.log(res.body);
-            expect(res.status).toBe(200);
-            done();
-        });
-    });
+    // describe('PATCH /account/:id', () => {
+    //     it('HTTP 200', async (done) => {
+    //         const res = await http.patch(`/account/${accountId}`).set({
+    //             Authorization: authHeader,
+    //         });
+    //         console.log(res.body);
+    //         expect(res.status).toBe(200);
+    //         done();
+    //     });
+    // });
 });

@@ -1,17 +1,22 @@
 import request from 'supertest';
 import server from '../../src/server';
+import AccountService from '../../src/services/AccountService';
 import db from '../../src/util/database';
+import { accountEmail, accountSecret, poolAddress } from './lib/constants';
 
 const http = request(server);
 
 describe('OAuth2 Grants', () => {
-    let authHeader: string, accessToken: string;
+    let authHeader: string, accessToken: string, accountId: string;
 
     beforeAll(async () => {
-        await db.truncate();
+        const { account, error } = await AccountService.signupFor(accountEmail, accountSecret, poolAddress);
+        if (error) console.log(error);
+        accountId = account.id;
     });
 
-    afterAll(() => {
+    afterAll(async () => {
+        await db.truncate();
         server.close();
     });
 
@@ -24,9 +29,9 @@ describe('OAuth2 Grants', () => {
     });
 
     describe('GET /account', () => {
-        it('HTTP 403', async (done) => {
+        it('HTTP 401 Unauthorized', async (done) => {
             const res = await http.get('/account');
-            expect(res.status).toBe(403);
+            expect(res.status).toBe(401);
             done();
         });
     });
@@ -35,11 +40,11 @@ describe('OAuth2 Grants', () => {
         it('HTTP 201', async (done) => {
             const res = await http.post('/reg').send({
                 application_type: 'web',
-                client_name: 'TestClient',
+                client_name: 'THX API',
                 grant_types: ['client_credentials'],
                 redirect_uris: [],
                 response_types: [],
-                scope: 'openid admin',
+                scope: 'openid account:read account:write',
             });
             authHeader = 'Basic ' + Buffer.from(`${res.body.client_id}:${res.body.client_secret}`).toString('base64');
 
@@ -58,7 +63,7 @@ describe('OAuth2 Grants', () => {
                 })
                 .send({
                     grant_type: 'client_credentials',
-                    scope: 'openid admin',
+                    scope: 'openid account:read account:write',
                 });
             expect(res.status).toBe(400);
             expect(res.body).toMatchObject({
@@ -76,7 +81,7 @@ describe('OAuth2 Grants', () => {
                 })
                 .send({
                     grant_type: 'authorization_code',
-                    scope: 'openid admin user',
+                    scope: 'openid account:read account:write',
                 });
             expect(res.body).toMatchObject({
                 error: 'unauthorized_client',
@@ -100,7 +105,7 @@ describe('OAuth2 Grants', () => {
             expect(res.body).toMatchObject({
                 error: 'invalid_scope',
                 error_description: 'requested scope is not whitelisted',
-                scope: 'user',
+                scope: 'admin',
             });
             expect(res.status).toBe(400);
             done();
@@ -115,21 +120,23 @@ describe('OAuth2 Grants', () => {
                 })
                 .send({
                     grant_type: 'client_credentials',
-                    scope: 'openid admin',
+                    scope: 'openid account:read account:write',
                 });
             accessToken = res.body.access_token;
 
             expect(res.status).toBe(200);
+            expect(accessToken).toBeDefined();
             done();
         });
     });
 
-    describe('GET /account', () => {
-        it('HTTP 403 (invalid token)', async (done) => {
-            const res = await http.get('/account').set({
-                Authorization: `Bearer ${accessToken}`,
-            });
-            expect(res.status).toBe(403);
+    describe('GET /account/:id', () => {
+        it('HTTP 403', async (done) => {
+            const res = await http
+                .get(`/account/${accountId}`)
+                .set({ 'Authorization': `Bearer ${accessToken}`, 'X-AssetPool': poolAddress })
+                .send();
+            expect(res.status).toBe(200);
             done();
         });
     });

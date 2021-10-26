@@ -42,6 +42,20 @@ export default {
             },
         };
     },
+    routes: {
+        authorization: '/auth',
+        backchannel_authentication: '/backchannel',
+        code_verification: '/device',
+        device_authorization: '/device/auth',
+        end_session: '/session/end',
+        introspection: '/token/introspection',
+        jwks: '/jwks',
+        pushed_authorization_request: '/request',
+        registration: '/reg',
+        revocation: '/token/revocation',
+        token: '/token',
+        userinfo: '/me',
+    },
     extraParams: [
         'signup_email',
         'return_url',

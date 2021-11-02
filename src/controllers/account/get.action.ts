@@ -14,8 +14,51 @@ export const getAccount = async (req: HttpRequest, res: Response, next: NextFunc
 
         if (account) {
             res.send({
+                id: account._id,
                 address: account.address,
                 // privateKey: account.privateKey, // TODO display this on /me endpoint
+                memberships: account.memberships,
+                erc20: account.erc20,
+                registrationAccessTokens: account.registrationAccessTokens,
+                burnProofs: account.burnProofs,
+            });
+        }
+    } catch (e) {
+        next(new HttpError(502, 'Account find failed', e));
+    }
+};
+
+export const getAccountByAddress = async (req: HttpRequest, res: Response, next: NextFunction) => {
+    try {
+        const { account, error } = await AccountService.getByAddress(req.params.address);
+
+        if (error) throw new Error(error.message);
+
+        if (account) {
+            res.send({
+                id: account._id,
+                address: account.address,
+                memberships: account.memberships,
+                erc20: account.erc20,
+                registrationAccessTokens: account.registrationAccessTokens,
+                burnProofs: account.burnProofs,
+            });
+        }
+    } catch (e) {
+        next(new HttpError(502, 'Account find failed', e));
+    }
+};
+
+export const getAccountByEmail = async (req: HttpRequest, res: Response, next: NextFunction) => {
+    try {
+        const { account, error } = await AccountService.getByEmail(req.params.email);
+
+        if (error) throw new Error(error.message);
+
+        if (account) {
+            res.send({
+                id: account._id,
+                address: account.address,
                 memberships: account.memberships,
                 erc20: account.erc20,
                 registrationAccessTokens: account.registrationAccessTokens,

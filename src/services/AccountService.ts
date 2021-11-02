@@ -5,17 +5,18 @@ import { ISSUER, SECURE_KEY } from '../util/secrets';
 import { checkPasswordStrength } from '../util/passwordcheck';
 import Web3 from 'web3';
 import axios from 'axios';
-
-const DURATION_TWENTYFOUR_HOURS = Date.now() + 1000 * 60 * 60 * 24;
-const ERROR_AUTHENTICATION_TOKEN_INVALID_OR_EXPIRED = 'Your authentication token is invalid or expired.';
-const ERROR_PASSWORD_MATCHING = 'Could not compare your passwords';
-const ERROR_PASSWORD_NOT_MATCHING = 'Your provided passwords do not match';
-const ERROR_SIGNUP_TOKEN_INVALID = 'Could not find an account for this signup_token.';
-const ERROR_SIGNUP_TOKEN_EXPIRED = 'This signup_token has expired.';
-const SUCCESS_SIGNUP_COMPLETED = 'Congratulations! Your e-mail address has been verified.';
-const ERROR_NO_ACCOUNT = 'Could not find an account for this address';
-const ERROR_PASSWORD_RESET_TOKEN_INVALID_OR_EXPIRED = 'Your password reset token is invalid or expired.';
-const ERROR_PASSWORD_STRENGTH = 'Please enter a strong password.';
+import {
+    ERROR_NO_ACCOUNT,
+    DURATION_TWENTYFOUR_HOURS,
+    ERROR_SIGNUP_TOKEN_INVALID,
+    ERROR_SIGNUP_TOKEN_EXPIRED,
+    SUCCESS_SIGNUP_COMPLETED,
+    ERROR_AUTHENTICATION_TOKEN_INVALID_OR_EXPIRED,
+    ERROR_PASSWORD_NOT_MATCHING,
+    ERROR_PASSWORD_MATCHING,
+    ERROR_PASSWORD_RESET_TOKEN_INVALID_OR_EXPIRED,
+    ERROR_PASSWORD_STRENGTH,
+} from '../util/messages';
 
 export default class AccountService {
     static async get(sub: string) {
@@ -195,50 +196,6 @@ export default class AccountService {
             await account.save();
 
             return { rat };
-        } catch (error) {
-            return { error };
-        }
-    }
-
-    static async addMembershipForAddress(assetPool: any, address: string) {
-        try {
-            const account = await Account.findOne({ address });
-
-            if (!account.memberships.includes(assetPool.address)) {
-                account.memberships.push(assetPool.address);
-            }
-
-            // TODO Figure out how to move this to the API project, potentially make it part of the assetPoolService
-            // const tokenAddress = await callFunction(assetPool.solution.methods.getToken(), assetPool.network);
-            // const hasERC20 = account.erc20.find((erc20: ERC20Token) => erc20.address === tokenAddress);
-
-            // if (!hasERC20) {
-            //     account.erc20.push({ address: tokenAddress, network: assetPool.network });
-            // }
-
-            await account.save();
-
-            return { result: true };
-        } catch (error) {
-            return { error };
-        }
-    }
-
-    static async removeMembershipForAddress(assetPool: any, address: string) {
-        try {
-            const account = await Account.findOne({ address });
-
-            if (account && account.memberships) {
-                const index = account.memberships.indexOf(assetPool.solution.options.address);
-
-                if (index > -1) {
-                    account.memberships.splice(index, 1);
-                }
-            }
-
-            await account.save();
-
-            return { result: true };
         } catch (error) {
             return { error };
         }

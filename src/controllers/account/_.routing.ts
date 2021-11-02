@@ -1,6 +1,6 @@
 import express from 'express';
 import checkScopes from 'express-jwt-authz';
-import { getAccount } from './get.action';
+import { getAccount, getAccountByAddress, getAccountByEmail } from './get.action';
 import { patchAccount } from './patch.action';
 import { deleteAccount } from './delete.action';
 import { postAccount } from './post.action';
@@ -13,6 +13,8 @@ const router = express.Router();
 router.use(checkJwt);
 router.post('/', checkScopes(['account:read', 'account:write']), validate(validations.postAccount), postAccount);
 router.get('/:id', checkScopes(['account:read']), getAccount);
+router.get('/address/:address', checkScopes(['account:read']), validate([]), getAccountByAddress);
+router.get('/email/:email', checkScopes(['account:read']), validate([]), getAccountByEmail);
 router.patch('/:id', checkScopes(['account:read', 'account:write'], { checkAllScopes: true }), patchAccount);
 router.delete('/:id', checkScopes(['account:write']), deleteAccount);
 

@@ -15,5 +15,5 @@
             "*": ["node_modules/*", "src/types/*"]
         }
     },
-    "include": ["src/**/*"]
+    "include": ["src/**/*", "scripts/local/AssetPool.ts", "scripts/local/artifacts.ts"]
 }

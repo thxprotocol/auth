@@ -109,6 +109,7 @@ export default {
         encryption: { enabled: true },
         introspection: { enabled: true },
         registration: { enabled: true },
+        registrationManagement: { enabled: true },
         rpInitiatedLogout: {
             enabled: true,
             logoutSource: async (ctx: any, form: any) => {

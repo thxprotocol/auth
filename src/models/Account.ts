@@ -1,33 +1,23 @@
 import bcrypt from 'bcrypt-nodejs';
-import mongoose, { Schema } from 'mongoose';
+import mongoose from 'mongoose';
 import { encryptString } from '../util/encrypt';
-
-export enum NetworkProvider {
-    Test = 0,
-    Main = 1,
-}
 
 export interface IAccount {
     active: boolean;
     email: string;
     password: string;
+    address: string;
+    privateKey: string;
     signupToken: string;
     signupTokenExpires: number;
     authenticationToken: string;
     authenticationTokenExpires: number;
     passwordResetToken: string;
     passwordResetExpires: number;
-    registrationAccessTokens: string[];
     acceptTermsPrivacy: boolean;
     acceptUpdates: boolean;
-    address: string;
-    privateKey: string;
-    tokens: AuthToken[];
-    erc20: ERC20Token[];
-    burnProofs: string[];
-    memberships: string[];
-    comparePassword: Function;
     recoveryPhrase: string;
+    comparePassword: Function;
 }
 
 export interface IAccountUpdates {
@@ -41,37 +31,21 @@ export interface IAccountUpdates {
 
 export type AccountDocument = mongoose.Document & IAccount;
 
-export interface ERC20Token {
-    network: NetworkProvider;
-    address: string;
-}
-
-export interface AuthToken {
-    accessToken: string;
-    kind: string;
-}
-
-const ERC20TokenSchema = new Schema({ network: Number, address: String });
 const accountSchema = new mongoose.Schema(
     {
         active: Boolean,
         email: { type: String, unique: true },
         password: String,
+        address: String,
+        privateKey: String,
         signupToken: String,
         signupTokenExpires: Date,
         authenticationToken: String,
         authenticationTokenExpires: Date,
         passwordResetToken: String,
         passwordResetExpires: Date,
-        registrationAccessTokens: [String],
         acceptTermsPrivacy: Boolean,
         acceptUpdates: Boolean,
-        address: String,
-        privateKey: String,
-        tokens: [String],
-        erc20: [ERC20TokenSchema],
-        burnProofs: [String],
-        memberships: [String],
         recoveryPhrase: String,
     },
     { timestamps: true },

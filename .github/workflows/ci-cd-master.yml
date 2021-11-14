@@ -40,10 +40,10 @@ jobs:
             matrix:
                 python-version: [3.8]
                 node-version: ['12.x']
-                appname: ['api']
+                appname: ['auth']
                 deploy-group: ['master']
-                s3-bucket: ['aws-deployments-api-master']
-                s3-filename: ['api-master-${{ github.sha }}']
+                s3-bucket: ['aws-deployments-auth-master']
+                s3-filename: ['auth-master-${{ github.sha }}']
 
         needs: buildAndTest
         steps:

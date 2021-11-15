@@ -16,8 +16,6 @@ export const patchAccount = async (req: HttpRequest, res: Response, next: NextFu
         const account = await getAccount();
         const { error } = await AccountService.update(account, {
             address: req.body.address,
-            memberships: req.body.memberships,
-            burnProofs: req.body.burnProofs,
         });
 
         if (error) {

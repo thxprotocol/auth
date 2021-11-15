@@ -2,7 +2,7 @@ import jwks from '../../jwks.json';
 import MongoAdapter from './adapter';
 import { Account } from '../../models/Account';
 import { AccountDocument } from '../../models/Account';
-import { ENVIRONMENT, SECURE_KEY } from '../../util/secrets';
+import { ENVIRONMENT, INITIAL_ACCESS_TOKEN, SECURE_KEY } from '../../util/secrets';
 import { interactionPolicy } from 'oidc-provider';
 
 const basePolicy = interactionPolicy.base();
@@ -108,7 +108,7 @@ export default {
         clientCredentials: { enabled: true },
         encryption: { enabled: true },
         introspection: { enabled: true },
-        registration: { enabled: true },
+        registration: { enabled: true, initialAccessToken: INITIAL_ACCESS_TOKEN },
         registrationManagement: { enabled: true },
         rpInitiatedLogout: {
             enabled: true,

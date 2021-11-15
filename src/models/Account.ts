@@ -24,9 +24,7 @@ export interface IAccountUpdates {
     acceptTermsPrivacy?: boolean;
     acceptUpdates?: boolean;
     address?: string;
-    memberships?: string[];
     privateKey?: string;
-    burnProofs?: string[];
 }
 
 export type AccountDocument = mongoose.Document & IAccount;

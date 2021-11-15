@@ -1,10 +1,9 @@
-import { Account, AccountDocument, ERC20Token, IAccountUpdates } from '../models/Account';
+import { Account, AccountDocument, IAccountUpdates } from '../models/Account';
 import { createRandomToken } from '../util/tokens';
 import { decryptString } from '../util/decrypt';
-import { ISSUER, SECURE_KEY } from '../util/secrets';
+import { SECURE_KEY } from '../util/secrets';
 import { checkPasswordStrength } from '../util/passwordcheck';
 import Web3 from 'web3';
-import axios from 'axios';
 import {
     ERROR_NO_ACCOUNT,
     DURATION_TWENTYFOUR_HOURS,
@@ -67,7 +66,7 @@ export default class AccountService {
 
     static async update(
         account: AccountDocument,
-        { acceptTermsPrivacy, acceptUpdates, address, memberships, privateKey, burnProofs }: IAccountUpdates,
+        { acceptTermsPrivacy, acceptUpdates, address, privateKey }: IAccountUpdates,
     ) {
         try {
             // No strict checking here since null == undefined
@@ -85,9 +84,7 @@ export default class AccountService {
             }
 
             account.address = address || account.address;
-            account.memberships = memberships || account.memberships;
             account.privateKey = privateKey || account.privateKey;
-            account.burnProofs = burnProofs || account.burnProofs;
 
             await account.save();
         } catch (error) {
@@ -162,40 +159,6 @@ export default class AccountService {
             return {
                 result: SUCCESS_SIGNUP_COMPLETED,
             };
-        } catch (error) {
-            return { error };
-        }
-    }
-
-    static async addRatForAddress(address: string) {
-        try {
-            const account = await Account.findOne({ address });
-            const r = await axios({
-                method: 'POST',
-                url: ISSUER + '/reg',
-                data: {
-                    application_type: 'web',
-                    grant_types: ['client_credentials'],
-                    request_uris: [],
-                    redirect_uris: [],
-                    post_logout_redirect_uris: [],
-                    response_types: [],
-                    scope: 'openid admin',
-                },
-            });
-            const rat = r.data.registration_access_token;
-
-            if (account.registrationAccessTokens.length) {
-                if (!account.registrationAccessTokens.includes(rat)) {
-                    account.registrationAccessTokens.push(rat);
-                }
-            } else {
-                account.registrationAccessTokens = [rat];
-            }
-
-            await account.save();
-
-            return { rat };
         } catch (error) {
             return { error };
         }

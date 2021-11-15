@@ -17,10 +17,6 @@ export const getAccount = async (req: HttpRequest, res: Response, next: NextFunc
                 id: account._id,
                 address: account.address,
                 // privateKey: account.privateKey, // TODO display this on /me endpoint
-                memberships: account.memberships,
-                erc20: account.erc20,
-                registrationAccessTokens: account.registrationAccessTokens,
-                burnProofs: account.burnProofs,
             });
         }
     } catch (e) {
@@ -38,10 +34,6 @@ export const getAccountByAddress = async (req: HttpRequest, res: Response, next:
             res.send({
                 id: account._id,
                 address: account.address,
-                memberships: account.memberships,
-                erc20: account.erc20,
-                registrationAccessTokens: account.registrationAccessTokens,
-                burnProofs: account.burnProofs,
             });
         }
     } catch (e) {
@@ -59,10 +51,6 @@ export const getAccountByEmail = async (req: HttpRequest, res: Response, next: N
             res.send({
                 id: account._id,
                 address: account.address,
-                memberships: account.memberships,
-                erc20: account.erc20,
-                registrationAccessTokens: account.registrationAccessTokens,
-                burnProofs: account.burnProofs,
             });
         }
     } catch (e) {

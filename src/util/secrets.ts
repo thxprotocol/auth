@@ -35,3 +35,4 @@ export const PORT = process.env.PORT;
 export const SECURE_KEY = process.env.SECURE_KEY;
 export const GTM = process.env.GTM;
 export const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
+export const INITIAL_ACCESS_TOKEN = process.env.INITIAL_ACCESS_TOKEN;

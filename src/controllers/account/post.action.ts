@@ -13,12 +13,7 @@ export const postAccount = async (req: HttpRequest, res: Response, next: NextFun
     }
 
     async function createAccount() {
-        const { account, error } = await AccountService.signupFor(
-            req.body.email,
-            req.body.secret,
-            req.body.poolAddress,
-            req.body.address,
-        );
+        const { account, error } = await AccountService.signupFor(req.body.email, req.body.secret, req.body.address);
 
         if (error) throw new Error(ERROR_CREATE_ACCOUNT);
 

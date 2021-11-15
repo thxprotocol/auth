@@ -119,7 +119,7 @@ export default class AccountService {
         return account;
     }
 
-    static async signupFor(email: string, secret: string, poolAddress: string, address?: string) {
+    static async signupFor(email: string, secret: string, address?: string) {
         try {
             const wallet = new Web3().eth.accounts.create();
             const privateKey = address ? null : wallet.privateKey;
@@ -129,7 +129,6 @@ export default class AccountService {
                 privateKey: address ? privateKey : wallet.privateKey,
                 email,
                 secret,
-                memberships: poolAddress ? [poolAddress] : [],
             });
 
             return { account: await account.save() };

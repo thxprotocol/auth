@@ -10,7 +10,7 @@ describe('OAuth2 Grants', () => {
     let authHeader: string, accessToken: string, accountId: string;
 
     beforeAll(async () => {
-        const { account, error } = await AccountService.signupFor(accountEmail, accountSecret, poolAddress);
+        const { account, error } = await AccountService.signupFor(accountEmail, accountSecret);
         if (error) console.log(error);
         accountId = account.id;
     });

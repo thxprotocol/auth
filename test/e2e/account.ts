@@ -83,7 +83,6 @@ describe('Account Controller', () => {
             expect(res.status).toBe(200);
             expect(res.body.address).toBeDefined();
             expect(res.body.privateKey).toBeUndefined();
-            expect(res.body.memberships[0]).toBe('0x287aAa0f0089069A115AF9D25f0adeB295b52964');
 
             done();
         });

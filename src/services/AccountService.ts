@@ -86,7 +86,7 @@ export default class AccountService {
             account.address = address || account.address;
             account.privateKey = privateKey || account.privateKey;
 
-            await account.save();
+            return { result: await account.save() };
         } catch (error) {
             return { error };
         }

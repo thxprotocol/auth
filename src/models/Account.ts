@@ -14,6 +14,8 @@ export interface IAccount {
     authenticationTokenExpires: number;
     passwordResetToken: string;
     passwordResetExpires: number;
+    googleAccessToken: string;
+    googleAccessTokenExpires: number;
     acceptTermsPrivacy: boolean;
     acceptUpdates: boolean;
     recoveryPhrase: string;
@@ -42,6 +44,8 @@ const accountSchema = new mongoose.Schema(
         authenticationTokenExpires: Date,
         passwordResetToken: String,
         passwordResetExpires: Date,
+        googleAccessToken: String,
+        googleAccessTokenExpires: String,
         acceptTermsPrivacy: Boolean,
         acceptUpdates: Boolean,
         recoveryPhrase: String,

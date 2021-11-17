@@ -35,4 +35,7 @@ export const PORT = process.env.PORT;
 export const SECURE_KEY = process.env.SECURE_KEY;
 export const GTM = process.env.GTM;
 export const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
+export const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
+export const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
+export const GOOGLE_REDIRECT_URI = process.env.GOOGLE_REDIRECT_URI;
 export const INITIAL_ACCESS_TOKEN = process.env.INITIAL_ACCESS_TOKEN;

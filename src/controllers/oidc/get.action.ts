@@ -3,6 +3,7 @@ import { HttpError } from '../../models/Error';
 import { GTM } from '../../util/secrets';
 import AccountService from '../../services/AccountService';
 import { oidc } from '.';
+import { googleLoginUrl } from '../../util/google';
 
 export default async function getController(req: Request, res: Response, next: NextFunction) {
     try {
@@ -55,7 +56,7 @@ export default async function getController(req: Request, res: Response, next: N
 
         res.render(view, {
             uid,
-            params,
+            params: { ...params, googleLoginUrl },
             alert,
             gtm: GTM,
         });

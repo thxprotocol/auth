@@ -139,7 +139,9 @@ export default {
     },
     cookies: {
         long: { signed: true, maxAge: 1 * 24 * 60 * 60 * 1000 },
-        short: { signed: true },
+        short: {
+            signed: true,
+        },
         keys: [SECURE_KEY.split(',')[0], SECURE_KEY.split(',')[1]],
     },
     async renderError(ctx: any, error: any) {

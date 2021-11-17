@@ -69,9 +69,6 @@
                                                value="<%= params.authentication_token %>" />
                                         <input type="hidden" name="secureKey" value="<%= params.secure_key %>" />
                                         <input type="hidden" name="returnUrl" value="<%= params.return_url %>" />
-
-                                        <hr>
-
                                         <button type="submit" class="btn rounded-pill btn-primary btn-block">
                                             Sign in
                                             <i class="fas fa-chevron-right" aria-hidden="true"></i>
@@ -96,6 +93,12 @@
                                                 Sign in
                                                 <i class="fas fa-chevron-right" aria-hidden="true"></i>
                                             </button>
+                                            <hr>
+                                            <a class="btn rounded-pill btn-light btn-block"
+                                               href="<%= params.googleLoginUrl %>&state=<%= uid %>">
+                                                Sign in with Google
+                                                <i class="fas fa-chevron-right" aria-hidden="true"></i>
+                                            </a>
                                         </form>
                                         <hr>
                                         <div class="text-center">

@@ -10,12 +10,14 @@ import { requestLogger } from './util/logger';
 import { corsHandler } from './util/cors';
 import { errorHandler, notFoundHandler } from './util/error';
 import { PORT, MONGODB_URI, DASHBOARD_URL, PUBLIC_URL } from './util/secrets';
-
+const expressLayouts = require('express-ejs-layouts');
 const app = express();
 
 db.connect(MONGODB_URI);
 
 app.set('trust proxy', true);
+app.use(expressLayouts);
+app.set('layout', './layouts/auth-layout');
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.set('port', PORT);

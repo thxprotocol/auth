@@ -28,6 +28,7 @@ export default async function postCreateController(req: Request, res: Response, 
             },
             alert,
             gtm: GTM,
+            layout: './layouts/signup-layout',
         });
     }
 
@@ -58,6 +59,7 @@ export default async function postCreateController(req: Request, res: Response, 
                         'Verify your e-mail address by clicking the link we just sent you. You can close this window.',
                 },
                 gtm: GTM,
+                layout: './layouts/signup-layout',
             });
         } catch (error) {
             return next(new HttpError(502, error.toString(), error));

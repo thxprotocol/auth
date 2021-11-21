@@ -59,7 +59,6 @@ export default async function getController(req: Request, res: Response, next: N
                 params,
                 alert,
                 gtm: GTM,
-                layout: './layouts/signup-layout',
             });
         } else {
             res.render(view, {

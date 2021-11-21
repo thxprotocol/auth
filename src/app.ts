@@ -4,6 +4,7 @@ import path from 'path';
 import db from './util/database';
 import oidcRouter from './controllers/oidc/_.routing';
 import accountRouter from './controllers/account/_.routing';
+import expressEJSLayouts from 'express-ejs-layouts';
 import { xframe, xssProtection } from 'lusca';
 import { oidc } from './controllers/oidc';
 import { requestLogger } from './util/logger';
@@ -15,10 +16,12 @@ const app = express();
 
 db.connect(MONGODB_URI);
 
+app.set('port', PORT);
 app.set('trust proxy', true);
+app.set('layout', './layouts/default');
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
-app.set('port', PORT);
+app.use(expressEJSLayouts);
 app.use(corsHandler);
 app.use(requestLogger);
 app.use(compression());

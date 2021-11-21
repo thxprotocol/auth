@@ -1,6 +1,5 @@
 import { Response, NextFunction } from 'express';
 import { HttpError, HttpRequest } from '../../models/Error';
-import { VERSION } from '../../util/secrets';
 import AccountService from '../../services/AccountService';
 
 export const patchAccount = async (req: HttpRequest, res: Response, next: NextFunction) => {
@@ -14,11 +13,11 @@ export const patchAccount = async (req: HttpRequest, res: Response, next: NextFu
 
     try {
         const account = await getAccount();
-        const { error } = await AccountService.update(account, {
+        const { result, error } = await AccountService.update(account, {
             address: req.body.address,
         });
 
-        if (error) {
+        if (!result || error) {
             if (error.code === 11000) {
                 next(new HttpError(422, 'A user for this e-mail already exists.', error));
                 return;
@@ -26,7 +25,7 @@ export const patchAccount = async (req: HttpRequest, res: Response, next: NextFu
             next(new HttpError(502, 'Account save failed', error));
             return;
         }
-        res.redirect(303, `/${VERSION}/account`);
+        res.status(204).end();
     } catch (err) {
         next(new HttpError(502, 'Account find failed.', err));
         return;

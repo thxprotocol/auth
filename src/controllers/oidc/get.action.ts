@@ -53,12 +53,21 @@ export default async function getController(req: Request, res: Response, next: N
             }
         }
 
-        res.render(view, {
-            uid,
-            params,
-            alert,
-            gtm: GTM,
-        });
+        if (view == 'signup') {
+            res.render(view, {
+                uid,
+                params,
+                alert,
+                gtm: GTM,
+            });
+        } else {
+            res.render(view, {
+                uid,
+                params,
+                alert,
+                gtm: GTM,
+            });
+        }
     } catch (err) {
         return next(new HttpError(500, 'Loading view failed.', err));
     }

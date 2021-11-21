@@ -77,6 +77,7 @@ export default {
         'withdrawals:read', // user
         'withdrawals:write', // admin
         'metrics:read', // cms
+        'offline_access',
     ],
     claims: {
         openid: ['sub', 'email', 'address'],

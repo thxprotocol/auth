@@ -32,7 +32,6 @@ export default async function postCreateController(req: Request, res: Response, 
             },
             alert,
             gtm: GTM,
-            layout: './layouts/layout',
         });
     }
 

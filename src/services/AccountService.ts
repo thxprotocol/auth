@@ -100,7 +100,13 @@ export default class AccountService {
         }
     }
 
-    static async signup(email: string, password: string, acceptTermsPrivacy: boolean, acceptUpdates: boolean) {
+    static async signup(
+        email: string,
+        password: string,
+        acceptTermsPrivacy: boolean,
+        acceptUpdates: boolean,
+        sso = false,
+    ) {
         let account = await Account.findOne({ email, active: false });
 
         if (!account) {
@@ -113,8 +119,11 @@ export default class AccountService {
         account.password = password;
         account.acceptTermsPrivacy = acceptTermsPrivacy || false;
         account.acceptUpdates = acceptUpdates || false;
-        account.signupToken = createRandomToken();
-        account.signupTokenExpires = DURATION_TWENTYFOUR_HOURS;
+
+        if (!sso) {
+            account.signupToken = createRandomToken();
+            account.signupTokenExpires = DURATION_TWENTYFOUR_HOURS;
+        }
 
         return account;
     }

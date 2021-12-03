@@ -5,11 +5,13 @@ import AccountService from '../../services/AccountService';
 
 export const postAccount = async (req: HttpRequest, res: Response, next: NextFunction) => {
     async function checkDuplicateEmail() {
-        const { result } = await AccountService.isEmailDuplicate(req.body.email);
+        const { result, error } = await AccountService.isEmailDuplicate(req.body.email);
 
-        if (result) {
+        if (error) {
             throw new Error(ERROR_DUPLICATE_EMAIL);
         }
+
+        return result;
     }
 
     async function createAccount() {
@@ -20,10 +22,15 @@ export const postAccount = async (req: HttpRequest, res: Response, next: NextFun
         return account;
     }
 
-    try {
-        await checkDuplicateEmail();
+    async function getAccount() {
+        const { account, error } = await AccountService.getByEmail(req.body.email);
+        if (error) throw new Error(ERROR_CREATE_ACCOUNT);
+        return account;
+    }
 
-        const account = await createAccount();
+    try {
+        const isDuplicate = await checkDuplicateEmail();
+        const account = isDuplicate ? await getAccount() : await createAccount();
 
         res.status(201).json({
             id: account._id,

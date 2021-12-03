@@ -2,7 +2,7 @@ import request from 'supertest';
 import server from '../../src/server';
 import AccountService from '../../src/services/AccountService';
 import db from '../../src/util/database';
-import { accountEmail, accountSecret, poolAddress } from './lib/constants';
+import { accountEmail, accountSecret } from './lib/constants';
 
 const http = request(server);
 
@@ -134,7 +134,7 @@ describe('OAuth2 Grants', () => {
         it('HTTP 403', async (done) => {
             const res = await http
                 .get(`/account/${accountId}`)
-                .set({ 'Authorization': `Bearer ${accessToken}`, 'X-AssetPool': poolAddress })
+                .set({ Authorization: `Bearer ${accessToken}` })
                 .send();
             expect(res.status).toBe(200);
             done();

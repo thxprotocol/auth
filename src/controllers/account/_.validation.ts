@@ -10,6 +10,5 @@ export const validations = {
         body('email').exists().isEmail(),
         body('secret').exists().isString().isLength({ min: 6 }),
         body('address').optional().custom(checkIsAddress),
-        body('poolAddress').exists().custom(checkIsAddress),
     ],
 };

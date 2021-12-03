@@ -25,7 +25,7 @@ export const postAccount = async (req: HttpRequest, res: Response, next: NextFun
 
         const account = await createAccount();
 
-        res.status(201).json({ id: account._id });
+        res.status(201).json(account);
     } catch (error) {
         return next(new HttpError(502, error.message, error));
     }

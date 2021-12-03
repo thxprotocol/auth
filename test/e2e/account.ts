@@ -76,8 +76,7 @@ describe('Account Controller', () => {
             const res = await http
                 .get(`/account/${accountId}`)
                 .set({
-                    'Authorization': authHeader,
-                    'X-AssetPool': poolAddress,
+                    Authorization: authHeader,
                 })
                 .send();
             expect(res.status).toBe(200);

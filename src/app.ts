@@ -24,12 +24,9 @@ app.set('trust proxy', true);
 app.set('layout', './layouts/default');
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
-app.use(
-    hostValidation({
-        hosts: allowedHosts(),
-    }),
-);
+
 app.use(helmet());
+app.use(hostValidation({ hosts: allowedHosts() }));
 app.use(corsHandler);
 app.use(requestLogger);
 app.use(expressEJSLayouts);

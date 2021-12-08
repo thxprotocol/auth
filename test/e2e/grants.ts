@@ -4,7 +4,7 @@ import AccountService from '../../src/services/AccountService';
 import db from '../../src/util/database';
 import { accountEmail, accountSecret } from './lib/constants';
 
-const http = request(server);
+const http = request.agent(server);
 
 describe('OAuth2 Grants', () => {
     let authHeader: string, accessToken: string, accountId: string;

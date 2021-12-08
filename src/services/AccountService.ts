@@ -66,7 +66,14 @@ export default class AccountService {
 
     static async update(
         account: AccountDocument,
-        { acceptTermsPrivacy, acceptUpdates, address, privateKey }: IAccountUpdates,
+        {
+            acceptTermsPrivacy,
+            acceptUpdates,
+            address,
+            privateKey,
+            googleAccessToken,
+            googleAccessTokenExpires,
+        }: IAccountUpdates,
     ) {
         try {
             // No strict checking here since null == undefined
@@ -85,16 +92,10 @@ export default class AccountService {
 
             account.address = address || account.address;
             account.privateKey = privateKey || account.privateKey;
+            account.googleAccessToken = googleAccessToken || account.googleAccessToken;
+            account.googleAccessTokenExpires = googleAccessTokenExpires || account.googleAccessTokenExpires;
 
             return { result: await account.save() };
-        } catch (error) {
-            return { error };
-        }
-    }
-
-    static async patch(account: AccountDocument) {
-        try {
-            await account.save();
         } catch (error) {
             return { error };
         }

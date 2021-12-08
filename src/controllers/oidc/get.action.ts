@@ -8,25 +8,11 @@ import { googleLoginUrl } from '../../util/google';
 export default async function getController(req: Request, res: Response, next: NextFunction) {
     try {
         const { uid, prompt, params } = await oidc.interactionDetails(req, res);
+
+        console.log(prompt, params);
+
         let view, alert;
-        switch (prompt.name) {
-            case 'login': {
-                view = 'login';
-                break;
-            }
-            case 'consent': {
-                const consent: any = {};
-
-                consent.rejectedScopes = [];
-                consent.rejectedClaims = [];
-                consent.replace = false;
-
-                const result = { consent };
-
-                return await oidc.interactionFinished(req, res, result, { mergeWithLastSubmission: true });
-            }
-        }
-        switch (params.prompt) {
+        switch (prompt.name || params.prompt) {
             case 'confirm': {
                 view = 'confirm';
                 const { error } = await AccountService.verifySignupToken(params.signup_token);
@@ -47,6 +33,17 @@ export default async function getController(req: Request, res: Response, next: N
             case 'create': {
                 view = 'signup';
                 break;
+            }
+            case 'consent': {
+                const consent: any = {};
+
+                consent.rejectedScopes = [];
+                consent.rejectedClaims = [];
+                consent.replace = false;
+
+                const result = { consent };
+
+                return await oidc.interactionFinished(req, res, result, { mergeWithLastSubmission: true });
             }
             case 'login': {
                 view = 'login';

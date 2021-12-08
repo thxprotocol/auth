@@ -57,6 +57,7 @@ export default {
         userinfo: '/me',
     },
     extraParams: [
+        'reward_hash',
         'signup_email',
         'return_url',
         'signup_token',

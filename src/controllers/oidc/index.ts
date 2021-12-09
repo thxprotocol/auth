@@ -2,7 +2,7 @@ import Provider from 'oidc-provider';
 import configuration from './config';
 import { ENVIRONMENT, ISSUER, SECURE_KEY } from '../../util/secrets';
 
-const oidc = new Provider(ISSUER, configuration as any);
+const oidc = new Provider(ISSUER, configuration as any); // Configuration
 
 oidc.proxy = true;
 oidc.keys = SECURE_KEY.split(',');

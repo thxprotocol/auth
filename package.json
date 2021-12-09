@@ -1,6 +1,6 @@
 {
-    "name": "@thxnetwork/api",
-    "version": "1.0.0-beta.27",
+    "name": "@thxnetwork/auth",
+    "version": "1.0.0-beta.1",
     "repository": {
         "type": "git",
         "url": "https://github.com/thxprotocol/api"
@@ -9,7 +9,7 @@
     "license": "AGPL-3.0",
     "scripts": {
         "preinstall": "npx npm-force-resolutions",
-        "serve:debug": "nodemon --inspect dist/server.js --legacy-watch",
+        "serve:debug": "nodemon --inspect dist/server.js",
         "lint": "npx tsc --noEmit && npx eslint \"src/**/*.ts\" \"test/**/*.ts\" --quiet --fix",
         "build": "npm run build:sass && npm run build:assets && npx tsc",
         "build:assets": "mkdir -p dist/public && cp -R src/public/* dist/public/. && cp -R src/views dist/.",
@@ -49,6 +49,8 @@
         "express-rate-limit": "^5.3.0",
         "googleapis": "^91.0.0",
         "express-validator": "^6.13.0",
+        "helmet": "^4.6.0",
+        "host-validation": "^2.0.1",
         "jose": "^2.0.5",
         "jwks-rsa": "^1.12.0",
         "lodash": "^4.17.21",
@@ -58,7 +60,8 @@
         "morgan": "^1.10.0",
         "nodemailer": "^6.6.1",
         "oidc-provider": "^6.31.1",
-        "winston": "^3.2.1"
+        "winston": "^3.2.1",
+        "y18n": "^5.0.8"
     },
     "devDependencies": {
         "@thxnetwork/artifacts": "^1.0.1",

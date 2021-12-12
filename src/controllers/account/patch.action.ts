@@ -30,8 +30,7 @@ export const patchAccount = async (req: HttpRequest, res: Response, next: NextFu
 
         await patchAccount(account, {
             address: req.body.address,
-            googleAccessToken: req.body.googleAccessToken,
-            googleAccessTokenExpires: req.body.googleAccessTokenExpires,
+            googleAccess: req.body.googleAccess,
         });
 
         res.status(204).end();

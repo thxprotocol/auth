@@ -9,10 +9,12 @@ const basePolicy = interactionPolicy.base();
 const promptReset = new interactionPolicy.Prompt({ name: 'reset', requestable: true });
 const promptCreate = new interactionPolicy.Prompt({ name: 'create', requestable: true });
 const promptConfirm = new interactionPolicy.Prompt({ name: 'confirm', requestable: true });
+const promptConnect = new interactionPolicy.Prompt({ name: 'connect', requestable: true });
 
 basePolicy.add(promptReset);
 basePolicy.add(promptCreate);
 basePolicy.add(promptConfirm);
+basePolicy.add(promptConnect);
 
 (async () => {
     if (ENVIRONMENT !== 'test') {
@@ -121,18 +123,7 @@ export default {
                 </head>
                 <body>
                 ${form}
-                <script>
-                    function logout() {
-                    var form = document.forms[0];
-                    var input = document.createElement('input');
-                    input.type = 'hidden';
-                    input.name = 'logout';
-                    input.value = 'yes';
-                    form.appendChild(input);
-                    form.submit();
-                    }
-                    logout()
-                </script>
+                <script src="/js/logout.js"></script>
                 </body>
                 </html>`;
             },
@@ -140,9 +131,7 @@ export default {
     },
     cookies: {
         long: { signed: true, maxAge: 1 * 24 * 60 * 60 * 1000 },
-        short: {
-            signed: true,
-        },
+        short: { signed: true },
         keys: [SECURE_KEY.split(',')[0], SECURE_KEY.split(',')[1]],
     },
     async renderError(ctx: any, error: any) {

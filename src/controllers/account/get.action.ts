@@ -7,9 +7,7 @@ function formatAccountRes(account: AccountDocument) {
     return {
         id: account._id,
         address: account.address,
-        googleAccessToken: account.googleAccessToken,
-        googleAccessTokenExpires: account.googleAccessTokenExpires,
-        // privateKey: account.privateKey, // TODO display this on /me endpoint
+        googleAccess: account.googleAccessToken && account.googleAccessTokenExpires > Date.now(),
     };
 }
 

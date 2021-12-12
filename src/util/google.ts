@@ -1,20 +1,38 @@
 import { google } from 'googleapis';
+import { AccountDocument } from '../models/Account';
 import { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_REDIRECT_URI } from './secrets';
 
-const oauth2Client = new google.auth.OAuth2(GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_REDIRECT_URI);
+const client = new google.auth.OAuth2(GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_REDIRECT_URI);
 
-export const googleLoginUrl = oauth2Client.generateAuthUrl({
+google.options({ auth: client });
+
+export const googleLoginUrl = client.generateAuthUrl({
     access_type: 'offline',
-    scope: [
-        'https://www.googleapis.com/auth/userinfo.email',
-        'https://www.googleapis.com/auth/userinfo.profile',
-        'https://www.googleapis.com/auth/youtube.readonly',
-        'https://www.googleapis.com/auth/youtube.force-ssl',
-    ],
+    scope: ['https://www.googleapis.com/auth/userinfo.email', 'https://www.googleapis.com/auth/youtube.readonly'],
 });
 
-export async function getGoogleAccessToken(code: string) {
-    const { tokens } = await oauth2Client.getToken(code);
-    oauth2Client.setCredentials(tokens);
-    return tokens;
+export async function getGoogleTokens(code: string) {
+    const res = await client.getToken(code);
+    return res.tokens;
+}
+
+export async function getYoutubeClient(account: AccountDocument) {
+    client.setCredentials({
+        access_token: account.googleAccessToken,
+    });
+
+    if (Date.now() > account.googleAccessTokenExpires) {
+        client.setCredentials({
+            access_token: account.googleAccessToken,
+            refresh_token: account.googleRefreshToken,
+        });
+        const { credentials } = await client.refreshAccessToken();
+
+        account.googleAccessToken = credentials.access_token;
+        account.googleAccessTokenExpires = credentials.expiry_date;
+
+        await account.save();
+    }
+
+    return google.youtube({ version: 'v3' });
 }

@@ -1,23 +1,17 @@
 import express, { urlencoded } from 'express';
-import { oidc } from '.';
 import getController from './get.action';
 import getAbortController from './getAbort.action';
 import getForgotController from './getForgot.action';
-import { getGoogle } from './getGoogle.action';
 import postCreateController from './postCreate.action';
 import postForgotController from './postForgot.action';
 import postLoginController from './postLogin.action';
 import postPasswordController from './postPassword.action';
 import postResetController from './postReset.action';
+import { getGoogle } from './getGoogle.action';
 
 const router = express.Router();
 
 router.get('/oidc/sso/google', getGoogle);
-router.get('/oidc/:uid/sso', async (req, res) => {
-    const details = await oidc.interactionDetails(req, res);
-    console.log(details);
-    await oidc.interactionFinished(req, res, details.result, { mergeWithLastSubmission: true });
-});
 router.get('/oidc/:uid', getController);
 router.post('/oidc/:uid/create', urlencoded({ extended: false }), postCreateController);
 router.post('/oidc/:uid/password', urlencoded({ extended: false }), postPasswordController);

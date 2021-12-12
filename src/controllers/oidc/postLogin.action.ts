@@ -29,8 +29,6 @@ export default async function postLoginController(req: Request, res: Response) {
     }
 
     try {
-        console.log(req.body);
-
         const sub = await getSubForCredentials(req.body.email, req.body.password);
         const account = await getAccount(sub);
 
@@ -47,19 +45,7 @@ export default async function postLoginController(req: Request, res: Response) {
         }
 
         // Make to finish the interaction and login with sub
-        await oidc.interactionFinished(
-            req,
-            res,
-            {
-                login: {
-                    account: sub,
-                },
-                meta: {
-                    hash: req.body.hash,
-                },
-            },
-            { mergeWithLastSubmission: true },
-        );
+        await oidc.interactionFinished(req, res, { login: { account: sub } }, { mergeWithLastSubmission: true });
     } catch (error) {
         return res.render('login', {
             uid: req.params.uid,

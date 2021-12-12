@@ -21,6 +21,7 @@ export default class AccountService {
     static async get(sub: string) {
         try {
             const account = await Account.findById(sub);
+
             return { account };
         } catch (error) {
             return { error };
@@ -66,14 +67,7 @@ export default class AccountService {
 
     static async update(
         account: AccountDocument,
-        {
-            acceptTermsPrivacy,
-            acceptUpdates,
-            address,
-            privateKey,
-            googleAccessToken,
-            googleAccessTokenExpires,
-        }: IAccountUpdates,
+        { acceptTermsPrivacy, acceptUpdates, address, privateKey, googleAccess }: IAccountUpdates,
     ) {
         try {
             // No strict checking here since null == undefined
@@ -92,8 +86,8 @@ export default class AccountService {
 
             account.address = address || account.address;
             account.privateKey = privateKey || account.privateKey;
-            account.googleAccessToken = googleAccessToken || account.googleAccessToken;
-            account.googleAccessTokenExpires = googleAccessTokenExpires || account.googleAccessTokenExpires;
+
+            // TODO Should also remove googleAccessToken and refresh token here
 
             return { result: await account.save() };
         } catch (error) {
@@ -108,25 +102,29 @@ export default class AccountService {
         acceptUpdates: boolean,
         sso = false,
     ) {
-        let account = await Account.findOne({ email, active: false });
+        try {
+            let account = await Account.findOne({ email, active: false });
 
-        if (!account) {
-            account = new Account({
-                active: false,
-            });
+            if (!account) {
+                account = new Account({
+                    active: false,
+                });
+            }
+
+            account.email = email;
+            account.password = password;
+            account.acceptTermsPrivacy = acceptTermsPrivacy || false;
+            account.acceptUpdates = acceptUpdates || false;
+
+            if (!sso) {
+                account.signupToken = createRandomToken();
+                account.signupTokenExpires = DURATION_TWENTYFOUR_HOURS;
+            }
+
+            return { account };
+        } catch (error) {
+            return { error };
         }
-
-        account.email = email;
-        account.password = password;
-        account.acceptTermsPrivacy = acceptTermsPrivacy || false;
-        account.acceptUpdates = acceptUpdates || false;
-
-        if (!sso) {
-            account.signupToken = createRandomToken();
-            account.signupTokenExpires = DURATION_TWENTYFOUR_HOURS;
-        }
-
-        return account;
     }
 
     static async signupFor(email: string, secret: string, address?: string) {

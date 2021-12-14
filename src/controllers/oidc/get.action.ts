@@ -3,20 +3,30 @@ import { HttpError } from '../../models/Error';
 import { GTM } from '../../util/secrets';
 import AccountService from '../../services/AccountService';
 import { oidc } from '.';
-import { googleLoginUrl } from '../../util/google';
+import { getGoogleLoginUrl } from '../../util/google';
 import { ChannelType, ChannelAction } from '../../models/Reward';
 
 export default async function getController(req: Request, res: Response, next: NextFunction) {
     try {
-        const { uid, prompt, params } = await oidc.interactionDetails(req, res);
+        const interaction = await oidc.interactionDetails(req, res);
+        const { uid, prompt, params } = interaction;
+        const googleLoginUrl = getGoogleLoginUrl(uid);
 
         let view, alert;
         switch (prompt.name || params.prompt) {
             case 'connect': {
-                if (uid) {
-                    return res.redirect(`${googleLoginUrl}&state=${uid}`);
+                if (!interaction.lastSubmission) {
+                    return res.redirect(googleLoginUrl);
                 }
-                break;
+                await oidc.interactionResult(
+                    req,
+                    res,
+                    {},
+                    {
+                        mergeWithLastSubmission: true,
+                    },
+                );
+                return res.redirect(params.return_url);
             }
             case 'create': {
                 view = 'signup';

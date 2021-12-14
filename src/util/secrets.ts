@@ -1,3 +1,4 @@
+import crypto from 'crypto';
 import dotenv from 'dotenv';
 import { NextFunction, Request, Response } from 'express';
 
@@ -5,14 +6,6 @@ export const VERSION = 'v1';
 export const ENVIRONMENT = process.env.NODE_ENV;
 
 dotenv.config({ path: ENVIRONMENT === 'test' ? '.env.ci' : '.env' });
-
-export function locals(req: Request, res: Response, next: NextFunction) {
-    res.locals = {
-        dashboardUrl: DASHBOARD_URL,
-        publicUrl: PUBLIC_URL,
-    };
-    next();
-}
 
 const required = [
     'ISSUER',
@@ -48,3 +41,12 @@ export const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 export const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
 export const GOOGLE_REDIRECT_URI = process.env.GOOGLE_REDIRECT_URI;
 export const INITIAL_ACCESS_TOKEN = process.env.INITIAL_ACCESS_TOKEN;
+
+export function locals(req: Request, res: Response, next: NextFunction) {
+    res.locals = {
+        dashboardUrl: DASHBOARD_URL,
+        publicUrl: PUBLIC_URL,
+        cspNonce: crypto.randomBytes(16).toString('hex'),
+    };
+    next();
+}

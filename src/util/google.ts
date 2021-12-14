@@ -6,10 +6,13 @@ const client = new google.auth.OAuth2(GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GO
 
 google.options({ auth: client });
 
-export const googleLoginUrl = client.generateAuthUrl({
-    access_type: 'offline',
-    scope: ['https://www.googleapis.com/auth/userinfo.email', 'https://www.googleapis.com/auth/youtube.readonly'],
-});
+export function getGoogleLoginUrl(uid: string) {
+    return client.generateAuthUrl({
+        state: uid,
+        access_type: 'offline',
+        scope: ['https://www.googleapis.com/auth/userinfo.email', 'https://www.googleapis.com/auth/youtube.readonly'],
+    });
+}
 
 export async function getGoogleTokens(code: string) {
     const res = await client.getToken(code);

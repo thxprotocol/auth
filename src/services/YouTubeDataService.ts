@@ -100,14 +100,7 @@ export default class YouTubeDataService {
                 id: videoIds,
                 part: ['snippet'],
             });
-            // const r = await axios({
-            //     method: 'GET',
-            //     url: `https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${videoIds}`,
-            //     headers: {
-            //         Authorization: `Bearer ${accessToken}`,
-            //     },
-            // });
-
+            r.data.items.map((item: any) => console.log(item.snippet));
             if (!r.data) {
                 throw new Error(ERROR_NO_DATA);
             }
@@ -127,6 +120,7 @@ export default class YouTubeDataService {
                     return {
                         id: item.id,
                         title: item.snippet.title,
+                        tags: item.snippet.tags,
                         thumbnailURI: item.snippet.thumbnails.default.url,
                     };
                 }),

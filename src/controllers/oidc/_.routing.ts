@@ -7,11 +7,11 @@ import postForgotController from './postForgot.action';
 import postLoginController from './postLogin.action';
 import postPasswordController from './postPassword.action';
 import postResetController from './postReset.action';
-import { getGoogle } from './getGoogle.action';
+import { getGoogleCallback } from './getCallbackGoogle.action';
 
 const router = express.Router();
 
-router.get('/oidc/sso/google', getGoogle);
+router.get('/oidc/callback/google', getGoogleCallback);
 router.get('/oidc/:uid', getController);
 router.post('/oidc/:uid/create', urlencoded({ extended: false }), postCreateController);
 router.post('/oidc/:uid/password', urlencoded({ extended: false }), postPasswordController);

@@ -9,7 +9,7 @@ export default class YouTubeDataService {
             const youtube = await getYoutubeClient(account);
             const r = await youtube.videos.list({
                 id: [channelItem],
-                part: ['snippet', 'contentDetails', 'statistics'],
+                part: ['snippet'],
                 myRating: 'like',
             });
 
@@ -18,7 +18,7 @@ export default class YouTubeDataService {
             }
 
             return {
-                result: !!r.data.items.find((item: { id: string }) => item.id === channelItem),
+                result: r.data.items.length > 0,
             };
         } catch (error) {
             return { error };
@@ -29,13 +29,21 @@ export default class YouTubeDataService {
         try {
             const youtube = await getYoutubeClient(account);
             const r = await youtube.subscriptions.list({
-                id: [channelItem],
-                part: ['snippet', 'contentDetails', 'statistics'],
+                forChannelId: channelItem,
+                part: ['snippet'],
+                mine: true,
             });
+
+            if (!r.data) {
+                throw new Error(ERROR_NO_DATA);
+            }
+
+            return {
+                result: r.data.items.length > 0,
+            };
         } catch (error) {
-            //
+            return { error };
         }
-        return;
     }
 
     static async getChannelList(account: AccountDocument) {
@@ -50,19 +58,16 @@ export default class YouTubeDataService {
                 throw new Error(ERROR_NO_DATA);
             }
 
-            const channels = r.data.items.map((item: any) => {
-                return {
-                    id: item.id,
-                    title: item.snippet.title,
-                    thumbnailURI: item.snippet.thumbnails.default.url,
-                };
-            });
-
             return {
-                channels,
+                channels: r.data.items.map((item: any) => {
+                    return {
+                        id: item.id,
+                        title: item.snippet.title,
+                        thumbnailURI: item.snippet.thumbnails.default.url,
+                    };
+                }),
             };
         } catch (error) {
-            console.log(error);
             return { error };
         }
     }
@@ -112,8 +117,11 @@ export default class YouTubeDataService {
             const channel = await getChannels();
             const uploadsChannelId = channel.items[0].contentDetails.relatedPlaylists.uploads;
             const playlistItems = await getPlaylistItems(uploadsChannelId);
-            const videoIds = playlistItems.map((item: any) => item.contentDetails.videoId);
-            const videos = await getVideos(videoIds);
+            const videoIds = playlistItems.map((item: any) => {
+                console.log(item);
+                return item.contentDetails.videoId;
+            });
+            const videos = videoIds.length ? await getVideos(videoIds) : [];
 
             return {
                 videos: videos.map((item: any) => {

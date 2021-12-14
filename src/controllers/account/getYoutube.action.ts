@@ -28,7 +28,7 @@ export const getYoutube = async (req: HttpRequest, res: Response, next: NextFunc
         const channels = await getYouTubeChannels(account);
         const videos = await getYouTubeVideos(account);
 
-        res.send({
+        res.json({
             channels,
             videos,
         });

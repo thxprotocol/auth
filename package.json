@@ -9,7 +9,7 @@
     "license": "AGPL-3.0",
     "scripts": {
         "preinstall": "npx npm-force-resolutions",
-        "serve:debug": "nodemon --inspect dist/server.js",
+        "serve:debug": "nodemon --inspect dist/server.js --legacy-watch",
         "lint": "npx tsc --noEmit && npx eslint \"src/**/*.ts\" \"test/**/*.ts\" --quiet --fix",
         "build": "npm run build:sass && npm run build:assets && npx tsc",
         "build:assets": "mkdir -p dist/public && cp -R src/public/* dist/public/. && cp -R src/views dist/.",

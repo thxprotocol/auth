@@ -1,6 +1,15 @@
 import { Response, NextFunction } from 'express';
+import { AccountDocument } from '../../models/Account';
 import { HttpError, HttpRequest } from '../../models/Error';
 import AccountService from '../../services/AccountService';
+
+function formatAccountRes(account: AccountDocument) {
+    return {
+        id: account._id,
+        address: account.address,
+        googleAccess: account.googleAccessToken && account.googleAccessTokenExpires > Date.now(),
+    };
+}
 
 export const getAccount = async (req: HttpRequest, res: Response, next: NextFunction) => {
     try {
@@ -9,10 +18,7 @@ export const getAccount = async (req: HttpRequest, res: Response, next: NextFunc
         if (error) throw new Error(error.message);
 
         if (account) {
-            res.send({
-                id: account._id,
-                address: account.address,
-            });
+            res.send(formatAccountRes(account));
         }
     } catch (e) {
         next(new HttpError(502, 'Account find failed', e));
@@ -26,10 +32,7 @@ export const getAccountByAddress = async (req: HttpRequest, res: Response, next:
         if (error) throw new Error(error.message);
 
         if (account) {
-            res.send({
-                id: account._id,
-                address: account.address,
-            });
+            res.send(formatAccountRes(account));
         }
     } catch (e) {
         next(new HttpError(502, 'Account find failed', e));
@@ -43,10 +46,7 @@ export const getAccountByEmail = async (req: HttpRequest, res: Response, next: N
         if (error) throw new Error(error.message);
 
         if (account) {
-            res.send({
-                id: account._id,
-                address: account.address,
-            });
+            res.send(formatAccountRes(account));
         }
     } catch (e) {
         next(new HttpError(502, 'Account find failed', e));

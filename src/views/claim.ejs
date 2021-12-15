@@ -1,0 +1,42 @@
+<div class="col-md-6 offset-md-3 col-xl-4 offset-xl-4 order-0 order-sm-1">
+    <div class="text-center pb-4 pt-4">
+        <img src="/img/logo.png" width="60" alt="THX Logo" />
+    </div>
+    <div class="card shadow-sm mb-5">
+        <div class="card-body pt-sm-5 px-sm-5 pb-md-4">
+            <% if (alert && alert.message) { %>
+                <div class="alert alert-<%= alert.variant %>">
+                    <%= alert.message %>
+                </div>
+                <% } %>
+
+                    <form autocomplete="off" action="/oidc/<%= uid %>/login" method="post" class="mb-4">
+                        <strong class="h2 d-block text-dark text-center mb-4">
+                            Claim reward
+                        </strong>
+                        <p>
+                            Sign in with
+                            <strong class="text-primary">
+                                <%= params.channelType %>
+                            </strong>,
+                            we will validate your
+                            <strong class="text-primary">
+                                <%= params.channelAction %>
+                            </strong>
+                            and claim your
+                            <strong class="text-primary">
+                                <%= params.rewardData.rewardAmount %>
+                                    <%= params.rewardData.tokenSymbol %>
+                            </strong>.
+                        </p>
+                        <input type="hidden" name="returnUrl" value="<%= params.return_url %>" />
+                        <input type="hidden" name="rewardHash" value="<%= params.reward_hash %>" />
+                        <a class="btn rounded-pill btn-primary btn-block" href="<%= params.googleLoginUrl %>">
+                            Sign in with Google
+                            <i class="fas fa-chevron-right" aria-hidden="true"></i>
+                        </a>
+                    </form>
+
+        </div>
+    </div>
+</div>

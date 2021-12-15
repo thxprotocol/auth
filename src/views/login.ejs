@@ -66,10 +66,15 @@
                                     <input class="form-control" required type="password" name="password">
                                 </div>
                                 <input type="hidden" name="returnUrl" value="<%= params.return_url %>" />
+                                <input type="hidden" name="rewardHash" value="<%= params.reward_hash %>" />
                                 <button type="submit" class="btn rounded-pill btn-primary btn-block">
                                     Sign in
                                     <i class="fas fa-chevron-right" aria-hidden="true"></i>
                                 </button>
+                                <a class="btn rounded-pill btn-light btn-block" href="<%= params.googleLoginUrl %>">
+                                    Sign in with Google
+                                    <i class="fas fa-chevron-right" aria-hidden="true"></i>
+                                </a>
                             </form>
                             <hr>
                             <div class="text-center">

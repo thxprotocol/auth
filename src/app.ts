@@ -13,7 +13,7 @@ import { requestLogger } from './util/logger';
 import { corsHandler } from './util/cors';
 import { allowedHosts } from './util/hosts';
 import { errorHandler, notFoundHandler } from './util/error';
-import { PORT, MONGODB_URI, DASHBOARD_URL, PUBLIC_URL } from './util/secrets';
+import { PORT, MONGODB_URI, locals } from './util/secrets';
 
 const app = express();
 
@@ -33,17 +33,7 @@ app.use(compression());
 app.use(xframe('SAMEORIGIN'));
 app.use(xssProtection(true));
 app.use(express.static(path.join(__dirname, 'public'), { maxAge: 31557600000 }));
-app.use(
-    '/',
-    (req, res, next) => {
-        res.locals = {
-            dashboardUrl: DASHBOARD_URL,
-            publicUrl: PUBLIC_URL,
-        };
-        next();
-    },
-    oidcRouter,
-);
+app.use('/', locals, oidcRouter);
 app.use('/account', json(), urlencoded({ extended: true }), accountRouter);
 app.use('/', oidc.callback);
 app.use(notFoundHandler);

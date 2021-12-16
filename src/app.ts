@@ -5,7 +5,6 @@ import db from './util/database';
 import oidcRouter from './controllers/oidc/_.routing';
 import accountRouter from './controllers/account/_.routing';
 import expressEJSLayouts from 'express-ejs-layouts';
-import hostValidation from 'host-validation';
 import { helmetInstance } from './util/helmet';
 import { xframe, xssProtection } from 'lusca';
 import { oidc } from './controllers/oidc';

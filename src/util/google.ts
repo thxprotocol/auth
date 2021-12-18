@@ -10,7 +10,11 @@ export function getGoogleLoginUrl(uid: string) {
     return client.generateAuthUrl({
         state: uid,
         access_type: 'offline',
-        scope: ['https://www.googleapis.com/auth/userinfo.email', 'https://www.googleapis.com/auth/youtube.readonly'],
+        scope: [
+            'https://www.googleapis.com/auth/userinfo.email',
+            'https://www.googleapis.com/auth/youtube.readonly',
+            'https://www.googleapis.com/auth/youtube',
+        ],
     });
 }
 

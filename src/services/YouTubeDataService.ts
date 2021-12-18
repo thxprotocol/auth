@@ -7,10 +7,8 @@ export default class YouTubeDataService {
     static async validateLike(account: AccountDocument, channelItem: string) {
         try {
             const youtube = await getYoutubeClient(account);
-            const r = await youtube.videos.list({
+            const r = await youtube.videos.getRating({
                 id: [channelItem],
-                part: ['snippet'],
-                myRating: 'like',
             });
 
             if (!r.data) {
@@ -18,7 +16,7 @@ export default class YouTubeDataService {
             }
 
             return {
-                result: r.data.items.length > 0,
+                result: r.data.items.length ? r.data.items[0].rating == 'like' : false,
             };
         } catch (error) {
             return { error };

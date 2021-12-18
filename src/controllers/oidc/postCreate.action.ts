@@ -35,7 +35,7 @@ export default async function postCreateController(req: Request, res: Response, 
         });
     }
 
-    const account = await AccountService.signup(
+    const { account } = await AccountService.signup(
         req.body.email,
         req.body.password,
         req.body.acceptTermsPrivacy,

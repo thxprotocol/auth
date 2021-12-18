@@ -1,5 +1,5 @@
 import { logger } from '../util/logger';
-import { Request } from 'express';
+import { Request, Response } from 'express';
 
 export class HttpError extends Error {
     timestamp: number;
@@ -24,4 +24,8 @@ export class HttpError extends Error {
 export interface HttpRequest extends Request {
     origin?: string;
     user?: any;
+}
+
+export interface HttpResponse extends Response {
+    locals: any;
 }

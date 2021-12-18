@@ -1,72 +1,60 @@
-import { Request, Response, NextFunction } from 'express';
-import { HttpError } from '../../models/Error';
-import { GTM } from '../../util/secrets';
 import AccountService from '../../services/AccountService';
+import MailService from '../../services/MailService';
+import { Request, Response } from 'express';
+import { GTM } from '../../util/secrets';
 import { ERROR_NO_ACCOUNT } from '../../util/messages';
 import { ERROR_AUTH_LINK } from '../../util/messages';
 import { ERROR_ACCOUNT_NOT_ACTIVE } from '../../util/messages';
-import MailService from '../../services/MailService';
 import { oidc } from '.';
+import { AccountDocument } from '../../models/Account';
 
-export default async function postLoginController(req: Request, res: Response, next: NextFunction) {
+export default async function postLoginController(req: Request, res: Response) {
     async function getAccount(sub: string) {
         const { account, error } = await AccountService.get(sub);
         if (error) throw new Error(error.message);
+        if (!account) throw new Error(ERROR_NO_ACCOUNT);
         return account;
     }
 
+    async function getSubForCredentials(email: string, password: string) {
+        const { sub, error } = await AccountService.getSubForCredentials(email, password);
+        if (error) throw new Error(error.message);
+        return sub;
+    }
+
+    async function sendConfirmationEmail(account: AccountDocument, returnUrl: string) {
+        const { result, error } = await MailService.sendConfirmationEmail(account, returnUrl);
+        if (error) throw new Error(error.message);
+        return result;
+    }
+
     try {
-        const { sub, error } = await AccountService.getSubForCredentials(req.body.email, req.body.password);
-        const alert = {
-            variant: 'danger',
-            message: '',
-        };
-
-        if (error) {
-            alert.message = error.toString();
-        }
-
+        const sub = await getSubForCredentials(req.body.email, req.body.password);
         const account = await getAccount(sub);
-        if (!account) {
-            alert.message = ERROR_NO_ACCOUNT;
-        }
 
-        if (account && !account.active) {
-            const { result, error } = await MailService.sendConfirmationEmail(account, req.body.returnUrl);
-
-            if (error) {
-                alert.message = error.toString();
-            }
-
-            if (result) {
-                alert.message = ERROR_ACCOUNT_NOT_ACTIVE;
+        // Make sure to send a new confirmation email for inactive accounts
+        if (!account.active) {
+            if (await sendConfirmationEmail(account, req.body.returnUrl)) {
+                throw new Error(ERROR_ACCOUNT_NOT_ACTIVE);
             }
         }
 
-        if (account && account.privateKey) {
-            alert.message = ERROR_AUTH_LINK;
+        // Make sure to ask for a login link from the authority if custodial key is found
+        if (account.privateKey) {
+            throw new Error(ERROR_AUTH_LINK);
         }
 
-        if (alert.message) {
-            return res.render('login', {
-                uid: req.params.uid,
-                params: {},
-                alert,
-                gtm: GTM,
-            });
-        } else {
-            await oidc.interactionFinished(
-                req,
-                res,
-                {
-                    login: {
-                        account: sub,
-                    },
-                },
-                { mergeWithLastSubmission: true },
-            );
-        }
+        // Make to finish the interaction and login with sub
+        await oidc.interactionFinished(req, res, { login: { account: sub } }, { mergeWithLastSubmission: true });
     } catch (error) {
-        return next(new HttpError(500, error.toString(), error));
+        return res.render('login', {
+            uid: req.params.uid,
+            params: {},
+            alert: {
+                variant: 'danger',
+                message: error.toString(),
+            },
+            gtm: GTM,
+        });
     }
 }

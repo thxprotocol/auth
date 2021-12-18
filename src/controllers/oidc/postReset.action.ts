@@ -10,32 +10,19 @@ export default async function postResetController(req: Request, res: Response, n
             req.body.passwordConfirm,
             req.body.passwordResetToken,
         );
-        if (error) {
-            return res.render('reset', {
-                uid: req.params.uid,
-                params: {
-                    return_url: req.body.returnUrl,
-                    password_reset_token: req.body.passwordResetToken,
-                },
-                alert: {
-                    variant: 'danger',
-                    message: error.toString(),
-                },
-                gtm: GTM,
-            });
-        } else {
-            return res.render('reset', {
-                uid: req.params.uid,
-                params: {
-                    return_url: req.body.returnUrl,
-                    password_reset_token: req.body.passwordResetToken,
-                },
-                alert: {
-                    variant: 'success',
-                },
-                gtm: GTM,
-            });
-        }
+
+        return res.render('reset', {
+            uid: req.params.uid,
+            params: {
+                return_url: req.body.returnUrl,
+                password_reset_token: req.body.passwordResetToken,
+            },
+            alert: {
+                variant: error ? 'danger' : 'success',
+                message: error ? error.toString() : '',
+            },
+            gtm: GTM,
+        });
     } catch (error) {
         return next(new HttpError(500, error.toString(), error));
     }

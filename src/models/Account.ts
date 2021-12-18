@@ -14,6 +14,9 @@ export interface IAccount {
     authenticationTokenExpires: number;
     passwordResetToken: string;
     passwordResetExpires: number;
+    googleAccessToken: string;
+    googleRefreshToken: string;
+    googleAccessTokenExpires: number;
     acceptTermsPrivacy: boolean;
     acceptUpdates: boolean;
     recoveryPhrase: string;
@@ -25,6 +28,7 @@ export interface IAccountUpdates {
     acceptUpdates?: boolean;
     address?: string;
     privateKey?: string;
+    googleAccess?: boolean;
 }
 
 export type AccountDocument = mongoose.Document & IAccount;
@@ -42,6 +46,9 @@ const accountSchema = new mongoose.Schema(
         authenticationTokenExpires: Date,
         passwordResetToken: String,
         passwordResetExpires: Date,
+        googleAccessToken: String,
+        googleRefreshToken: String,
+        googleAccessTokenExpires: Number,
         acceptTermsPrivacy: Boolean,
         acceptUpdates: Boolean,
         recoveryPhrase: String,

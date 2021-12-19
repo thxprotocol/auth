@@ -5,12 +5,14 @@ import AccountService from '../../services/AccountService';
 import { oidc } from '.';
 import { getGoogleLoginUrl } from '../../util/google';
 import { ChannelType, ChannelAction } from '../../models/Reward';
+import { getTwitterLoginURL } from '../../util/twitter';
 
 export default async function getController(req: Request, res: Response, next: NextFunction) {
     try {
         const interaction = await oidc.interactionDetails(req, res);
         const { uid, prompt, params } = interaction;
         const googleLoginUrl = getGoogleLoginUrl(uid);
+        const twitterLoginUrl = getTwitterLoginURL(uid);
 
         let view, alert;
         switch (prompt.name || params.prompt) {
@@ -60,6 +62,7 @@ export default async function getController(req: Request, res: Response, next: N
                 }
 
                 params.googleLoginUrl = googleLoginUrl;
+                params.twitterLoginUrl = twitterLoginUrl;
 
                 break;
             }

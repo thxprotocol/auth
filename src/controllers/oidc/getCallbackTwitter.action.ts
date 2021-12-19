@@ -1,14 +1,14 @@
 import AccountService from '../../services/AccountService';
 import { Response, NextFunction } from 'express';
-import { getGoogleTokens } from '../../util/google';
 import { HttpError, HttpRequest } from '../../models/Error';
 import { oidc } from '.';
 import { parseJwt } from '../../util/jwt';
 import { AccountDocument } from '../../models/Account';
 import { ERROR_NO_ACCOUNT } from '../../util/messages';
 import { validateEmail } from '../../util/validate';
+import { getTwitterTokens } from '../../util/twitter';
 
-export default async function getGoogleCallback(req: HttpRequest, res: Response, next: NextFunction) {
+export default async function getTwitterCallback(req: HttpRequest, res: Response, next: NextFunction) {
     async function isEmailDuplicate(email: string) {
         const { result, error } = await AccountService.isEmailDuplicate(email);
 
@@ -40,9 +40,9 @@ export default async function getGoogleCallback(req: HttpRequest, res: Response,
     }
 
     async function updateTokens(account: AccountDocument, tokens: any) {
-        account.googleAccessToken = tokens.access_token || account.googleAccessToken;
-        account.googleRefreshToken = tokens.refresh_token || account.googleRefreshToken;
-        account.googleAccessTokenExpires = Number(tokens.expiry_date) || account.googleAccessTokenExpires;
+        account.twitterAccessToken = tokens.access_token || account.googleAccessToken;
+        account.twitterRefreshToken = tokens.refresh_token || account.googleRefreshToken;
+        account.twitterAccessTokenExpires = Number(tokens.expiry_date) || account.googleAccessTokenExpires;
 
         await account.save();
     }
@@ -65,25 +65,26 @@ export default async function getGoogleCallback(req: HttpRequest, res: Response,
         const uid = req.query.state as string;
 
         // Get all token information
-        const tokens = await getGoogleTokens(code);
-        const claims = await parseJwt(tokens.id_token);
+        const tokens = await getTwitterTokens(code);
+        console.log(tokens);
+        // const claims = await parseJwt(tokens.id_token);
 
-        // Get the interaction based on the state
-        const interaction = await getInteraction(uid);
+        // // Get the interaction based on the state
+        // const interaction = await getInteraction(uid);
 
-        // Check if there is an active session for this interaction
-        const account =
-            interaction.session && interaction.session.accountId
-                ? // If so, get account for sub
-                  await getAccountBySub(interaction.session.accountId)
-                : // If not, get account for email claim
-                  await getAccountByEmail(claims.email);
+        // // Check if there is an active session for this interaction
+        // const account =
+        //     interaction.session && interaction.session.accountId
+        //         ? // If so, get account for sub
+        //           await getAccountBySub(interaction.session.accountId)
+        //         : // If not, get account for email claim
+        //           await getAccountByEmail(claims.email);
 
-        const returnTo = await saveInteraction(interaction, account._id.toString());
+        // const returnTo = await saveInteraction(interaction, account._id.toString());
 
-        await updateTokens(account, tokens);
+        // await updateTokens(account, tokens);
 
-        return res.redirect(returnTo);
+        // return res.redirect(returnTo);
     } catch (error) {
         return next(new HttpError(502, error.message, error));
     }

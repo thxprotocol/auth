@@ -17,6 +17,9 @@ export interface IAccount {
     googleAccessToken: string;
     googleRefreshToken: string;
     googleAccessTokenExpires: number;
+    twitterAccessToken: string;
+    twitterRefreshToken: string;
+    twitterAccessTokenExpires: number;
     acceptTermsPrivacy: boolean;
     acceptUpdates: boolean;
     recoveryPhrase: string;
@@ -49,6 +52,9 @@ const accountSchema = new mongoose.Schema(
         googleAccessToken: String,
         googleRefreshToken: String,
         googleAccessTokenExpires: Number,
+        twitterAccessToken: String,
+        twitterRefreshToken: String,
+        twitterAccessTokenExpires: String,
         acceptTermsPrivacy: Boolean,
         acceptUpdates: Boolean,
         recoveryPhrase: String,

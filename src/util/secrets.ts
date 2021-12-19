@@ -17,6 +17,7 @@ const required = [
     'PORT',
     'SECURE_KEY',
     'SENDGRID_API_KEY',
+    'TWITTER_CLIENT_ID',
 ];
 
 required.forEach((value: string) => {
@@ -41,6 +42,8 @@ export const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 export const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
 export const GOOGLE_REDIRECT_URI = process.env.GOOGLE_REDIRECT_URI;
 export const INITIAL_ACCESS_TOKEN = process.env.INITIAL_ACCESS_TOKEN;
+export const TWITTER_CLIENT_ID = process.env.TWITTER_CLIENT_ID;
+export const TWITTER_REDIRECT_URI = process.env.TWITTER_REDIRECT_URI;
 
 export function locals(req: Request, res: Response, next: NextFunction) {
     res.locals = {

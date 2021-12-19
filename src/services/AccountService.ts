@@ -16,6 +16,7 @@ import {
     ERROR_PASSWORD_RESET_TOKEN_INVALID_OR_EXPIRED,
     ERROR_PASSWORD_STRENGTH,
 } from '../util/messages';
+import YouTubeDataService from './YouTubeDataService';
 
 export default class AccountService {
     static async get(sub: string) {
@@ -87,7 +88,13 @@ export default class AccountService {
             account.address = address || account.address;
             account.privateKey = privateKey || account.privateKey;
 
-            // TODO Should also remove googleAccessToken and refresh token here
+            if (googleAccess === false) {
+                await YouTubeDataService.revokeAccess(account);
+
+                account.googleAccessToken = '';
+                account.googleRefreshToken = '';
+                account.googleAccessTokenExpires = null;
+            }
 
             return { result: await account.save() };
         } catch (error) {

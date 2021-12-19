@@ -1,5 +1,7 @@
+import axios from 'axios';
+import { GoogleConfigurable } from 'googleapis-common';
 import { AccountDocument } from '../models/Account';
-import { getYoutubeClient } from '../util/google';
+import { getYoutubeClient, IYoutubeClient } from '../util/google';
 
 const ERROR_NO_DATA = 'Could not find an youtube data for this accesstoken';
 
@@ -71,8 +73,7 @@ export default class YouTubeDataService {
     }
 
     static async getVideoList(account: AccountDocument) {
-        async function getChannels() {
-            const youtube = await getYoutubeClient(account);
+        async function getChannels(youtube: IYoutubeClient) {
             const r = await youtube.channels.list({
                 part: ['contentDetails'],
                 mine: true,
@@ -85,8 +86,7 @@ export default class YouTubeDataService {
             return r.data;
         }
 
-        async function getPlaylistItems(id: string) {
-            const youtube = await getYoutubeClient(account);
+        async function getPlaylistItems(youtube: IYoutubeClient, id: string) {
             const r = await youtube.playlistItems.list({
                 playlistId: id,
                 part: ['contentDetails'],
@@ -97,8 +97,7 @@ export default class YouTubeDataService {
             return r.data.items;
         }
 
-        async function getVideos(videoIds: string[]) {
-            const youtube = await getYoutubeClient(account);
+        async function getVideos(youtube: IYoutubeClient, videoIds: string[]) {
             const r = await youtube.videos.list({
                 id: videoIds,
                 part: ['snippet'],
@@ -112,11 +111,12 @@ export default class YouTubeDataService {
         }
 
         try {
-            const channel = await getChannels();
+            const youtube = await getYoutubeClient(account);
+            const channel = await getChannels(youtube);
             const uploadsChannelId = channel.items[0].contentDetails.relatedPlaylists.uploads;
-            const playlistItems = await getPlaylistItems(uploadsChannelId);
+            const playlistItems = await getPlaylistItems(youtube, uploadsChannelId);
             const videoIds = playlistItems.map((item: any) => item.contentDetails.videoId);
-            const videos = videoIds.length ? await getVideos(videoIds) : [];
+            const videos = videoIds.length ? await getVideos(youtube, videoIds) : [];
 
             return {
                 videos: videos.map((item: any) => {
@@ -128,6 +128,21 @@ export default class YouTubeDataService {
                     };
                 }),
             };
+        } catch (error) {
+            return { error };
+        }
+    }
+
+    static async revokeAccess(account: AccountDocument) {
+        try {
+            const r = await axios({
+                url: `https://oauth2.googleapis.com/revoke?token=${account.googleAccessToken}`,
+                method: 'POST',
+            });
+
+            if (r.status !== 200) throw new Error('Could not revoke access token');
+
+            return { result: r.data };
         } catch (error) {
             return { error };
         }

@@ -103,7 +103,7 @@ export default class YouTubeDataService {
                 id: videoIds,
                 part: ['snippet'],
             });
-            r.data.items.map((item: any) => console.log(item.snippet));
+
             if (!r.data) {
                 throw new Error(ERROR_NO_DATA);
             }
@@ -115,10 +115,7 @@ export default class YouTubeDataService {
             const channel = await getChannels();
             const uploadsChannelId = channel.items[0].contentDetails.relatedPlaylists.uploads;
             const playlistItems = await getPlaylistItems(uploadsChannelId);
-            const videoIds = playlistItems.map((item: any) => {
-                console.log(item);
-                return item.contentDetails.videoId;
-            });
+            const videoIds = playlistItems.map((item: any) => item.contentDetails.videoId);
             const videos = videoIds.length ? await getVideos(videoIds) : [];
 
             return {

@@ -1,6 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
 import { HttpError } from '../../models/Error';
-import { GTM } from '../../util/secrets';
 import AccountService from '../../services/AccountService';
 import { oidc } from '.';
 import { getGoogleLoginUrl } from '../../util/google';
@@ -14,12 +13,38 @@ export default async function getController(req: Request, res: Response, next: N
         const googleLoginUrl = getGoogleLoginUrl(uid);
         const twitterLoginUrl = getTwitterLoginURL(uid);
 
-        let view, alert;
-        switch (prompt.name || params.prompt) {
+        switch (params.prompt) {
+            case 'create': {
+                let alert;
+                return res.render('signup', { uid, params, alert });
+            }
+            case 'confirm': {
+                const { error } = await AccountService.verifySignupToken(params.signup_token);
+                let alert;
+                if (error) {
+                    alert = {
+                        variant: 'danger',
+                        message: error,
+                    };
+                }
+                return res.render('confirm', { uid, params, alert });
+            }
+            case 'reset': {
+                return res.render('reset', { uid, params });
+            }
             case 'connect': {
-                if (!interaction.lastSubmission) {
+                const { account, error } = await AccountService.get(interaction.session.accountId);
+
+                if (error) throw new Error(error.message);
+
+                if (!account.googleAccessToken) {
                     return res.redirect(googleLoginUrl);
                 }
+
+                if (!account.twitterAccessToken) {
+                    return res.redirect(twitterLoginUrl);
+                }
+
                 await oidc.interactionResult(
                     req,
                     res,
@@ -30,28 +55,11 @@ export default async function getController(req: Request, res: Response, next: N
                 );
                 return res.redirect(params.return_url);
             }
-            case 'create': {
-                view = 'signup';
-                break;
-            }
-            case 'confirm': {
-                view = 'confirm';
-                const { error } = await AccountService.verifySignupToken(params.signup_token);
+        }
 
-                if (error) {
-                    alert = {
-                        variant: 'danger',
-                        message: error,
-                    };
-                }
-
-                break;
-            }
-            case 'reset': {
-                view = 'reset';
-                break;
-            }
+        switch (prompt.name) {
             case 'login': {
+                let view, alert;
                 if (!params.reward_hash) {
                     view = 'login';
                 } else {
@@ -64,7 +72,7 @@ export default async function getController(req: Request, res: Response, next: N
                 params.googleLoginUrl = googleLoginUrl;
                 params.twitterLoginUrl = twitterLoginUrl;
 
-                break;
+                return res.render(view, { uid, params, alert });
             }
             case 'consent': {
                 const consent: any = {};
@@ -75,13 +83,6 @@ export default async function getController(req: Request, res: Response, next: N
                 return await oidc.interactionFinished(req, res, { consent }, { mergeWithLastSubmission: true });
             }
         }
-
-        return res.render(view, {
-            uid,
-            params,
-            alert,
-            gtm: GTM,
-        });
     } catch (error) {
         return next(new HttpError(500, 'Loading view failed.', error));
     }

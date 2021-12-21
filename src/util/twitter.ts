@@ -10,7 +10,7 @@ export function getTwitterLoginURL(uid: string) {
 
 export async function getTwitterTokens(code: string) {
     try {
-        const body = new FormData();
+        const body = new URLSearchParams();
         body.append('code', code);
         body.append('grant_type', 'authorization_code');
         body.append('client_id', TWITTER_CLIENT_ID);
@@ -22,6 +22,7 @@ export async function getTwitterTokens(code: string) {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
+                'Authorization': `Bearer ${code}`,
             },
             data: body,
         });

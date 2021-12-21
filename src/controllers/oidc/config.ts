@@ -11,10 +11,10 @@ const promptCreate = new interactionPolicy.Prompt({ name: 'create', requestable:
 const promptConfirm = new interactionPolicy.Prompt({ name: 'confirm', requestable: true });
 const promptConnect = new interactionPolicy.Prompt({ name: 'connect', requestable: true });
 
-basePolicy.add(promptReset);
 basePolicy.add(promptCreate);
 basePolicy.add(promptConfirm);
 basePolicy.add(promptConnect);
+basePolicy.add(promptReset);
 
 (async () => {
     if (ENVIRONMENT !== 'test') {

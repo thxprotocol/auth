@@ -107,23 +107,22 @@ export default class AccountService {
         password: string,
         acceptTermsPrivacy: boolean,
         acceptUpdates: boolean,
-        sso = false,
+        active = false,
     ) {
         try {
             let account = await Account.findOne({ email, active: false });
 
             if (!account) {
-                account = new Account({
-                    active: false,
-                });
+                account = new Account();
             }
 
+            account.active = active;
             account.email = email;
             account.password = password;
             account.acceptTermsPrivacy = acceptTermsPrivacy || false;
             account.acceptUpdates = acceptUpdates || false;
 
-            if (!sso) {
+            if (!active) {
                 account.signupToken = createRandomToken();
                 account.signupTokenExpires = DURATION_TWENTYFOUR_HOURS;
             }
@@ -134,7 +133,7 @@ export default class AccountService {
         }
     }
 
-    static async signupFor(email: string, secret: string, address?: string) {
+    static async signupFor(email: string, password: string, address?: string) {
         try {
             const wallet = new Web3().eth.accounts.create();
             const privateKey = address ? null : wallet.privateKey;
@@ -143,7 +142,7 @@ export default class AccountService {
                 address: address ? address : wallet.address,
                 privateKey: address ? privateKey : wallet.privateKey,
                 email,
-                secret,
+                password,
             });
 
             return { account: await account.save() };

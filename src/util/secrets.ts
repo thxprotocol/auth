@@ -47,9 +47,9 @@ export const TWITTER_REDIRECT_URI = process.env.TWITTER_REDIRECT_URI;
 
 export function locals(req: Request, res: Response, next: NextFunction) {
     res.locals = {
+        gtm: GTM,
         dashboardUrl: DASHBOARD_URL,
         publicUrl: PUBLIC_URL,
-        cspNonce: crypto.randomBytes(16).toString('hex'),
     };
     next();
 }

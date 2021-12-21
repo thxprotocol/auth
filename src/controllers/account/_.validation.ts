@@ -8,7 +8,7 @@ function checkIsAddress(value: string) {
 export const validations = {
     postAccount: [
         body('email').exists().isEmail(),
-        body('secret').exists().isString().isLength({ min: 6 }),
+        body('password').exists().isString().isLength({ min: 6 }),
         body('address').optional().custom(checkIsAddress),
     ],
 };

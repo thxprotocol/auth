@@ -67,6 +67,7 @@ export default {
         'secure_key',
         'password_reset_token',
         'prompt',
+        'channel',
     ],
     scopes: [
         'account:read', // admin

@@ -1,4 +1,4 @@
-import { google } from 'googleapis';
+import { google, youtube_v3 } from 'googleapis';
 import { AccountDocument } from '../models/Account';
 import { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_REDIRECT_URI } from './secrets';
 
@@ -6,15 +6,13 @@ const client = new google.auth.OAuth2(GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GO
 
 google.options({ auth: client });
 
+export type IYoutubeClient = youtube_v3.Youtube;
+
 export function getGoogleLoginUrl(uid: string) {
     return client.generateAuthUrl({
         state: uid,
         access_type: 'offline',
-        scope: [
-            'https://www.googleapis.com/auth/userinfo.email',
-            'https://www.googleapis.com/auth/youtube.readonly',
-            'https://www.googleapis.com/auth/youtube',
-        ],
+        scope: ['https://www.googleapis.com/auth/userinfo.email', 'https://www.googleapis.com/auth/youtube'],
     });
 }
 

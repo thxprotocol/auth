@@ -25,10 +25,16 @@ export const getYoutube = async (req: HttpRequest, res: Response, next: NextFunc
 
     try {
         const account = await getAccount();
+
+        if (!account.googleAccessToken || !account.googleRefreshToken) {
+            return res.json({ isAuthorized: false });
+        }
+
         const channels = await getYouTubeChannels(account);
         const videos = await getYouTubeVideos(account);
 
         res.json({
+            isAuthorized: true,
             channels,
             videos,
         });

@@ -2,6 +2,7 @@ import request from 'supertest';
 import server from '../../src/server';
 import AccountService from '../../src/services/AccountService';
 import db from '../../src/util/database';
+import { INITIAL_ACCESS_TOKEN } from '../../src/util/secrets';
 import { accountAddress, accountEmail, accountSecret } from './lib/constants';
 
 const http = request.agent(server);
@@ -25,14 +26,17 @@ describe('Account Controller', () => {
         }
 
         async function registerClient() {
-            const res = await http.post('/reg').send({
-                application_type: 'web',
-                client_name: 'thx_api',
-                grant_types: ['client_credentials'],
-                redirect_uris: [],
-                response_types: [],
-                scope: 'openid account:read account:write',
-            });
+            const res = await http
+                .post('/reg')
+                .set({ Authorization: `Bearer ${INITIAL_ACCESS_TOKEN}` })
+                .send({
+                    application_type: 'web',
+                    client_name: 'thx_api',
+                    grant_types: ['client_credentials'],
+                    redirect_uris: [],
+                    response_types: [],
+                    scope: 'openid account:read account:write',
+                });
 
             return 'Basic ' + Buffer.from(`${res.body.client_id}:${res.body.client_secret}`).toString('base64');
         }
@@ -55,7 +59,7 @@ describe('Account Controller', () => {
                 })
                 .send({
                     email: accountEmail,
-                    secret: accountSecret,
+                    password: accountSecret,
                 });
             expect(res.status).toBe(201);
 
@@ -139,7 +143,7 @@ describe('Account Controller', () => {
                 })
                 .send({
                     email: accountEmail,
-                    secret: accountSecret,
+                    password: accountSecret,
                 });
             expect(res.status).toBe(201);
             expect(res.body.id).toBe(accountId);

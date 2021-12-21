@@ -2,6 +2,7 @@ import request from 'supertest';
 import server from '../../src/server';
 import AccountService from '../../src/services/AccountService';
 import db from '../../src/util/database';
+import { INITIAL_ACCESS_TOKEN } from '../../src/util/secrets';
 import { accountEmail, accountSecret } from './lib/constants';
 
 const http = request.agent(server);
@@ -38,14 +39,17 @@ describe('OAuth2 Grants', () => {
 
     describe('GET /reg', () => {
         it('HTTP 201', async (done) => {
-            const res = await http.post('/reg').send({
-                application_type: 'web',
-                client_name: 'THX API',
-                grant_types: ['client_credentials'],
-                redirect_uris: [],
-                response_types: [],
-                scope: 'openid account:read account:write',
-            });
+            const res = await http
+                .post('/reg')
+                .set({ Authorization: `Bearer ${INITIAL_ACCESS_TOKEN}` })
+                .send({
+                    application_type: 'web',
+                    client_name: 'THX API',
+                    grant_types: ['client_credentials'],
+                    redirect_uris: [],
+                    response_types: [],
+                    scope: 'openid account:read account:write',
+                });
             authHeader = 'Basic ' + Buffer.from(`${res.body.client_id}:${res.body.client_secret}`).toString('base64');
 
             expect(res.status).toBe(201);

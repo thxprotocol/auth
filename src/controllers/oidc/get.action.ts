@@ -37,11 +37,11 @@ export default async function getController(req: Request, res: Response, next: N
 
                 if (error) throw new Error(error.message);
 
-                if (!account.googleAccessToken) {
+                if (params.channel == ChannelType.Google && !account.googleAccessToken) {
                     return res.redirect(googleLoginUrl);
                 }
 
-                if (!account.twitterAccessToken) {
+                if (params.channel == ChannelType.Twitter && !account.twitterAccessToken) {
                     return res.redirect(twitterLoginUrl);
                 }
 

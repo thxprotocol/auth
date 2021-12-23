@@ -10,7 +10,10 @@ import { AccountDocument } from '../../models/Account';
 import { getGoogleLoginUrl } from '../../util/google';
 
 export default async function postLoginController(req: Request, res: Response) {
-    const googleLoginUrl = getGoogleLoginUrl(req.params.uid);
+    const googleLoginUrl = getGoogleLoginUrl(req.params.uid, [
+        'https://www.googleapis.com/auth/userinfo.email',
+        'https://www.googleapis.com/auth/youtube.readonly',
+    ]);
 
     async function getAccount(sub: string) {
         const { account, error } = await AccountService.get(sub);

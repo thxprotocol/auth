@@ -10,7 +10,7 @@ export default async function getController(req: Request, res: Response, next: N
     try {
         const interaction = await oidc.interactionDetails(req, res);
         const { uid, prompt, params } = interaction;
-        const googleLoginUrl = getGoogleLoginUrl(uid);
+
         // const twitterLoginUrl = getTwitterLoginURL(uid);
 
         switch (params.prompt) {
@@ -38,6 +38,10 @@ export default async function getController(req: Request, res: Response, next: N
                 if (error) throw new Error(error.message);
 
                 if (params.channel == ChannelType.Google && !account.googleAccessToken) {
+                    const googleLoginUrl = getGoogleLoginUrl(req.params.uid, [
+                        'https://www.googleapis.com/auth/userinfo.email',
+                        'https://www.googleapis.com/auth/youtube.readonly',
+                    ]);
                     return res.redirect(googleLoginUrl);
                 }
 
@@ -62,15 +66,24 @@ export default async function getController(req: Request, res: Response, next: N
                 let view, alert;
                 if (!params.reward_hash) {
                     view = 'login';
+                    const googleLoginUrl = getGoogleLoginUrl(req.params.uid, [
+                        'https://www.googleapis.com/auth/userinfo.email',
+                        'https://www.googleapis.com/auth/youtube.readonly',
+                    ]);
+                    params.googleLoginUrl = googleLoginUrl;
                 } else {
                     view = 'claim';
+                    const googleLoginUrl = getGoogleLoginUrl(uid, [
+                        'https://www.googleapis.com/auth/userinfo.email',
+                        'https://www.googleapis.com/auth/youtube',
+                    ]);
                     params.rewardData = JSON.parse(Buffer.from(params.reward_hash, 'base64').toString());
                     params.channelType = ChannelType[params.rewardData.rewardCondition.channelType];
                     params.channelAction = ChannelAction[params.rewardData.rewardCondition.channelAction];
                     params.channelItem = params.rewardData.rewardCondition.channelItem;
+                    params.googleLoginUrl = googleLoginUrl;
                 }
 
-                params.googleLoginUrl = googleLoginUrl;
                 // params.twitterLoginUrl = twitterLoginUrl;
 
                 return res.render(view, { uid, params, alert });

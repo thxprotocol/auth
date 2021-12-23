@@ -8,11 +8,11 @@ google.options({ auth: client });
 
 export type IYoutubeClient = youtube_v3.Youtube;
 
-export function getGoogleLoginUrl(uid: string) {
+export function getGoogleLoginUrl(uid: string, scope: string[]) {
     return client.generateAuthUrl({
         state: uid,
         access_type: 'offline',
-        scope: ['https://www.googleapis.com/auth/userinfo.email', 'https://www.googleapis.com/auth/youtube'],
+        scope,
     });
 }
 

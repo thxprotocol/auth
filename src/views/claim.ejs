@@ -12,22 +12,21 @@
 
                     <form autocomplete="off" action="/oidc/<%= uid %>/login" method="post" class="mb-4">
                         <strong class="h2 d-block text-dark text-center mb-4">
-                            Claim reward
+                            Claim <%= params.rewardData.rewardAmount %>
+                                <%= params.rewardData.tokenSymbol %>
                         </strong>
                         <p>
-                            Sign in with
-                            <strong class="text-primary">
-                                <%= params.channelType %>
-                            </strong>,
-                            we will validate your
-                            <strong class="text-primary">
-                                <%= params.channelAction %>
-                            </strong>
-                            and claim your
-                            <strong class="text-primary">
-                                <%= params.rewardData.rewardAmount %>
-                                    <%= params.rewardData.tokenSymbol %>
-                            </strong>.
+                            Make sure to grant the <strong class="text-primary">"Manage YouTube account"</strong>
+                            permission during authorization, so we can verify if you
+                            <% if (params.channelAction=='like' ) %>
+                                <a target="_blank"
+                                   href="https://www.youtube.com/watch?v=<%= params.channelItem %>">liked this video</a>
+                                <% } %>
+                                    <% if (params.channelAction=='subscribe' ) %>
+                                        <a target="_blank"
+                                           href="https://www.youtube.com/channel/<%= params.channelItem %>">subscribed
+                                            to this channel</a>.
+                                        <% } %>
                         </p>
                         <input type="hidden" name="returnUrl" value="<%= params.return_url %>" />
                         <input type="hidden" name="rewardHash" value="<%= params.reward_hash %>" />

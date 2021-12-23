@@ -67,6 +67,7 @@ export default async function getController(req: Request, res: Response, next: N
                     params.rewardData = JSON.parse(Buffer.from(params.reward_hash, 'base64').toString());
                     params.channelType = ChannelType[params.rewardData.rewardCondition.channelType];
                     params.channelAction = ChannelAction[params.rewardData.rewardCondition.channelAction];
+                    params.channelItem = params.rewardData.rewardCondition.channelItem;
                 }
 
                 params.googleLoginUrl = googleLoginUrl;

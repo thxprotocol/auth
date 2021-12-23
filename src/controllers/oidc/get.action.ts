@@ -4,14 +4,14 @@ import AccountService from '../../services/AccountService';
 import { oidc } from '.';
 import { getGoogleLoginUrl } from '../../util/google';
 import { ChannelType, ChannelAction } from '../../models/Reward';
-import { getTwitterLoginURL } from '../../util/twitter';
+// import { getTwitterLoginURL } from '../../util/twitter';
 
 export default async function getController(req: Request, res: Response, next: NextFunction) {
     try {
         const interaction = await oidc.interactionDetails(req, res);
         const { uid, prompt, params } = interaction;
         const googleLoginUrl = getGoogleLoginUrl(uid);
-        const twitterLoginUrl = getTwitterLoginURL(uid);
+        // const twitterLoginUrl = getTwitterLoginURL(uid);
 
         switch (params.prompt) {
             case 'create': {
@@ -41,9 +41,9 @@ export default async function getController(req: Request, res: Response, next: N
                     return res.redirect(googleLoginUrl);
                 }
 
-                if (params.channel == ChannelType.Twitter && !account.twitterAccessToken) {
-                    return res.redirect(twitterLoginUrl);
-                }
+                // if (params.channel == ChannelType.Twitter && !account.twitterAccessToken) {
+                //     return res.redirect(twitterLoginUrl);
+                // }
 
                 await oidc.interactionResult(
                     req,
@@ -70,7 +70,7 @@ export default async function getController(req: Request, res: Response, next: N
                 }
 
                 params.googleLoginUrl = googleLoginUrl;
-                params.twitterLoginUrl = twitterLoginUrl;
+                // params.twitterLoginUrl = twitterLoginUrl;
 
                 return res.render(view, { uid, params, alert });
             }

@@ -6,6 +6,12 @@ import { getGoogleLoginUrl } from '../../util/google';
 import { ChannelType, ChannelAction } from '../../models/Reward';
 // import { getTwitterLoginURL } from '../../util/twitter';
 
+const walletScope = ['https://www.googleapis.com/auth/userinfo.email', 'https://www.googleapis.com/auth/youtube'];
+const dashboardScope = [
+    'https://www.googleapis.com/auth/userinfo.email',
+    'https://www.googleapis.com/auth/youtube.readonly',
+];
+
 export default async function getController(req: Request, res: Response, next: NextFunction) {
     try {
         const interaction = await oidc.interactionDetails(req, res);
@@ -38,10 +44,7 @@ export default async function getController(req: Request, res: Response, next: N
                 if (error) throw new Error(error.message);
 
                 if (params.channel == ChannelType.Google && !account.googleAccessToken) {
-                    const googleLoginUrl = getGoogleLoginUrl(req.params.uid, [
-                        'https://www.googleapis.com/auth/userinfo.email',
-                        'https://www.googleapis.com/auth/youtube.readonly',
-                    ]);
+                    const googleLoginUrl = getGoogleLoginUrl(req.params.uid, dashboardScope);
                     return res.redirect(googleLoginUrl);
                 }
 
@@ -66,17 +69,12 @@ export default async function getController(req: Request, res: Response, next: N
                 let view, alert;
                 if (!params.reward_hash) {
                     view = 'login';
-                    const googleLoginUrl = getGoogleLoginUrl(req.params.uid, [
-                        'https://www.googleapis.com/auth/userinfo.email',
-                        'https://www.googleapis.com/auth/youtube.readonly',
-                    ]);
+                    const googleLoginUrl = getGoogleLoginUrl(req.params.uid, dashboardScope);
                     params.googleLoginUrl = googleLoginUrl;
                 } else {
                     view = 'claim';
-                    const googleLoginUrl = getGoogleLoginUrl(uid, [
-                        'https://www.googleapis.com/auth/userinfo.email',
-                        'https://www.googleapis.com/auth/youtube',
-                    ]);
+
+                    const googleLoginUrl = getGoogleLoginUrl(uid, walletScope);
                     params.rewardData = JSON.parse(Buffer.from(params.reward_hash, 'base64').toString());
                     params.channelType = ChannelType[params.rewardData.rewardCondition.channelType];
                     params.channelAction = ChannelAction[params.rewardData.rewardCondition.channelAction];

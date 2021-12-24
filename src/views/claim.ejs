@@ -18,11 +18,11 @@
                         <p>
                             Make sure to grant the <strong class="text-primary">"Manage YouTube account"</strong>
                             permission during authorization, so we can verify if you
-                            <% if (params.channelAction=='like' ) %>
+                            <% if (params.channelAction=='like' ) { %>
                                 <a target="_blank"
                                    href="https://www.youtube.com/watch?v=<%= params.channelItem %>">liked this video</a>
                                 <% } %>
-                                    <% if (params.channelAction=='subscribe' ) %>
+                                    <% if (params.channelAction=='subscribe' ) { %>
                                         <a target="_blank"
                                            href="https://www.youtube.com/channel/<%= params.channelItem %>">subscribed
                                             to this channel</a>.

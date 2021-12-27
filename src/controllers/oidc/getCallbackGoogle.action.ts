@@ -55,21 +55,22 @@ export default async function getGoogleCallback(req: HttpRequest, res: Response,
     }
 
     async function getInteraction(uid: string) {
-        const interaction = await oidc.Interaction.find(uid);
-        if (!interaction) throw new Error('Could not find interaction for this state');
-        return interaction;
+        return await oidc.Interaction.find(uid);
     }
 
     try {
         const code = req.query.code as string;
         const uid = req.query.state as string;
 
+        // Get the interaction based on the state
+        const interaction = await getInteraction(uid);
+
+        if (!interaction) return res.redirect(interaction.returnTo);
+        if (!code) return res.redirect(interaction.params.return_url);
+
         // Get all token information
         const tokens = await getGoogleTokens(code);
         const claims = await parseJwt(tokens.id_token);
-
-        // Get the interaction based on the state
-        const interaction = await getInteraction(uid);
 
         // Check if there is an active session for this interaction
         const account =

@@ -49,6 +49,7 @@ export function locals(req: Request, res: Response, next: NextFunction) {
     res.locals = {
         gtm: GTM,
         dashboardUrl: DASHBOARD_URL,
+        walletUrl: WALLET_URL,
         publicUrl: PUBLIC_URL,
     };
     next();

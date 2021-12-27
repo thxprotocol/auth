@@ -15,6 +15,8 @@ const dashboardScope = [
 export default async function getController(req: Request, res: Response, next: NextFunction) {
     try {
         const interaction = await oidc.interactionDetails(req, res);
+        if (!interaction) throw new Error('Could not find the interaction.');
+
         const { uid, prompt, params } = interaction;
 
         // const twitterLoginUrl = getTwitterLoginURL(uid);
@@ -96,6 +98,6 @@ export default async function getController(req: Request, res: Response, next: N
             }
         }
     } catch (error) {
-        return next(new HttpError(500, 'Loading view failed.', error));
+        return res.render('error', { params: {}, alert: { variant: 'danger', message: error.message } });
     }
 }

@@ -53,10 +53,32 @@
                             </button>
                         </form>
                         <% } else { %>
+                            <strong class="h2 d-block text-dark text-center mb-4">
+                                Hello!
+                            </strong>
+                            <p>
+                                Sign in with your social account or an existing THX account.
+                                <i data-toggle="tooltip"
+                                   title="We will create a new account if the email address used for authentication has not been used for a sign up."
+                                   class="fas fa-question-circle" aria-hidden="true"></i>
+
+                            </p>
+                            <a class="btn btn-sign-in btn-google btn-block" href="<%= params.googleLoginUrl %>">
+                                <div class="logo">
+                                    <img src="/img/g-logo.png" alt="Google logo" />
+                                </div>
+                                <div class="label">Sign in with Google</div>
+                            </a>
+                            <!-- <a class="btn btn-sign-in btn-twitter btn-block disabled cursor-not-allowed"
+                               href="<%= params.twitterLoginUrl %>">
+                                <div class="logo">
+                                    <img src="/img/t-logo.png" alt="Twitter logo" />
+                                </div>
+                                <div class="label">Sign in with Twitter</div>
+                            </a> -->
+                            <hr>
                             <form autocomplete="off" action="/oidc/<%= uid %>/login" method="post" class="mb-4">
-                                <strong class="h2 d-block text-dark text-center mb-4">
-                                    Login
-                                </strong>
+
                                 <div class="form-group">
                                     <label>E-mail:</label>
                                     <input class="form-control" required type="email" name="email">
@@ -71,14 +93,6 @@
                                     Sign in
                                     <i class="fas fa-chevron-right" aria-hidden="true"></i>
                                 </button>
-                                <a class="btn rounded-pill btn-light btn-block" href="<%= params.googleLoginUrl %>">
-                                    Sign in with Google
-                                    <i class="fas fa-chevron-right" aria-hidden="true"></i>
-                                </a>
-                                <!-- <a class="btn rounded-pill btn-light btn-block" href="<%= params.twitterLoginUrl %>">
-                                    Sign in with Twitter
-                                    <i class="fas fa-chevron-right" aria-hidden="true"></i>
-                                </a> -->
                             </form>
                             <hr>
                             <div class="text-center">

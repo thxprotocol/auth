@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap');
+
 [class*='btn-outline-'] {
     border-width: 3px;
 }
@@ -144,5 +146,62 @@
         margin: 0;
         font-size: 1.1rem;
         margin-right: 10px;
+    }
+}
+
+.btn-sign-in {
+    display: flex;
+    align-items: center;
+    border: 1px solid $gray-400;
+    padding: 0;
+
+    .logo {
+        margin-right: 0.5rem;
+        background: white;
+        border-radius: 3px;
+        margin: 1px;
+        padding: 15px;
+        flex: 0 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 15px;
+
+        img {
+            height: 18px;
+            width: 18px;
+        }
+    }
+
+    .label {
+        font-family: Roboto, sans-serif;
+        font-size: 16px;
+        color: white;
+        flex: 1;
+        text-align: left;
+    }
+}
+
+.btn-google {
+    background-color: #4285f4;
+
+    &:active {
+        background-color: #3367d6;
+    }
+
+    .label {
+        font-family: Roboto, sans-serif;
+    }
+}
+
+.btn-twitter {
+    background-color: #0098ff;
+
+    &:active {
+        background-color: #3367d6;
+    }
+
+    .label {
+        font-family: Roboto, sans-serif;
     }
 }

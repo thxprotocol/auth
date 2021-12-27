@@ -113,6 +113,11 @@ export default class YouTubeDataService {
         try {
             const youtube = await getYoutubeClient(account);
             const channel = await getChannels(youtube);
+
+            if (!channel.items.length) {
+                return { videos: [] };
+            }
+
             const uploadsChannelId = channel.items[0].contentDetails.relatedPlaylists.uploads;
             const playlistItems = await getPlaylistItems(youtube, uploadsChannelId);
             const videoIds = playlistItems.map((item: any) => item.contentDetails.videoId);

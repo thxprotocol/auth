@@ -65,7 +65,11 @@ export default async function getGoogleCallback(req: HttpRequest, res: Response,
         // Get the interaction based on the state
         const interaction = await getInteraction(uid);
 
-        if (!interaction) return res.redirect(interaction.returnTo);
+        if (!interaction)
+            return res.render('error', {
+                params: {},
+                alert: { variant: 'danger', message: 'Could not find your session.' },
+            });
         if (!code) return res.redirect(interaction.params.return_url);
 
         // Get all token information

@@ -1,5 +1,4 @@
 import { Request, Response, NextFunction } from 'express';
-import { HttpError } from '../../models/Error';
 import AccountService from '../../services/AccountService';
 import { oidc } from '.';
 import { getGoogleLoginUrl } from '../../util/google';

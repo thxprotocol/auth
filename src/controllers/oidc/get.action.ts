@@ -5,11 +5,20 @@ import { getGoogleLoginUrl } from '../../util/google';
 import { ChannelType, ChannelAction } from '../../models/Reward';
 // import { getTwitterLoginURL } from '../../util/twitter';
 
-const walletScope = ['https://www.googleapis.com/auth/userinfo.email', 'https://www.googleapis.com/auth/youtube'];
-const dashboardScope = [
+const youtubeScope = ['https://www.googleapis.com/auth/userinfo.email', 'https://www.googleapis.com/auth/youtube'];
+const youtubeReadOnlyScope = [
     'https://www.googleapis.com/auth/userinfo.email',
     'https://www.googleapis.com/auth/youtube.readonly',
 ];
+
+function getLoginLinkForChannelAction(uid: string, channelAction: ChannelAction) {
+    if (channelAction === ChannelAction.Like) {
+        return getGoogleLoginUrl(uid, youtubeScope);
+    }
+    if (channelAction === ChannelAction.Subscribe) {
+        return getGoogleLoginUrl(uid, youtubeReadOnlyScope);
+    }
+}
 
 export default async function getController(req: Request, res: Response, next: NextFunction) {
     try {
@@ -45,7 +54,7 @@ export default async function getController(req: Request, res: Response, next: N
                 if (error) throw new Error(error.message);
 
                 if (params.channel == ChannelType.Google && !account.googleAccessToken) {
-                    const googleLoginUrl = getGoogleLoginUrl(req.params.uid, dashboardScope);
+                    const googleLoginUrl = getGoogleLoginUrl(req.params.uid, youtubeReadOnlyScope);
                     return res.redirect(googleLoginUrl);
                 }
 
@@ -70,17 +79,19 @@ export default async function getController(req: Request, res: Response, next: N
                 let view, alert;
                 if (!params.reward_hash) {
                     view = 'login';
-                    const googleLoginUrl = getGoogleLoginUrl(req.params.uid, dashboardScope);
+                    const googleLoginUrl = getGoogleLoginUrl(req.params.uid, youtubeReadOnlyScope);
                     params.googleLoginUrl = googleLoginUrl;
                 } else {
                     view = 'claim';
 
-                    const googleLoginUrl = getGoogleLoginUrl(uid, walletScope);
                     params.rewardData = JSON.parse(Buffer.from(params.reward_hash, 'base64').toString());
+                    params.googleLoginUrl = getLoginLinkForChannelAction(
+                        uid,
+                        params.rewardData.rewardCondition.channelAction,
+                    );
                     params.channelType = ChannelType[params.rewardData.rewardCondition.channelType];
                     params.channelAction = ChannelAction[params.rewardData.rewardCondition.channelAction];
                     params.channelItem = params.rewardData.rewardCondition.channelItem;
-                    params.googleLoginUrl = googleLoginUrl;
                 }
 
                 // params.twitterLoginUrl = twitterLoginUrl;

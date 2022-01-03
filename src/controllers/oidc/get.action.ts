@@ -1,9 +1,9 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response } from 'express';
 import AccountService from '../../services/AccountService';
 import { oidc } from '.';
 import { getGoogleLoginUrl } from '../../util/google';
 import { ChannelType, ChannelAction } from '../../models/Reward';
-// import { getTwitterLoginURL } from '../../util/twitter';
+import { getTwitterLoginURL } from '../../util/twitter';
 
 const youtubeScope = ['https://www.googleapis.com/auth/userinfo.email', 'https://www.googleapis.com/auth/youtube'];
 const youtubeReadOnlyScope = [
@@ -20,14 +20,14 @@ function getLoginLinkForChannelAction(uid: string, channelAction: ChannelAction)
     }
 }
 
-export default async function getController(req: Request, res: Response, next: NextFunction) {
+export default async function getController(req: Request, res: Response) {
     try {
         const interaction = await oidc.interactionDetails(req, res);
         if (!interaction) throw new Error('Could not find the interaction.');
 
         const { uid, prompt, params } = interaction;
 
-        // const twitterLoginUrl = getTwitterLoginURL(uid);
+        const twitterLoginUrl = getTwitterLoginURL(uid);
 
         switch (params.prompt) {
             case 'create': {
@@ -58,9 +58,9 @@ export default async function getController(req: Request, res: Response, next: N
                     return res.redirect(googleLoginUrl);
                 }
 
-                // if (params.channel == ChannelType.Twitter && !account.twitterAccessToken) {
-                //     return res.redirect(twitterLoginUrl);
-                // }
+                if (params.channel == ChannelType.Twitter && !account.twitterAccessToken) {
+                    return res.redirect(twitterLoginUrl);
+                }
 
                 await oidc.interactionResult(
                     req,
@@ -94,7 +94,7 @@ export default async function getController(req: Request, res: Response, next: N
                     params.channelItem = params.rewardData.rewardCondition.channelItem;
                 }
 
-                // params.twitterLoginUrl = twitterLoginUrl;
+                params.twitterLoginUrl = twitterLoginUrl;
 
                 return res.render(view, { uid, params, alert });
             }

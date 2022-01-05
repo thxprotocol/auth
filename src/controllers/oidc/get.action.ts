@@ -29,6 +29,7 @@ export default async function getController(req: Request, res: Response, next: N
 
         // const twitterLoginUrl = getTwitterLoginURL(uid);
 
+        // Prompt params are used for unauthenticated routes
         switch (params.prompt) {
             case 'create': {
                 let alert;
@@ -48,6 +49,9 @@ export default async function getController(req: Request, res: Response, next: N
             case 'reset': {
                 return res.render('reset', { uid, params });
             }
+        }
+        // Regular prompts are used for authenticated routes
+        switch (prompt.name) {
             case 'connect': {
                 const { account, error } = await AccountService.get(interaction.session.accountId);
 
@@ -72,9 +76,6 @@ export default async function getController(req: Request, res: Response, next: N
                 );
                 return res.redirect(params.return_url);
             }
-        }
-
-        switch (prompt.name) {
             case 'login': {
                 let view, alert;
                 if (!params.reward_hash) {

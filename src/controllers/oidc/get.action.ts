@@ -1,5 +1,5 @@
-import { Request, Response } from 'express';
 import AccountService from '../../services/AccountService';
+import { Request, Response } from 'express';
 import { oidc } from '.';
 import { getGoogleLoginUrl } from '../../util/google';
 import { ChannelType, ChannelAction } from '../../models/Reward';
@@ -12,11 +12,14 @@ const youtubeReadOnlyScope = [
 ];
 
 function getLoginLinkForChannelAction(uid: string, channelAction: ChannelAction) {
-    if (channelAction === ChannelAction.Like) {
-        return getGoogleLoginUrl(uid, youtubeScope);
-    }
-    if (channelAction === ChannelAction.Subscribe) {
-        return getGoogleLoginUrl(uid, youtubeReadOnlyScope);
+    switch (channelAction) {
+        default:
+        case ChannelAction.YouTubeLike:
+            return { googleLoginUrl: getGoogleLoginUrl(uid, youtubeScope) };
+        case ChannelAction.YouTubeSubscribe:
+            return { googleLoginUrl: getGoogleLoginUrl(uid, youtubeReadOnlyScope) };
+        case ChannelAction.TwitterLike || ChannelAction.TwitterSubscribe || ChannelAction.TwitterFollow:
+            return { twitterLoginUrl: getTwitterLoginURL(uid) };
     }
 }
 
@@ -26,8 +29,6 @@ export default async function getController(req: Request, res: Response) {
         if (!interaction) throw new Error('Could not find the interaction.');
 
         const { uid, prompt, params } = interaction;
-
-        const twitterLoginUrl = getTwitterLoginURL(uid);
 
         switch (params.prompt) {
             case 'create': {
@@ -59,6 +60,7 @@ export default async function getController(req: Request, res: Response) {
                 }
 
                 if (params.channel == ChannelType.Twitter && !account.twitterAccessToken) {
+                    const twitterLoginUrl = getTwitterLoginURL(uid);
                     return res.redirect(twitterLoginUrl);
                 }
 
@@ -77,26 +79,34 @@ export default async function getController(req: Request, res: Response) {
         switch (prompt.name) {
             case 'login': {
                 let view, alert;
+
                 if (!params.reward_hash) {
                     view = 'login';
-                    const googleLoginUrl = getGoogleLoginUrl(req.params.uid, youtubeReadOnlyScope);
+                    const googleLoginUrl = getGoogleLoginUrl(uid, youtubeReadOnlyScope);
+                    const twitterLoginUrl = getTwitterLoginURL(uid);
+
                     params.googleLoginUrl = googleLoginUrl;
+                    params.twitterLoginUrl = twitterLoginUrl;
+
+                    return res.render(view, { uid, params, alert });
                 } else {
                     view = 'claim';
+                    const rewardData = JSON.parse(Buffer.from(params.reward_hash, 'base64').toString());
 
-                    params.rewardData = JSON.parse(Buffer.from(params.reward_hash, 'base64').toString());
-                    params.googleLoginUrl = getLoginLinkForChannelAction(
-                        uid,
-                        params.rewardData.rewardCondition.channelAction,
-                    );
+                    params.rewardData = rewardData;
                     params.channelType = ChannelType[params.rewardData.rewardCondition.channelType];
                     params.channelAction = ChannelAction[params.rewardData.rewardCondition.channelAction];
                     params.channelItem = params.rewardData.rewardCondition.channelItem;
+
+                    return res.render(view, {
+                        uid,
+                        params: {
+                            ...params,
+                            ...getLoginLinkForChannelAction(uid, rewardData.rewardCondition.channelAction),
+                        },
+                        alert,
+                    });
                 }
-
-                params.twitterLoginUrl = twitterLoginUrl;
-
-                return res.render(view, { uid, params, alert });
             }
             case 'consent': {
                 const consent: any = {};

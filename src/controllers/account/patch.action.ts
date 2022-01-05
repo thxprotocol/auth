@@ -31,6 +31,7 @@ export const patchAccount = async (req: HttpRequest, res: Response, next: NextFu
         await patchAccount(account, {
             address: req.body.address,
             googleAccess: req.body.googleAccess,
+            twitterAccess: req.body.twitterAccess,
         });
 
         res.status(204).end();

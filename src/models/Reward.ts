@@ -5,7 +5,9 @@ export enum ChannelType {
 }
 
 export enum ChannelAction {
-    None = 0,
-    Like = 1,
-    Subscribe = 2,
+    YouTubeLike = 0,
+    YouTubeSubscribe = 1,
+    TwitterLike = 2,
+    TwitterSubscribe = 3,
+    TwitterFollow = 4,
 }

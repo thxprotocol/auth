@@ -68,7 +68,7 @@ export default class AccountService {
 
     static async update(
         account: AccountDocument,
-        { acceptTermsPrivacy, acceptUpdates, address, privateKey, googleAccess }: IAccountUpdates,
+        { acceptTermsPrivacy, acceptUpdates, address, privateKey, googleAccess, twitterAccess }: IAccountUpdates,
     ) {
         try {
             // No strict checking here since null == undefined
@@ -94,6 +94,12 @@ export default class AccountService {
                 account.googleAccessToken = '';
                 account.googleRefreshToken = '';
                 account.googleAccessTokenExpires = null;
+            }
+
+            if (twitterAccess === false) {
+                account.twitterAccessToken = '';
+                account.twitterRefreshToken = '';
+                account.twitterAccessTokenExpires = null;
             }
 
             return { result: await account.save() };

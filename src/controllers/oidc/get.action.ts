@@ -30,6 +30,7 @@ export default async function getController(req: Request, res: Response) {
 
         const { uid, prompt, params } = interaction;
 
+        // Prompt params are used for unauthenticated routes
         switch (params.prompt) {
             case 'create': {
                 let alert;
@@ -49,6 +50,9 @@ export default async function getController(req: Request, res: Response) {
             case 'reset': {
                 return res.render('reset', { uid, params });
             }
+        }
+        // Regular prompts are used for authenticated routes
+        switch (prompt.name) {
             case 'connect': {
                 const { account, error } = await AccountService.get(interaction.session.accountId);
 
@@ -74,9 +78,6 @@ export default async function getController(req: Request, res: Response) {
                 );
                 return res.redirect(params.return_url);
             }
-        }
-
-        switch (prompt.name) {
             case 'login': {
                 let view, alert;
 

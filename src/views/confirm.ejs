@@ -5,21 +5,21 @@
     <div class="card shadow-sm mb-5">
         <div class="card-body p-sm-5">
             <% if (alert && alert.message) { %>
-                <strong class="h2 d-block text-dark text-center mb-4">
-                    Oops...
-                </strong>
-                <div class="alert alert-<%= alert.variant %>">
-                    <%= alert.message %>
-                </div>
-                <% } else { %>
-                    <strong class="h2 d-block text-dark text-center mb-4">
-                        Congratulations!
-                    </strong>
-                    <p>Your e-mail address has been verified.</p>
-                    <a href="<%= params.return_url %>" class="btn rounded-pill btn-primary btn-block">
-                        Sign in
-                    </a>
-                    <% } %>
+            <strong class="h2 d-block text-dark text-center mb-4">
+                Oops...
+            </strong>
+            <div class="alert alert-<%= alert.variant %>">
+                <%= alert.message %>
+            </div>
+            <% } else { %>
+            <strong class="h2 d-block text-dark text-center mb-4">
+                Congratulations!
+            </strong>
+            <p>Your e-mail address has been verified.</p>
+            <a href="<%= params.return_url %>" class="btn rounded-pill btn-primary btn-block">
+                Sign in
+            </a>
+            <% } %>
         </div>
     </div>
 </div>

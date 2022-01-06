@@ -9,27 +9,27 @@
             </strong>
 
             <% if (alert && alert.message) { %>
-                <div class="alert alert-<%= alert.variant %>">
-                    <%= alert.message %>
-                </div>
-                <% } %>
+            <div class="alert alert-<%= alert.variant %>">
+                <%= alert.message %>
+            </div>
+            <% } %>
 
-                    <p>
-                        Your interaction might have expired or something else went wrong. Please use the buttons
-                        below to find your way back.
-                    </p>
-                    <a class="btn rounded-pill btn-light btn-block" href="<%= dashboardUrl %>">
-                        Go to dashboard.thx.network
-                        <i class="fas fa-chevron-right" aria-hidden="true"></i>
-                    </a>
-                    <a class="btn rounded-pill btn-light btn-block" href="<%= walletUrl %>">
-                        Go to wallet.thx.network
-                        <i class="fas fa-chevron-right" aria-hidden="true"></i>
-                    </a>
-                    <a class="btn rounded-pill btn-light btn-block" href="<%= publicUrl %>">
-                        Go to www.thx.network
-                        <i class="fas fa-chevron-right" aria-hidden="true"></i>
-                    </a>
+            <p>
+                Your interaction might have expired or something else went wrong. Please use the buttons
+                below to find your way back.
+            </p>
+            <a class="btn rounded-pill btn-light btn-block" href="<%= dashboardUrl %>">
+                Go to dashboard.thx.network
+                <i class="fas fa-chevron-right" aria-hidden="true"></i>
+            </a>
+            <a class="btn rounded-pill btn-light btn-block" href="<%= walletUrl %>">
+                Go to wallet.thx.network
+                <i class="fas fa-chevron-right" aria-hidden="true"></i>
+            </a>
+            <a class="btn rounded-pill btn-light btn-block" href="<%= publicUrl %>">
+                Go to www.thx.network
+                <i class="fas fa-chevron-right" aria-hidden="true"></i>
+            </a>
 
         </div>
     </div>

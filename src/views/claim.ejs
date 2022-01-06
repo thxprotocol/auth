@@ -5,47 +5,48 @@
     <div class="card shadow-sm mb-5">
         <div class="card-body pt-sm-5 px-sm-5 pb-md-4">
             <% if (alert && alert.message) { %>
-                <div class="alert alert-<%= alert.variant %>">
-                    <%= alert.message %>
-                </div>
-                <% } %>
+            <div class="alert alert-<%= alert.variant %>">
+                <%= alert.message %>
+            </div>
+            <% } %>
 
-                    <form autocomplete="off" action="/oidc/<%= uid %>/login" method="post" class="mb-4">
-                        <strong class="h2 d-block text-dark text-center mb-4">
-                            Claim <%= params.rewardData.rewardAmount %>
-                                <%= params.rewardData.tokenSymbol %>
-                        </strong>
-                        <p>
-                            Make sure to grant the
-                            <strong class="text-primary">
-                                <% if (params.channelAction.toLowerCase()=='like' ) { %>
-                                    "Manage YouTube account"
-                                    <% } %>
-                                        <% if (params.channelAction.toLowerCase()=='subscribe' ) { %>
-                                            "View YouTube account"
-                                            <% } %>
-                            </strong>
-                            permission during authorization, so we can verify if you
-                            <% if (params.channelAction.toLowerCase()=='like' ) { %>
-                                <a target="_blank" href="https://www.youtube.com/watch?v=<%= params.channelItem %>"
-                                   class="font-weight-bold">liked this video</a>
-                                <% } %>
-                                    <% if (params.channelAction.toLowerCase()=='subscribe' ) { %>
-                                        <a target="_blank"
-                                           href="https://www.youtube.com/channel/<%= params.channelItem %>"
-                                           class="font-weight-bold">subscribed
-                                            to this channel</a>.
-                                        <% } %>
-                        </p>
-                        <input type="hidden" name="returnUrl" value="<%= params.return_url %>" />
-                        <input type="hidden" name="rewardHash" value="<%= params.reward_hash %>" />
-                        <a class="btn btn-sign-in btn-google btn-block" href="<%= params.googleLoginUrl %>">
-                            <div class="logo">
-                                <img src="/img/g-logo.png" alt="Google logo" />
-                            </div>
-                            <div class="label">Sign in with Google</div>
-                        </a>
-                    </form>
+            <form autocomplete="off" action="/oidc/<%= uid %>/login" method="post" class="mb-4">
+                <strong class="h2 d-block text-dark text-center mb-4">
+                    Claim <%= params.rewardData.rewardAmount %>
+                    <%= params.rewardData.tokenSymbol %>
+                </strong>
+                <p>
+                    Make sure to grant the
+                    <strong class="text-primary">
+                        <% if (params.channelAction.toLowerCase()=='like' ) { %>
+                        "Manage YouTube account"
+                        <% } %>
+                        <% if (params.channelAction.toLowerCase()=='subscribe' ) { %>
+                        "View YouTube account"
+                        <% } %>
+                    </strong>
+                    permission during authorization, so we can verify if you
+                    <% if (params.channelAction.toLowerCase()=='like' ) { %>
+                    <a target="_blank" href="https://www.youtube.com/watch?v=<%= params.channelItem %>"
+                       class="font-weight-bold">liked this video</a>
+                    <% } %>
+                    <% if (params.channelAction.toLowerCase()=='subscribe' ) { %>
+                    <a target="_blank" href="https://www.youtube.com/channel/<%= params.channelItem %>"
+                       class="font-weight-bold">subscribed
+                        to this channel</a>.
+                    <% } %>
+                </p>
+                <input type="hidden" name="returnUrl" value="<%= params.return_url %>" />
+                <input type="hidden" name="rewardHash" value="<%= params.reward_hash %>" />
+                <% if (params.channelAction.toLowerCase()=='subscribe' ) { %>
+                <a class="btn btn-sign-in btn-google btn-block" href="<%= params.googleLoginUrl %>">
+                    <div class="logo">
+                        <img src="/img/g-logo.png" alt="Google logo" />
+                    </div>
+                    <div class="label">Sign in with Google</div>
+                </a>
+                <% } %>
+            </form>
 
         </div>
     </div>

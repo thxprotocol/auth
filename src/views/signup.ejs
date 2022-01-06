@@ -5,77 +5,74 @@
     <div class="card shadow-lg mb-5">
         <div class="card-body pt-sm-5 px-sm-5 pb-sm-3">
             <% if (alert && alert.message && alert.variant==='danger' ) { %>
-                <div class="alert alert-<%= alert.variant %>">
-                    <%= alert.message %>
+            <div class="alert alert-<%= alert.variant %>">
+                <%= alert.message %>
+            </div>
+            <% } %>
+            <% if (alert && alert.message && alert.variant==='success' ) { %>
+            <strong class="h2 d-block text-dark text-center mb-4">
+                THX for signing up!
+            </strong>
+            <div class="alert alert-<%= alert.variant %>">
+                <%= alert.message %>
+            </div>
+            <% } else { %>
+            <p class="alert alert-primary">
+                &#x1f973; <strong>We are in beta!</strong> Try the full version for free -
+                no creditcard required or other hidden charges - testing is free forever.
+            </p>
+            <form autocomplete="off" action="/oidc/<%= uid %>/create" method="post">
+                <div class="form-group">
+                    <label>E-mail:</label>
+                    <% if (params.signup_email) { %>
+                    <input class="form-control" value="<%= params.signup_email %>" required type="email" name="email">
+                    <% } else { %>
+                    <input class="form-control" required type="email" name="email">
+                    <% } %>
+
                 </div>
-                <% } %>
-                    <% if (alert && alert.message && alert.variant==='success' ) { %>
-                        <strong class="h2 d-block text-dark text-center mb-4">
-                            THX for signing up!
-                        </strong>
-                        <div class="alert alert-<%= alert.variant %>">
-                            <%= alert.message %>
-                        </div>
-                        <% } else { %>
-                            <p class="alert alert-primary">
-                                &#x1f973; <strong>We are in beta!</strong> Try the full version for free -
-                                no creditcard required or other hidden charges - testing is free forever.
-                            </p>
-                            <form autocomplete="off" action="/oidc/<%= uid %>/create" method="post">
-                                <div class="form-group">
-                                    <label>E-mail:</label>
-                                    <% if (params.signup_email) { %>
-                                        <input class="form-control" value="<%= params.signup_email %>" required
-                                            type="email" name="email">
-                                        <% } else { %>
-                                            <input class="form-control" required type="email" name="email">
-                                            <% } %>
+                <p class="small text-muted">Passwords should have a minimal length of 8 characters
+                    and contain lowercase, uppercase, special (!@#$%^&*) characters and a
+                    number (0-9).</p>
+                <div class="form-group">
+                    <label>Password:</label>
+                    <input class="form-control" required type="password" name="password">
+                </div>
+                <div class="form-group">
+                    <label>Password again:</label>
+                    <input class="form-control" required type="password" name="confirmPassword">
+                </div>
+                <div class="form-group">
+                    <div class="m-0 custom-control custom-checkbox b-custom-control-sm">
+                        <input id="acceptTermsPrivacy" type="checkbox" name="acceptTermsPrivacy"
+                               class="custom-control-input" value="true"><label for="acceptTermsPrivacy"
+                               class="custom-control-label font-weight-normal"> I agree to
+                            THX' <a href="<%= publicUrl %>/general-terms-and-conditions.pdf" target="_blank">terms of
+                                use</a> and <a href="<%= publicUrl %>/privacy-policy.pdf" target="_blank">privacy
+                                statement</a></label>
+                    </div>
+                    <div class="custom-control custom-checkbox b-custom-control-sm"><input id="acceptUpdates"
+                               type="checkbox" name="acceptUpdates" class="custom-control-input" value="true"><label
+                               for="acceptUpdates" class="custom-control-label font-weight-normal">
+                            Opt-in to
+                            receive updates from THX on its products, you can opt-out at any
+                            time. </label>
 
-                                </div>
-                                 <p class="small text-muted">Passwords should have a minimal length of 8 characters
-                                    and contain lowercase, uppercase, special (!@#$%^&*) characters and a
-                                    number (0-9).</p>
-                                <div class="form-group">
-                                    <label>Password:</label>
-                                    <input class="form-control" required type="password" name="password">
-                                </div>
-                                <div class="form-group">
-                                    <label>Password again:</label>
-                                    <input class="form-control" required type="password" name="confirmPassword">
-                                </div>
-                                <div class="form-group">
-                                    <div class="m-0 custom-control custom-checkbox b-custom-control-sm">
-                                        <input id="acceptTermsPrivacy" type="checkbox" name="acceptTermsPrivacy"
-                                            class="custom-control-input" value="true"><label for="acceptTermsPrivacy"
-                                            class="custom-control-label font-weight-normal"> I agree to
-                                            THX' <a href="<%= publicUrl %>/general-terms-and-conditions.pdf"
-                                                target="_blank">terms of use</a> and <a
-                                                href="<%= publicUrl %>/privacy-policy.pdf" target="_blank">privacy
-                                                statement</a></label>
-                                    </div>
-                                    <div class="custom-control custom-checkbox b-custom-control-sm"><input
-                                            id="acceptUpdates" type="checkbox" name="acceptUpdates"
-                                            class="custom-control-input" value="true"><label for="acceptUpdates"
-                                            class="custom-control-label font-weight-normal">
-                                            Opt-in to
-                                            receive updates from THX on its products, you can opt-out at any
-                                            time. </label>
-
-                                    </div>
-                                    <input type="hidden" name="returnUrl" value="<%= params.return_url %>" />
-                                </div>
-                                <div class="form-group row mb-0">
-                                    <div class="col-md-12">
-                                        <button type="submit" class="btn rounded-pill mt-3 btn-primary btn-block">
-                                            Sign-up
-                                        </button>
-                                        <a class="btn btn-block btn-link" href="/oidc/<%= uid %>/abort">Already have an
-                                            account?
-                                            Sign in.</a>
-                                    </div>
-                                </div>
-                            </form>
-                            <% } %>
+                    </div>
+                    <input type="hidden" name="returnUrl" value="<%= params.return_url %>" />
+                </div>
+                <div class="form-group row mb-0">
+                    <div class="col-md-12">
+                        <button type="submit" class="btn rounded-pill mt-3 btn-primary btn-block">
+                            Sign-up
+                        </button>
+                        <a class="btn btn-block btn-link" href="/oidc/<%= uid %>/abort">Already have an
+                            account?
+                            Sign in.</a>
+                    </div>
+                </div>
+            </form>
+            <% } %>
         </div>
     </div>
 </div>

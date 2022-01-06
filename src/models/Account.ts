@@ -55,7 +55,7 @@ const accountSchema = new mongoose.Schema(
         googleAccessTokenExpires: Number,
         twitterAccessToken: String,
         twitterRefreshToken: String,
-        twitterAccessTokenExpires: String,
+        twitterAccessTokenExpires: Number,
         acceptTermsPrivacy: Boolean,
         acceptUpdates: Boolean,
         recoveryPhrase: String,

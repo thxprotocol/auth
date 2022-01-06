@@ -6,6 +6,53 @@ const ERROR_NO_DATA = 'Could not find an youtube data for this accesstoken';
 axios.defaults.baseURL = 'https://api.twitter.com';
 
 export default class YouTubeDataService {
+    static async validateLike(accessToken: string, channelItem: string) {
+        try {
+            const { user } = await this.getUser(accessToken);
+            if (!user) throw new Error('Could not find Twitter user.');
+
+            const r = await axios({
+                url: `/2/tweets/${channelItem}/liking_users`,
+                method: 'GET',
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
+
+            if (!r.data) throw new Error(ERROR_NO_DATA);
+
+            return {
+                result: r.data.data ? !!r.data.data.filter((u: { id: number }) => u.id === user.id).length : false,
+            };
+        } catch (error) {
+            return { error };
+        }
+    }
+
+    static async validateRetweet(accessToken: string, channelItem: string) {
+        try {
+            const { user } = await this.getUser(accessToken);
+            if (!user) throw new Error('Could not find Twitter user.');
+
+            const r = await axios({
+                url: '/2/tweets/retweets_of_me',
+                method: 'GET',
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
+            console.log(r.data, channelItem);
+
+            if (!r.data) throw new Error(ERROR_NO_DATA);
+
+            return {
+                result: r.data.data ? !!r.data.data.filter((u: { id: number }) => u.id === user.id).length : false,
+            };
+        } catch (error) {
+            return { error };
+        }
+    }
+
     static async getUser(accessToken: string) {
         try {
             const r = await axios({
@@ -16,13 +63,9 @@ export default class YouTubeDataService {
                 },
             });
 
-            if (!r.data) {
-                throw new Error(ERROR_NO_DATA);
-            }
+            if (!r.data) throw new Error(ERROR_NO_DATA);
 
-            return {
-                user: r.data.data,
-            };
+            return { user: r.data.data };
         } catch (error) {
             return { error };
         }
@@ -40,13 +83,11 @@ export default class YouTubeDataService {
                 },
             });
 
-            if (!r.data) {
-                throw new Error(ERROR_NO_DATA);
-            }
+            console.log(r.data);
 
-            return {
-                tweets: r.data.data,
-            };
+            if (!r.data) throw new Error(ERROR_NO_DATA);
+
+            return { tweets: r.data.data };
         } catch (error) {
             return { error };
         }
@@ -70,13 +111,9 @@ export default class YouTubeDataService {
                 data: body,
             });
 
-            if (r.status !== 200) {
-                throw new Error('Failed to request access token');
-            }
+            if (r.status !== 200) throw new Error('Failed to request access token');
 
-            return {
-                tokens: r.data,
-            };
+            return { tokens: r.data };
         } catch (error) {
             return { error };
         }
@@ -106,9 +143,7 @@ export default class YouTubeDataService {
                 throw new Error('Failed to request access token');
             }
 
-            return {
-                tokens: r.data,
-            };
+            return { tokens: r.data };
         } catch (error) {
             return { error };
         }

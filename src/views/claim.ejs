@@ -16,34 +16,52 @@
                     <%= params.rewardData.tokenSymbol %>
                 </strong>
                 <p>
-                    Make sure to grant the
-                    <strong class="text-primary">
-                        <% if (params.channelAction.toLowerCase()=='like' ) { %>
-                        "Manage YouTube account"
-                        <% } %>
-                        <% if (params.channelAction.toLowerCase()=='subscribe' ) { %>
-                        "View YouTube account"
-                        <% } %>
-                    </strong>
-                    permission during authorization, so we can verify if you
-                    <% if (params.channelAction.toLowerCase()=='like' ) { %>
+                    Access to this information will enable us to verify if you
+                    <% if (params.channelAction =='YouTubeLike' ) { %>
                     <a target="_blank" href="https://www.youtube.com/watch?v=<%= params.channelItem %>"
                        class="font-weight-bold">liked this video</a>
                     <% } %>
-                    <% if (params.channelAction.toLowerCase()=='subscribe' ) { %>
+                    <% if (params.channelAction =='YouTubeSubscribe' ) { %>
                     <a target="_blank" href="https://www.youtube.com/channel/<%= params.channelItem %>"
-                       class="font-weight-bold">subscribed
-                        to this channel</a>.
+                       class="font-weight-bold">subscribed to this channel</a>.
+                    <% } %>
+                    <% if (params.channelAction =='TwitterLike' ) { %>
+                    <a target="_blank" href="https://www.twitter.com/twitter/status/<%= params.channelItem %>"
+                       class="font-weight-bold">liked this tweet</a>.
+                    <% } %>
+                    <% if (params.channelAction =='TwitterRetweet' ) { %>
+                    <a target="_blank" href="https://www.twitter.com/twitter/status/<%= params.channelItem %>"
+                       class="font-weight-bold">retweeted this tweet</a>.
+                    <% } %>
+                    <% if (params.channelAction =='TwitterFollow' ) { %>
+                    <a target="_blank" href="https://www.twitter.com/<%= params.channelItem %>"
+                       class="font-weight-bold">follow this account</a>.
                     <% } %>
                 </p>
+                <p>
+                    Make sure to grant these scopes:
+                </p>
+                <ul>
+                    <% for(let scope of params.channelScopes || []){  %>
+                    <li class="small"><%= scope %></li>
+                    <% } %>
+                </ul>
                 <input type="hidden" name="returnUrl" value="<%= params.return_url %>" />
                 <input type="hidden" name="rewardHash" value="<%= params.reward_hash %>" />
-                <% if (params.channelAction.toLowerCase()=='subscribe' ) { %>
+                <% if (params.googleLoginUrl ) { %>
                 <a class="btn btn-sign-in btn-google btn-block" href="<%= params.googleLoginUrl %>">
                     <div class="logo">
                         <img src="/img/g-logo.png" alt="Google logo" />
                     </div>
                     <div class="label">Sign in with Google</div>
+                </a>
+                <% } %>
+                <% if (params.twitterLoginUrl ) { %>
+                <a class="btn btn-sign-in btn-twitter btn-block" href="<%= params.twitterLoginUrl %>">
+                    <div class="logo">
+                        <img src="/img/t-logo.png" alt="Twitter logo" />
+                    </div>
+                    <div class="label">Sign in with Twitter</div>
                 </a>
                 <% } %>
             </form>

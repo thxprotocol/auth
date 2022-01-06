@@ -3,13 +3,25 @@ import { Request, Response } from 'express';
 import { oidc } from '.';
 import { getGoogleLoginUrl } from '../../util/google';
 import { ChannelType, ChannelAction } from '../../models/Reward';
-import { getTwitterLoginURL } from '../../util/twitter';
+import { getTwitterLoginURL, twitterScopes } from '../../util/twitter';
 
 const youtubeScope = ['https://www.googleapis.com/auth/userinfo.email', 'https://www.googleapis.com/auth/youtube'];
 const youtubeReadOnlyScope = [
     'https://www.googleapis.com/auth/userinfo.email',
     'https://www.googleapis.com/auth/youtube.readonly',
 ];
+
+function getChannelScopes(channelAction: ChannelAction) {
+    switch (channelAction) {
+        default:
+        case ChannelAction.YouTubeLike:
+            return { channelScopes: youtubeScope };
+        case ChannelAction.YouTubeSubscribe:
+            return { channelScopes: youtubeReadOnlyScope };
+        case ChannelAction.TwitterLike || ChannelAction.TwitterSubscribe || ChannelAction.TwitterFollow:
+            return { channelScopes: twitterScopes.split('%20') };
+    }
+}
 
 function getLoginLinkForChannelAction(uid: string, channelAction: ChannelAction) {
     switch (channelAction) {
@@ -29,6 +41,8 @@ export default async function getController(req: Request, res: Response) {
         if (!interaction) throw new Error('Could not find the interaction.');
 
         const { uid, prompt, params } = interaction;
+
+        console.log(interaction);
 
         // Prompt params are used for unauthenticated routes
         switch (params.prompt) {
@@ -54,17 +68,21 @@ export default async function getController(req: Request, res: Response) {
         // Regular prompts are used for authenticated routes
         switch (prompt.name) {
             case 'connect': {
+                console.log('connecting!');
                 const { account, error } = await AccountService.get(interaction.session.accountId);
 
                 if (error) throw new Error(error.message);
+
+                console.log(params.channel, account.twitterAccessToken);
 
                 if (params.channel == ChannelType.Google && !account.googleAccessToken) {
                     const googleLoginUrl = getGoogleLoginUrl(req.params.uid, youtubeReadOnlyScope);
                     return res.redirect(googleLoginUrl);
                 }
-
+                console.log(params.channel == ChannelType.Twitter && !account.twitterAccessToken);
                 if (params.channel == ChannelType.Twitter && !account.twitterAccessToken) {
                     const twitterLoginUrl = getTwitterLoginURL(uid);
+                    console.log(twitterLoginUrl);
                     return res.redirect(twitterLoginUrl);
                 }
 
@@ -103,6 +121,7 @@ export default async function getController(req: Request, res: Response) {
                         uid,
                         params: {
                             ...params,
+                            ...getChannelScopes(rewardData.rewardCondition.channelAction),
                             ...getLoginLinkForChannelAction(uid, rewardData.rewardCondition.channelAction),
                         },
                         alert,

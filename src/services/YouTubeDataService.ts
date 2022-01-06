@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { GoogleConfigurable } from 'googleapis-common';
 import { AccountDocument } from '../models/Account';
 import { getYoutubeClient, IYoutubeClient } from '../util/google';
 

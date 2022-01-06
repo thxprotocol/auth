@@ -39,6 +39,7 @@ export const getYoutube = async (req: HttpRequest, res: Response, next: NextFunc
             videos,
         });
     } catch (error) {
+        console.log(error);
         next(new HttpError(502, error.message, error));
     }
 };

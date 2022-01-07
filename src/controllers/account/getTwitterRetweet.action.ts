@@ -4,7 +4,7 @@ import { HttpError, HttpRequest } from '../../models/Error';
 import AccountService from '../../services/AccountService';
 import TwitterService from '../../services/TwitterService';
 
-export const getTwitterLike = async (req: HttpRequest, res: Response, next: NextFunction) => {
+export const getTwitterRetweet = async (req: HttpRequest, res: Response, next: NextFunction) => {
     async function getAccount(sub: string) {
         const { account, error } = await AccountService.get(sub);
         if (error) throw new Error(error.message);
@@ -25,7 +25,6 @@ export const getTwitterLike = async (req: HttpRequest, res: Response, next: Next
             result,
         });
     } catch (error) {
-        console.log('result error', error);
         next(new HttpError(502, error.message, error));
     }
 };

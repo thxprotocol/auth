@@ -25,7 +25,6 @@ export const getTwitterLike = async (req: HttpRequest, res: Response, next: Next
             result,
         });
     } catch (error) {
-        console.log('result error', error);
         next(new HttpError(502, error.message, error));
     }
 };

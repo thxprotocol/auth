@@ -12,28 +12,28 @@
 
             <form autocomplete="off" action="/oidc/<%= uid %>/login" method="post" class="mb-4">
                 <strong class="h2 d-block text-dark text-center mb-4">
-                    Claim <%= params.rewardData.rewardAmount %>
-                    <%= params.rewardData.tokenSymbol %>
+                    Claim <span class="text-primary"><%= params.rewardData.rewardAmount %>
+                        <%= params.rewardData.tokenSymbol %></span>
                 </strong>
                 <p>
                     Access to this information will enable us to verify if you
-                    <% if (params.channelAction =='YouTubeLike' ) { %>
+                    <% if (params.channelAction == 'YouTubeLike' ) { %>
                     <a target="_blank" href="https://www.youtube.com/watch?v=<%= params.channelItem %>"
                        class="font-weight-bold">liked this video</a>
                     <% } %>
-                    <% if (params.channelAction =='YouTubeSubscribe' ) { %>
+                    <% if (params.channelAction == 'YouTubeSubscribe' ) { %>
                     <a target="_blank" href="https://www.youtube.com/channel/<%= params.channelItem %>"
                        class="font-weight-bold">subscribed to this channel</a>.
                     <% } %>
-                    <% if (params.channelAction =='TwitterLike' ) { %>
+                    <% if (params.channelAction == 'TwitterLike' ) { %>
                     <a target="_blank" href="https://www.twitter.com/twitter/status/<%= params.channelItem %>"
                        class="font-weight-bold">liked this tweet</a>.
                     <% } %>
-                    <% if (params.channelAction =='TwitterRetweet' ) { %>
+                    <% if (params.channelAction == 'TwitterRetweet' ) { %>
                     <a target="_blank" href="https://www.twitter.com/twitter/status/<%= params.channelItem %>"
                        class="font-weight-bold">retweeted this tweet</a>.
                     <% } %>
-                    <% if (params.channelAction =='TwitterFollow' ) { %>
+                    <% if (params.channelAction == 'TwitterFollow' ) { %>
                     <a target="_blank" href="https://www.twitter.com/<%= params.channelItem %>"
                        class="font-weight-bold">follow this account</a>.
                     <% } %>

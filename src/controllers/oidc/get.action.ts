@@ -13,24 +13,26 @@ const youtubeReadOnlyScope = [
 
 function getChannelScopes(channelAction: ChannelAction) {
     switch (channelAction) {
-        default:
         case ChannelAction.YouTubeLike:
             return { channelScopes: youtubeScope };
         case ChannelAction.YouTubeSubscribe:
             return { channelScopes: youtubeReadOnlyScope };
-        case ChannelAction.TwitterLike || ChannelAction.TwitterSubscribe || ChannelAction.TwitterFollow:
+        case ChannelAction.TwitterLike:
+        case ChannelAction.TwitterRetweet:
+        case ChannelAction.TwitterFollow:
             return { channelScopes: twitterScopes.split('%20') };
     }
 }
 
 function getLoginLinkForChannelAction(uid: string, channelAction: ChannelAction) {
     switch (channelAction) {
-        default:
         case ChannelAction.YouTubeLike:
             return { googleLoginUrl: getGoogleLoginUrl(uid, youtubeScope) };
         case ChannelAction.YouTubeSubscribe:
             return { googleLoginUrl: getGoogleLoginUrl(uid, youtubeReadOnlyScope) };
-        case ChannelAction.TwitterLike || ChannelAction.TwitterSubscribe || ChannelAction.TwitterFollow:
+        case ChannelAction.TwitterLike:
+        case ChannelAction.TwitterRetweet:
+        case ChannelAction.TwitterFollow:
             return { twitterLoginUrl: getTwitterLoginURL(uid) };
     }
 }
@@ -41,8 +43,6 @@ export default async function getController(req: Request, res: Response) {
         if (!interaction) throw new Error('Could not find the interaction.');
 
         const { uid, prompt, params } = interaction;
-
-        console.log(interaction);
 
         // Prompt params are used for unauthenticated routes
         switch (params.prompt) {
@@ -68,63 +68,52 @@ export default async function getController(req: Request, res: Response) {
         // Regular prompts are used for authenticated routes
         switch (prompt.name) {
             case 'connect': {
-                console.log('connecting!');
                 const { account, error } = await AccountService.get(interaction.session.accountId);
 
                 if (error) throw new Error(error.message);
-
-                console.log(params.channel, account.twitterAccessToken);
 
                 if (params.channel == ChannelType.Google && !account.googleAccessToken) {
                     const googleLoginUrl = getGoogleLoginUrl(req.params.uid, youtubeReadOnlyScope);
                     return res.redirect(googleLoginUrl);
                 }
-                console.log(params.channel == ChannelType.Twitter && !account.twitterAccessToken);
+
                 if (params.channel == ChannelType.Twitter && !account.twitterAccessToken) {
                     const twitterLoginUrl = getTwitterLoginURL(uid);
-                    console.log(twitterLoginUrl);
                     return res.redirect(twitterLoginUrl);
                 }
 
-                await oidc.interactionResult(
-                    req,
-                    res,
-                    {},
-                    {
-                        mergeWithLastSubmission: true,
-                    },
-                );
+                await oidc.interactionResult(req, res, {}, { mergeWithLastSubmission: true });
                 return res.redirect(params.return_url);
             }
             case 'login': {
-                let view, alert;
-
                 if (!params.reward_hash) {
-                    view = 'login';
+                    const view = 'login';
                     const googleLoginUrl = getGoogleLoginUrl(uid, youtubeReadOnlyScope);
                     const twitterLoginUrl = getTwitterLoginURL(uid);
 
                     params.googleLoginUrl = googleLoginUrl;
                     params.twitterLoginUrl = twitterLoginUrl;
 
-                    return res.render(view, { uid, params, alert });
+                    return res.render(view, { uid, params, alert: {} });
                 } else {
-                    view = 'claim';
+                    const view = 'claim';
                     const rewardData = JSON.parse(Buffer.from(params.reward_hash, 'base64').toString());
 
                     params.rewardData = rewardData;
-                    params.channelType = ChannelType[params.rewardData.rewardCondition.channelType];
                     params.channelAction = ChannelAction[params.rewardData.rewardCondition.channelAction];
                     params.channelItem = params.rewardData.rewardCondition.channelItem;
+
+                    const scopes = getChannelScopes(rewardData.rewardCondition.channelAction);
+                    const loginLink = getLoginLinkForChannelAction(uid, rewardData.rewardCondition.channelAction);
 
                     return res.render(view, {
                         uid,
                         params: {
                             ...params,
-                            ...getChannelScopes(rewardData.rewardCondition.channelAction),
-                            ...getLoginLinkForChannelAction(uid, rewardData.rewardCondition.channelAction),
+                            ...scopes,
+                            ...loginLink,
                         },
-                        alert,
+                        alert: {},
                     });
                 }
             }

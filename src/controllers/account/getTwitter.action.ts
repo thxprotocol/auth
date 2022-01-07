@@ -10,7 +10,11 @@ export const getTwitter = async (req: HttpRequest, res: Response, next: NextFunc
         if (error) throw new Error(error.message);
         return account;
     }
-
+    async function getTwitterUser(accessToken: string) {
+        const { user, error } = await TwitterService.getUser(accessToken);
+        if (error) throw new Error(error.message);
+        return user;
+    }
     async function getTwitterTweets(accessToken: string) {
         const { tweets, error } = await TwitterService.getTweets(accessToken);
         if (error) throw new Error(error.message);
@@ -45,10 +49,12 @@ export const getTwitter = async (req: HttpRequest, res: Response, next: NextFunc
         }
 
         const tweets = await getTwitterTweets(account.twitterAccessToken);
+        const user = await getTwitterUser(account.twitterAccessToken);
 
         res.json({
             isAuthorized: true,
             tweets,
+            users: [user],
         });
     } catch (error) {
         next(new HttpError(502, error.message, error));

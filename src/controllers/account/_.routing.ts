@@ -9,6 +9,7 @@ import { validations } from './_.validation';
 import { checkJwt } from '../../util/jwt';
 import { getTwitter } from './getTwitter.action';
 import { getTwitterLike } from './getTwitterLike.action';
+import { getTwitterRetweet } from './getTwitterRetweet.action';
 import { getYoutube } from './getYoutube.action';
 import { getYoutubeLike } from './getYoutubeLike.action';
 import { getYoutubeSubscribe } from './getYoutubeSubscribe.action';
@@ -21,6 +22,7 @@ router.get('/:id', checkScopes(['account:read']), getAccount);
 
 router.get('/:sub/twitter', checkScopes(['account:read']), getTwitter);
 router.get('/:sub/twitter/like/:item', checkScopes(['account:read']), getTwitterLike);
+router.get('/:sub/twitter/retweet/:item', checkScopes(['account:read']), getTwitterRetweet);
 
 router.get('/:sub/youtube', checkScopes(['account:read']), getYoutube);
 router.get('/:sub/youtube/like/:item', checkScopes(['account:read']), getYoutubeLike);

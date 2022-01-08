@@ -1,8 +1,8 @@
 import { Response, NextFunction } from 'express';
-import { AccountDocument } from '../../models/Account';
-import { HttpError, HttpRequest } from '../../models/Error';
-import AccountService from '../../services/AccountService';
-import YouTubeDataService from '../../services/YouTubeDataService';
+import { AccountDocument } from '../../../models/Account';
+import { HttpError, HttpRequest } from '../../../models/Error';
+import AccountService from '../../../services/AccountService';
+import YouTubeDataService from '../../../services/YouTubeDataService';
 
 export const getYoutubeSubscribe = async (req: HttpRequest, res: Response, next: NextFunction) => {
     async function getAccount(sub: string) {

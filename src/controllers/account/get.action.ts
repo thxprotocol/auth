@@ -8,6 +8,7 @@ function formatAccountRes(account: AccountDocument) {
         id: account._id,
         address: account.address,
         googleAccess: account.googleAccessToken && account.googleAccessTokenExpires > Date.now(),
+        twitterAccess: account.twitterAccessToken && account.twitterAccessTokenExpires > Date.now(),
     };
 }
 

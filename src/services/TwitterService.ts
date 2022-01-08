@@ -122,20 +122,20 @@ export default class YouTubeDataService {
 
     static async refreshTokens(refreshToken: string) {
         try {
-            const body = new URLSearchParams();
-            body.append('refresh_token', refreshToken);
-            body.append('grant_type', 'refresh_token');
-            body.append('client_id', TWITTER_CLIENT_ID);
+            const data = new URLSearchParams();
+            data.append('refresh_token', refreshToken);
+            data.append('grant_type', 'refresh_token');
+            data.append('client_id', TWITTER_CLIENT_ID);
 
             const r = await axios({
-                url: 'https://api.twitter.com/2/oauth2/token',
+                url: '/2/oauth2/token',
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
                     'Authorization':
                         'Basic ' + Buffer.from(`${TWITTER_CLIENT_ID}:${TWITTER_CLIENT_SECRET}`).toString('base64'),
                 },
-                data: body,
+                data,
             });
 
             if (r.status !== 200) throw new Error(ERROR_TOKEN_REQUEST_FAILED);
@@ -156,7 +156,7 @@ export default class YouTubeDataService {
             body.append('code_verifier', 'challenge');
 
             const r = await axios({
-                url: 'https://api.twitter.com/2/oauth2/token',
+                url: '/2/oauth2/token',
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',

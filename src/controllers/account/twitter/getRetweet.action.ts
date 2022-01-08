@@ -1,8 +1,8 @@
 import { Response, NextFunction } from 'express';
-import { AccountDocument } from '../../models/Account';
-import { HttpError, HttpRequest } from '../../models/Error';
-import AccountService from '../../services/AccountService';
-import TwitterService from '../../services/TwitterService';
+import { AccountDocument } from '../../../models/Account';
+import { HttpError, HttpRequest } from '../../../models/Error';
+import AccountService from '../../../services/AccountService';
+import TwitterService from '../../../services/TwitterService';
 
 export const getTwitterRetweet = async (req: HttpRequest, res: Response, next: NextFunction) => {
     async function getAccount(sub: string) {

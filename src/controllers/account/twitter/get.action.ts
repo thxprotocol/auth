@@ -1,8 +1,8 @@
 import { Response, NextFunction } from 'express';
-import { HttpError, HttpRequest } from '../../models/Error';
-import { AccountDocument } from '../../models/Account';
-import TwitterService from '../../services/TwitterService';
-import AccountService from '../../services/AccountService';
+import { HttpError, HttpRequest } from '../../../models/Error';
+import { AccountDocument } from '../../../models/Account';
+import TwitterService from '../../../services/TwitterService';
+import AccountService from '../../../services/AccountService';
 
 export const getTwitter = async (req: HttpRequest, res: Response, next: NextFunction) => {
     async function getAccount() {
@@ -23,6 +23,7 @@ export const getTwitter = async (req: HttpRequest, res: Response, next: NextFunc
 
     async function refreshToken(refreshToken: string) {
         const { tokens, error } = await TwitterService.refreshTokens(refreshToken);
+        console.log(tokens, error);
         if (error) throw new Error(error.message);
         return tokens;
     }
@@ -30,8 +31,9 @@ export const getTwitter = async (req: HttpRequest, res: Response, next: NextFunc
     async function updateTokens(account: AccountDocument, tokens: any) {
         account.twitterAccessToken = tokens.access_token || account.twitterAccessToken;
         account.twitterRefreshToken = tokens.refresh_token || account.twitterRefreshToken;
-        account.twitterAccessTokenExpires =
-            Date.now() + Number(tokens.expires_in) * 1000 || account.twitterAccessTokenExpires;
+        account.twitterAccessTokenExpires = tokens.expires_in
+            ? Date.now() + Number(tokens.expires_in) * 1000
+            : account.twitterAccessTokenExpires;
 
         return await account.save();
     }

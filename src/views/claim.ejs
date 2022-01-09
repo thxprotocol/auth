@@ -16,7 +16,14 @@
                         <%= params.rewardData.tokenSymbol %></span>
                 </strong>
                 <p>
-                    Access to this information will enable us to verify if you
+                    Sign in to your THX Web Wallet with your <%= params.channelType %> account to claim this reward.
+                    <a href="#" data-toggle="tooltip"
+                       title="We will create a new account if the email address used for authentication has not been used for a sign up.">
+                        <i class="fas fa-question-circle" aria-hidden="true"></i>
+                    </a>
+                </p>
+                <p>
+                    We will use your social account to verify if you
                     <% if (params.channelAction == 'YouTubeLike' ) { %>
                     <a target="_blank" href="https://www.youtube.com/watch?v=<%= params.channelItem %>"
                        class="font-weight-bold">liked this video</a>

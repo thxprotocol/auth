@@ -4,6 +4,7 @@ import { oidc } from '.';
 import { getGoogleLoginUrl } from '../../util/google';
 import { ChannelType, ChannelAction } from '../../models/Reward';
 import { getTwitterLoginURL, twitterScopes } from '../../util/twitter';
+import { WALLET_URL } from '../../util/secrets';
 
 const youtubeScope = ['https://www.googleapis.com/auth/userinfo.email', 'https://www.googleapis.com/auth/youtube'];
 const youtubeReadOnlyScope = [
@@ -83,30 +84,30 @@ export default async function getController(req: Request, res: Response) {
                 }
 
                 await oidc.interactionResult(req, res, {}, { mergeWithLastSubmission: true });
+
                 return res.redirect(params.return_url);
             }
             case 'login': {
                 if (!params.reward_hash) {
-                    const view = 'login';
-                    const googleLoginUrl = getGoogleLoginUrl(uid, youtubeReadOnlyScope);
-                    const twitterLoginUrl = getTwitterLoginURL(uid);
+                    console.log(params.return_url, WALLET_URL);
 
-                    params.googleLoginUrl = googleLoginUrl;
-                    params.twitterLoginUrl = twitterLoginUrl;
-
-                    return res.render(view, { uid, params, alert: {} });
+                    if (params.return_url === WALLET_URL) {
+                        params.googleLoginUrl = getGoogleLoginUrl(req.params.uid, youtubeReadOnlyScope);
+                        params.twitterLoginUrl = getTwitterLoginURL(uid);
+                    }
+                    return res.render('login', { uid, params, alert: {} });
                 } else {
-                    const view = 'claim';
                     const rewardData = JSON.parse(Buffer.from(params.reward_hash, 'base64').toString());
 
                     params.rewardData = rewardData;
+                    params.channelType = ChannelType[params.rewardData.rewardCondition.channelType];
                     params.channelAction = ChannelAction[params.rewardData.rewardCondition.channelAction];
                     params.channelItem = params.rewardData.rewardCondition.channelItem;
 
                     const scopes = getChannelScopes(rewardData.rewardCondition.channelAction);
                     const loginLink = getLoginLinkForChannelAction(uid, rewardData.rewardCondition.channelAction);
 
-                    return res.render(view, {
+                    return res.render('claim', {
                         uid,
                         params: {
                             ...params,

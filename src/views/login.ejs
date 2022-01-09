@@ -29,12 +29,12 @@
                                 use</a> and <a href="<%= publicUrl %>/privacy-policy.pdf" target="_blank">privacy
                                 statement</a></label>
                     </div>
-                    <div class="custom-control custom-checkbox b-custom-control-sm"><input id="acceptUpdates"
-                               type="checkbox" name="acceptUpdates" class="custom-control-input" value="true"><label
-                               for="acceptUpdates" class="custom-control-label font-weight-normal">
-                            Opt-in to
-                            receive updates from THX on its products, you can opt-out at any
-                            time. </label>
+                    <div class="custom-control custom-checkbox b-custom-control-sm">
+                        <input id="acceptUpdates" type="checkbox" name="acceptUpdates" class="custom-control-input"
+                               value="true">
+                        <label for="acceptUpdates" class="custom-control-label font-weight-normal">
+                            Opt-in to receive updates from THX on its products, you can opt-out at any time.
+                        </label>
                     </div>
                 </div>
                 <input type="hidden" name="authenticationToken" value="<%= params.authentication_token %>" />
@@ -52,6 +52,7 @@
             <strong class="h2 d-block text-dark text-center mb-4">
                 Hello!
             </strong>
+            <% if (params.googleLoginUrl || params.twitterLoginUrl) { %>
             <p>
                 Sign in with your social account or an existing THX account.
                 <a href="#" data-toggle="tooltip"
@@ -73,6 +74,7 @@
                 <div class="label">Sign in with Twitter</div>
             </a>
             <hr>
+            <% } %>
             <form autocomplete="off" action="/oidc/<%= uid %>/login" method="post" class="mb-4">
 
                 <div class="form-group">

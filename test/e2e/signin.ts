@@ -1,8 +1,10 @@
 import request from 'supertest';
 import server from '../../src/server';
+import AccountService from '../../src/services/AccountService';
+import db from '../../src/util/database';
+import { INITIAL_ACCESS_TOKEN } from '../../src/util/secrets';
+import { accountEmail, accountSecret } from './lib/constants';
 
-const CLIENT_ID = 'puqOQ6ZT9U8UsfyzuTIwT';
-const CLIENT_SECRET = 'VVrUT7n82KNcuh947RAI-dqY79K8r47k_Xk9WvdKXl_viltV5kzX5oNDjen97vr0pBRSlv3oGZvz3_ka1136LQ';
 const REDIRECT_URL = 'https://localhost:8082/signin-oidc';
 
 function getPath(url: string) {
@@ -12,6 +14,37 @@ function getPath(url: string) {
 describe('Sign In', () => {
     let uid = '';
     const http = request.agent(server);
+    let CLIENT_ID = '';
+    let CLIENT_SECRET = '';
+
+    beforeAll(async () => {
+        const res = await http
+            .post('/reg')
+            .set({ Authorization: `Bearer ${INITIAL_ACCESS_TOKEN}` })
+            .send({
+                application_type: 'web',
+                client_name: 'THX Dashboard',
+                grant_types: ['authorization_code'],
+                redirect_uris: ['https://localhost:8082/signin-oidc'],
+                response_types: ['code'],
+                scope: 'openid dashboard user',
+            });
+
+        CLIENT_ID = res.body.client_id;
+        CLIENT_SECRET = res.body.client_secret;
+    });
+
+    beforeAll(async () => {
+        const { account, error } = await AccountService.signup(accountEmail, accountSecret, true, true, true);
+        if (error) console.log(error);
+        account.privateKey = undefined;
+        account.save();
+    });
+
+    afterAll(async () => {
+        await db.truncate();
+        server.close();
+    });
 
     describe('GET /auth', () => {
         it('Successfully get UID', async () => {
@@ -37,11 +70,12 @@ describe('Sign In', () => {
         describe('Login flow check', () => {
             let redirectUrl = '';
             let Cookies = '';
+            let code = '';
 
             it('Successful login with correct information', async () => {
                 const res = await http.post(`/oidc/${uid}/login`).send({
-                    email: 'peter@thx.network',
-                    password: 'qpwoei',
+                    email: accountEmail,
+                    password: accountSecret,
                 });
                 expect(res.status).toEqual(302);
 
@@ -62,7 +96,6 @@ describe('Sign In', () => {
                 Cookies += res.headers['set-cookie']?.join('; ');
             });
 
-            let code = '';
             it('Redirect back to callback URL with auth code', async () => {
                 const res = await http.get(redirectUrl).set('Cookie', Cookies).send();
                 expect(res.status).toEqual(302);
@@ -101,15 +134,11 @@ describe('Sign In', () => {
 
         it('Failed to login with wrong password', async () => {
             const res = await http.post(`/oidc/${uid}/login`).send({
-                email: 'peter@thx.network',
+                email: accountEmail,
                 password: 'thisgoingtofail',
             });
             expect(res.status).toEqual(200);
             expect(res.text).toMatch(new RegExp('.*Your provided passwords do not match*'));
         });
-    });
-
-    afterAll(async () => {
-        server.close();
     });
 });

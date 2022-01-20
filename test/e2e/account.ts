@@ -1,5 +1,6 @@
 import request from 'supertest';
 import server from '../../src/server';
+import db from '../../src/util/database';
 import AccountService from '../../src/services/AccountService';
 import { INITIAL_ACCESS_TOKEN } from '../../src/util/secrets';
 import { accountAddress, accountEmail, accountSecret } from './lib/constants';
@@ -45,6 +46,7 @@ describe('Account Controller', () => {
     });
 
     afterAll(async () => {
+        await db.truncate();
         server.close();
     });
 

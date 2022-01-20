@@ -1,8 +1,9 @@
 import request from 'supertest';
 import server from '../../src/server';
+import db from '../../src/util/database';
 import AccountService from '../../src/services/AccountService';
 import { INITIAL_ACCESS_TOKEN } from '../../src/util/secrets';
-import { accountEmail } from './lib/constants';
+import { accountEmail, accountSecret } from './lib/constants';
 
 const http = request.agent(server);
 
@@ -10,14 +11,13 @@ describe('OAuth2 Grants', () => {
     let authHeader: string, accessToken: string, accountId: string;
 
     beforeAll(async () => {
-        const { account, error } = await AccountService.getByEmail(accountEmail);
+        const { account, error } = await AccountService.signupFor(accountEmail, accountSecret);
         if (error) console.log(error);
         accountId = account.id;
     });
 
     afterAll(async () => {
-        const { account } = await AccountService.getByEmail(accountEmail);
-        await account.remove();
+        await db.truncate();
         server.close();
     });
 

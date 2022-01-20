@@ -4,7 +4,7 @@ import AccountService from '../../src/services/AccountService';
 import { INITIAL_ACCESS_TOKEN } from '../../src/util/secrets';
 import { accountAddress, accountEmail, accountSecret } from './lib/constants';
 
-const http = request(server);
+const http = request.agent(server);
 
 describe('Account Controller', () => {
     let authHeader: string, basicAuthHeader: string, accountId: string;

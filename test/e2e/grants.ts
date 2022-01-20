@@ -1,15 +1,13 @@
 import request from 'supertest';
 import server from '../../src/server';
 import AccountService from '../../src/services/AccountService';
-import { INITIAL_ACCESS_TOKEN, TESTING, MONGODB_TEST_URI, MONGODB_URI } from '../../src/util/secrets';
+import { INITIAL_ACCESS_TOKEN } from '../../src/util/secrets';
 import { accountEmail } from './lib/constants';
 
 const http = request.agent(server);
 
 describe('OAuth2 Grants', () => {
     let authHeader: string, accessToken: string, accountId: string;
-
-    console.log(TESTING ? MONGODB_TEST_URI : MONGODB_URI);
 
     beforeAll(async () => {
         const { account, error } = await AccountService.getByEmail(accountEmail);

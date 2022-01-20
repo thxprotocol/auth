@@ -11,11 +11,11 @@ import { oidc } from './controllers/oidc';
 import { requestLogger } from './util/logger';
 import { corsHandler } from './util/cors';
 import { errorHandler, notFoundHandler } from './util/error';
-import { PORT, MONGODB_URI, locals, MONGODB_TEST_URI, TESTING } from './util/secrets';
+import { PORT, MONGODB_URI, locals } from './util/secrets';
 
 const app = express();
 
-db.connect(TESTING ? MONGODB_TEST_URI : MONGODB_URI);
+db.connect(MONGODB_URI);
 
 app.set('port', PORT);
 app.set('trust proxy', true);

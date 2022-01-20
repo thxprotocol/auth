@@ -11,11 +11,11 @@ import { oidc } from './controllers/oidc';
 import { requestLogger } from './util/logger';
 import { corsHandler } from './util/cors';
 import { errorHandler, notFoundHandler } from './util/error';
-import { PORT, MONGODB_URI, locals } from './util/secrets';
+import { PORT, MONGODB_URI, locals, MONGODB_TEST_URI, TESTING } from './util/secrets';
 
 const app = express();
 
-db.connect(MONGODB_URI);
+db.connect(TESTING ? MONGODB_TEST_URI : MONGODB_URI);
 
 app.set('port', PORT);
 app.set('trust proxy', true);
@@ -27,6 +27,7 @@ app.use(helmetInstance);
 app.use(corsHandler);
 app.use(requestLogger);
 app.use(expressEJSLayouts);
+app.use(express.json());
 app.use(xframe('SAMEORIGIN'));
 app.use(xssProtection(true));
 app.use(express.static(path.join(__dirname, 'public'), { maxAge: 31557600000 }));

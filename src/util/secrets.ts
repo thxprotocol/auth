@@ -14,6 +14,7 @@ const required = [
     'PUBLIC_URL',
     'DASHBOARD_URL',
     'MONGODB_URI',
+    'MONGODB_TEST_URI',
     'PORT',
     'SECURE_KEY',
     'SENDGRID_API_KEY',
@@ -34,7 +35,9 @@ export const PUBLIC_URL = process.env.PUBLIC_URL;
 export const DASHBOARD_URL = process.env.DASHBOARD_URL;
 export const WIDGETS_URL = process.env.WIDGETS_URL;
 export const MONGODB_URI = process.env.MONGODB_URI;
+export const MONGODB_TEST_URI = process.env.MONGODB_TEST_URI;
 export const PORT = process.env.PORT;
+export const TESTING = process.env.NODE_ENV === 'test'; // https://jestjs.io/docs/environment-variables
 export const SECURE_KEY = process.env.SECURE_KEY;
 export const GTM = process.env.GTM;
 export const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;

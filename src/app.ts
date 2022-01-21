@@ -27,7 +27,6 @@ app.use(helmetInstance);
 app.use(corsHandler);
 app.use(requestLogger);
 app.use(expressEJSLayouts);
-app.use(express.json());
 app.use(xframe('SAMEORIGIN'));
 app.use(xssProtection(true));
 app.use(express.static(path.join(__dirname, 'public'), { maxAge: 31557600000 }));

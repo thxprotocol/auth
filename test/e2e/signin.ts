@@ -12,7 +12,7 @@ function getPath(url: string) {
 }
 
 describe('Sign In', () => {
-    let uid = '';
+    let CID = '';
     const http = request.agent(server);
     let CLIENT_ID = '';
     let CLIENT_SECRET = '';
@@ -38,7 +38,7 @@ describe('Sign In', () => {
         const { account, error } = await AccountService.signup(accountEmail, accountSecret, true, true, true);
         if (error) console.log(error);
         account.privateKey = undefined;
-        account.save();
+        await account.save();
     });
 
     afterAll(async () => {
@@ -47,7 +47,7 @@ describe('Sign In', () => {
     });
 
     describe('GET /auth', () => {
-        it('Successfully get UID', async () => {
+        it('Successfully get CID', async () => {
             const params = new URLSearchParams({
                 client_id: CLIENT_ID,
                 redirect_uri: REDIRECT_URL,
@@ -62,21 +62,21 @@ describe('Sign In', () => {
             expect(res.status).toEqual(302);
             expect(res.header.location).toMatch(new RegExp('/oidc/.*'));
 
-            uid = (res.header.location as string).split('/')[2];
+            CID = (res.header.location as string).split('/')[2];
         });
     });
 
-    describe('POST /oidc/<uid>/login', () => {
+    describe('POST /oidc/<cid>/login', () => {
         describe('Login flow check', () => {
             let redirectUrl = '';
             let Cookies = '';
             let code = '';
 
             it('Successful login with correct information', async () => {
-                const res = await http.post(`/oidc/${uid}/login`).send({
-                    email: accountEmail,
-                    password: accountSecret,
-                });
+                const res = await http
+                    .post(`/oidc/${CID}/login`)
+                    .send(`email=${accountEmail}&password=${accountSecret}`);
+
                 expect(res.status).toEqual(302);
 
                 redirectUrl = getPath(res.header.location);
@@ -124,19 +124,16 @@ describe('Sign In', () => {
         });
 
         it('Failed to login with wrong credential', async () => {
-            const res = await http.post(`/oidc/${uid}/login`).send({
-                email: 'fake.user@thx.network',
-                password: 'thisgoingtofail',
-            });
+            const res = await http
+                .post(`/oidc/${CID}/login`)
+                .send('email=fake.user@thx.network&password=thisgoingtofail');
+
             expect(res.status).toEqual(200);
             expect(res.text).toMatch(new RegExp('.*Cannot read property.*'));
         });
 
         it('Failed to login with wrong password', async () => {
-            const res = await http.post(`/oidc/${uid}/login`).send({
-                email: accountEmail,
-                password: 'thisgoingtofail',
-            });
+            const res = await http.post(`/oidc/${CID}/login`).send(`email=${accountEmail}&password=thisgoingtofail`);
             expect(res.status).toEqual(200);
             expect(res.text).toMatch(new RegExp('.*Your provided passwords do not match*'));
         });

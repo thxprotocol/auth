@@ -23,7 +23,6 @@ export const getTwitter = async (req: HttpRequest, res: Response, next: NextFunc
 
     async function refreshToken(refreshToken: string) {
         const { tokens, error } = await TwitterService.refreshTokens(refreshToken);
-        console.log(tokens, error);
         if (error) throw new Error(error.message);
         return tokens;
     }

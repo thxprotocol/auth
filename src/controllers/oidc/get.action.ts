@@ -89,8 +89,6 @@ export default async function getController(req: Request, res: Response) {
             }
             case 'login': {
                 if (!params.reward_hash) {
-                    console.log(params.return_url, WALLET_URL);
-
                     if (params.return_url === WALLET_URL) {
                         params.googleLoginUrl = getGoogleLoginUrl(req.params.uid, youtubeReadOnlyScope);
                         params.twitterLoginUrl = getTwitterLoginURL(uid);

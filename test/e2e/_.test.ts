@@ -13,3 +13,4 @@ afterAll(async () => {
 
 require('./account.ts');
 require('./grants.ts');
+require('./signin.ts');

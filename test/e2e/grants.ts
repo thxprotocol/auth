@@ -1,7 +1,7 @@
 import request from 'supertest';
 import server from '../../src/server';
-import AccountService from '../../src/services/AccountService';
 import db from '../../src/util/database';
+import AccountService from '../../src/services/AccountService';
 import { INITIAL_ACCESS_TOKEN } from '../../src/util/secrets';
 import { accountEmail, accountSecret } from './lib/constants';
 

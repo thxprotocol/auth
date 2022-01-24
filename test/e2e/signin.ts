@@ -3,13 +3,9 @@ import server from '../../src/server';
 import AccountService from '../../src/services/AccountService';
 import db from '../../src/util/database';
 import { INITIAL_ACCESS_TOKEN } from '../../src/util/secrets';
-import { accountEmail, accountSecret } from './lib/constants';
+import { getPath, accountEmail, accountSecret } from './lib';
 
 const REDIRECT_URL = 'https://localhost:8082/signin-oidc';
-
-function getPath(url: string) {
-    return '/' + url.split('/')[3] + '/' + url.split('/')[4];
-}
 
 describe('Sign In', () => {
     let CID = '';

@@ -129,7 +129,7 @@ describe('Sign In', () => {
                 .send('email=fake.user@thx.network&password=thisgoingtofail');
 
             expect(res.status).toEqual(200);
-            expect(res.text).toMatch(new RegExp('.*Cannot read property.*'));
+            expect(res.text).toMatch(new RegExp('.*Could not find an account for this address*'));
         });
 
         it('Failed to login with wrong password', async () => {

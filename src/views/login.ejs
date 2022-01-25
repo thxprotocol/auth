@@ -4,9 +4,12 @@
     </div>
     <div class="card shadow-sm mb-5">
         <div class="card-body pt-sm-5 px-sm-5 pb-sm-3">
+            <strong class="h2 d-block text-dark text-center mb-4">
+                Hello!
+            </strong>
             <% if (alert && alert.message) { %>
             <div class="alert alert-<%= alert.variant %>">
-                <%= alert.message %>
+                <%- alert.message %>
             </div>
             <% } %>
             <% if (params.authentication_token && params.secure_key) { %>
@@ -49,9 +52,7 @@
                 </button>
             </form>
             <% } else { %>
-            <strong class="h2 d-block text-dark text-center mb-4">
-                Hello!
-            </strong>
+
             <% if (params.googleLoginUrl || params.twitterLoginUrl) { %>
             <p>
                 Sign in with your social account or an existing THX account.

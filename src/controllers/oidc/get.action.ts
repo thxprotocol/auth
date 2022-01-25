@@ -98,9 +98,21 @@ export default async function getController(req: Request, res: Response) {
                     const rewardData = JSON.parse(Buffer.from(params.reward_hash, 'base64').toString());
 
                     params.rewardData = rewardData;
-                    params.channelType = ChannelType[params.rewardData.rewardCondition.channelType];
-                    params.channelAction = ChannelAction[params.rewardData.rewardCondition.channelAction];
-                    params.channelItem = params.rewardData.rewardCondition.channelItem;
+
+                    if (!rewardData.rewardCondition || !rewardData.rewardCondition.channelType) {
+                        return res.render('login', {
+                            uid,
+                            params,
+                            alert: {
+                                variant: 'success',
+                                message: `Sign in and claim your <strong>${rewardData.rewardAmount} ${rewardData.tokenSymbol}</strong>!`,
+                            },
+                        });
+                    }
+
+                    params.channelType = ChannelType[rewardData.rewardCondition.channelType];
+                    params.channelAction = ChannelAction[rewardData.rewardCondition.channelAction];
+                    params.channelItem = rewardData.rewardCondition.channelItem;
 
                     const scopes = getChannelScopes(rewardData.rewardCondition.channelAction);
                     const loginLink = getLoginLinkForChannelAction(uid, rewardData.rewardCondition.channelAction);

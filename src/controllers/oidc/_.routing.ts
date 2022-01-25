@@ -1,4 +1,4 @@
-import express, { urlencoded, json } from 'express';
+import express, { urlencoded } from 'express';
 import getController from './get.action';
 import getAbortController from './getAbort.action';
 import getForgotController from './getForgot.action';

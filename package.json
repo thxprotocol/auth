@@ -58,6 +58,7 @@
         "migrate-mongo": "^8.2.3",
         "mongoose": "^5.13.9",
         "morgan": "^1.10.0",
+        "nock": "^13.2.2",
         "nodemailer": "^6.6.1",
         "oidc-provider": "^6.31.1",
         "winston": "^3.2.1",

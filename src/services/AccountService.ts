@@ -220,6 +220,8 @@ export default class AccountService {
         try {
             const account: AccountDocument = await Account.findOne({ email });
 
+            if (!account) throw new Error(ERROR_NO_ACCOUNT);
+
             const { error, isMatch } = account.comparePassword(password);
 
             if (error) {

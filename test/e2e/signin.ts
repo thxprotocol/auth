@@ -3,13 +3,9 @@ import server from '../../src/server';
 import AccountService from '../../src/services/AccountService';
 import db from '../../src/util/database';
 import { INITIAL_ACCESS_TOKEN } from '../../src/util/secrets';
-import { accountEmail, accountSecret } from './lib/constants';
+import { getPath, accountEmail, accountSecret } from './lib';
 
 const REDIRECT_URL = 'https://localhost:8082/signin-oidc';
-
-function getPath(url: string) {
-    return '/' + url.split('/')[3] + '/' + url.split('/')[4];
-}
 
 describe('Sign In', () => {
     let CID = '';
@@ -129,7 +125,7 @@ describe('Sign In', () => {
                 .send('email=fake.user@thx.network&password=thisgoingtofail');
 
             expect(res.status).toEqual(200);
-            expect(res.text).toMatch(new RegExp('.*Cannot read property.*'));
+            expect(res.text).toMatch(new RegExp('.*Could not find an account for this address*'));
         });
 
         it('Failed to login with wrong password', async () => {

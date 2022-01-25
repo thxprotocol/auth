@@ -21,7 +21,7 @@ export default async function postCreateController(req: Request, res: Response, 
         alert.message = 'The provided passwords are not identical.';
     } else if (req.body.acceptTermsPrivacy !== 'true') {
         alert.message = 'Please accept the terms of use and privacy statement.';
-    } else if (!req.body.email.length) {
+    } else if (!req.body.email?.length) {
         alert.message = 'Email cannot be blank.';
     }
 

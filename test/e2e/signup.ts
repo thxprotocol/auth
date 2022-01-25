@@ -79,32 +79,32 @@ describe('Sign up', () => {
             expect(res.text).toMatch(new RegExp('.*Please enter a strong password.*'));
         });
 
-        // it('Failed to create account with empty email', async () => {
-        //     const params = new URLSearchParams({
-        //         email: '',
-        //         password: NEW_ACCOUNT_PASSWORD,
-        //         confirmPassword: NEW_ACCOUNT_PASSWORD,
-        //         acceptTermsPrivacy: true as any,
-        //         returnUrl: 'https://localhost:8082',
-        //     });
+        it('Failed to create account with empty email', async () => {
+            const params = new URLSearchParams({
+                email: '',
+                password: NEW_ACCOUNT_PASSWORD,
+                confirmPassword: NEW_ACCOUNT_PASSWORD,
+                acceptTermsPrivacy: true as any,
+                returnUrl: 'https://localhost:8082',
+            });
 
-        //     const res = await http.post(`/oidc/${CID}/create`).send(params.toString());
-        //     expect(res.text).toMatch(new RegExp('.*Please enter a valid email address.*'));
-        // });
+            const res = await http.post(`/oidc/${CID}/create`).send(params.toString());
+            expect(res.text).toMatch(new RegExp('.*Email cannot be blank*'));
+        });
 
-        // it('Failed to create account without accept policy', async () => {
-        //     const NEW_ACCOUNT_EMAIL = 'policy.email@thx.network';
-        //     const params = new URLSearchParams({
-        //         email: NEW_ACCOUNT_EMAIL,
-        //         password: NEW_ACCOUNT_PASSWORD,
-        //         confirmPassword: NEW_ACCOUNT_PASSWORD,
-        //         acceptTermsPrivacy: false as any,
-        //         returnUrl: 'https://localhost:8082',
-        //     });
+        it('Failed to create account without accept policy', async () => {
+            const NEW_ACCOUNT_EMAIL = 'policy.email@thx.network';
+            const params = new URLSearchParams({
+                email: NEW_ACCOUNT_EMAIL,
+                password: NEW_ACCOUNT_PASSWORD,
+                confirmPassword: NEW_ACCOUNT_PASSWORD,
+                acceptTermsPrivacy: false as any,
+                returnUrl: 'https://localhost:8082',
+            });
 
-        //     const res = await http.post(`/oidc/${CID}/create`).send(params.toString());
-        //     expect(res.text).toMatch(new RegExp('.*You much accept our policy to be able to register*'));
-        // });
+            const res = await http.post(`/oidc/${CID}/create`).send(params.toString());
+            expect(res.text).toMatch(new RegExp('.*Please accept the terms of use and privacy statement.*'));
+        });
 
         describe('Sign up flow', () => {
             let redirectUrl = '';

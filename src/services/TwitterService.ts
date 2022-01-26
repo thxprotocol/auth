@@ -14,7 +14,7 @@ export default class YouTubeDataService {
             if (!user) throw new Error('Could not find Twitter user.');
 
             const r = await axios({
-                url: `/2/tweets/${channelItem}/liking_users`,
+                url: `/2/users/${user.id}/liked_tweets?max_results=100&tweet.fields=id`,
                 method: 'GET',
                 headers: {
                     Authorization: `Bearer ${accessToken}`,
@@ -25,7 +25,7 @@ export default class YouTubeDataService {
             if (!r.data) throw new Error(ERROR_NO_DATA);
 
             return {
-                result: r.data.data ? !!r.data.data.filter((u: { id: number }) => u.id === user.id).length : false,
+                result: r.data.data ? !!r.data.data.filter((t: { id: string }) => t.id === channelItem).length : false,
             };
         } catch (error) {
             return { error };
@@ -104,7 +104,7 @@ export default class YouTubeDataService {
             const { user } = await this.getUser(accessToken);
             if (!user) throw new Error('Could not find Twitter user.');
             const r = await axios({
-                url: `/2/users/${user.id}/tweets?tweet.fields=created_at,in_reply_to_user_id,conversation_id`,
+                url: `/2/users/${user.id}/tweets?tweet.fields=id,referenced_tweets,created_at`,
                 method: 'GET',
                 headers: {
                     Authorization: `Bearer ${accessToken}`,

@@ -12,6 +12,6 @@ afterAll(async () => {
 });
 
 require('./account.ts');
-// require('./grants.ts');
-// require('./signin.ts');
-// require('./signup.ts');
+require('./grants.ts');
+require('./signin.ts');
+require('./signup.ts');

@@ -5,7 +5,8 @@ const ERROR_NO_DATA = 'Could not find an youtube data for this accesstoken';
 const ERROR_NOT_AUTHORIZED = 'Not authorized for Twitter API';
 const ERROR_TOKEN_REQUEST_FAILED = 'Failed to request access token';
 
-axios.defaults.baseURL = 'https://api.twitter.com';
+export const TWITTER_API_ENDPOINT = 'https://api.twitter.com';
+axios.defaults.baseURL = TWITTER_API_ENDPOINT;
 
 export default class YouTubeDataService {
     static async validateLike(accessToken: string, channelItem: string) {

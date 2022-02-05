@@ -51,7 +51,7 @@ describe('Account Controller', () => {
     });
 
     describe('POST /account', () => {
-        it('HTTP 200', async (done) => {
+        it('HTTP 200', async () => {
             const res = await http
                 .post('/account')
                 .set({
@@ -64,13 +64,11 @@ describe('Account Controller', () => {
             expect(res.status).toBe(201);
 
             accountId = res.body.id;
-
-            done();
         });
     });
 
     describe('GET /account/:id', () => {
-        it('HTTP 200', async (done) => {
+        it('HTTP 200', async () => {
             const res = await http
                 .get(`/account/${accountId}`)
                 .set({
@@ -80,13 +78,11 @@ describe('Account Controller', () => {
             expect(res.status).toBe(200);
             expect(res.body.address).toBeDefined();
             expect(res.body.privateKey).toBeUndefined();
-
-            done();
         });
     });
 
     describe('PATCH /account/:id', () => {
-        it('HTTP 200', async (done) => {
+        it('HTTP 200', async () => {
             const res = await http
                 .patch(`/account/${accountId}`)
                 .set({
@@ -96,11 +92,9 @@ describe('Account Controller', () => {
                     address: accountAddress,
                 });
             expect(res.status).toBe(204);
-
-            done();
         });
 
-        it('HTTP 200', async (done) => {
+        it('HTTP 200', async () => {
             const res = await http
                 .get(`/account/${accountId}`)
                 .set({
@@ -109,13 +103,11 @@ describe('Account Controller', () => {
                 .send();
             expect(res.status).toBe(200);
             expect(res.body.address).toBe(accountAddress);
-
-            done();
         });
     });
 
     describe('GET /account/:id (remove address)', () => {
-        it('HTTP 200', async (done) => {
+        it('HTTP 200', async () => {
             const { account } = await AccountService.get(accountId);
             account.address = '';
             await account.save();
@@ -129,13 +121,11 @@ describe('Account Controller', () => {
             expect(res.status).toBe(200);
             expect(res.body.address).toBe('');
             expect(res.body.privateKey).toBeUndefined();
-
-            done();
         });
     });
 
     describe('POST /account (generate address)', () => {
-        it('HTTP 200', async (done) => {
+        it('HTTP 200', async () => {
             const res = await http
                 .post('/account')
                 .set({
@@ -148,8 +138,6 @@ describe('Account Controller', () => {
             expect(res.status).toBe(201);
             expect(res.body.id).toBe(accountId);
             expect(res.body.address).toBeDefined();
-
-            done();
         });
     });
 });

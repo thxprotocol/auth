@@ -1,10 +1,7 @@
 import dotenv from 'dotenv';
 import { NextFunction, Request, Response } from 'express';
 
-export const VERSION = 'v1';
-export const ENVIRONMENT = process.env.NODE_ENV;
-
-dotenv.config({ path: ENVIRONMENT === 'test' ? '.env.ci' : '.env' });
+dotenv.config();
 
 const required = [
     'ISSUER',
@@ -26,6 +23,16 @@ required.forEach((value: string) => {
     }
 });
 
+// This allows you to use a single .env file with both regular and test configuration. This allows for an
+// easy to use setup locally without having hardcoded credentials during test runs.
+if (process.env.NODE_ENV === 'test') {
+    if (process.env.PORT_TEST !== undefined) process.env.PORT = process.env.PORT_TEST;
+    if (process.env.MONGODB_URI_TEST !== undefined) process.env.MONGODB_URI = process.env.MONGODB_URI_TEST;
+    if (process.env.TESTNET_RPC_TEST !== undefined) process.env.TESTNET_RPC = process.env.TESTNET_RPC_TEST;
+}
+
+export const VERSION = 'v1';
+export const NODE_ENV = process.env.NODE_ENV;
 export const ISSUER = process.env.ISSUER;
 export const AUTH_URL = process.env.AUTH_URL;
 export const WALLET_URL = process.env.WALLET_URL;

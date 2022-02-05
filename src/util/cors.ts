@@ -2,7 +2,7 @@ import cors from 'cors';
 import { Client } from '../models/Client';
 import { AUTH_URL, WALLET_URL, DASHBOARD_URL, WIDGETS_URL } from '../util/secrets';
 
-export const corsHandler = cors(async (req: any, callback: Function) => {
+export const corsHandler = cors(async (req: any, callback: any) => {
     const origin = req.header('Origin');
     const allowedOrigins = [AUTH_URL, WALLET_URL, DASHBOARD_URL, WIDGETS_URL];
     const clients = await Client.find({});

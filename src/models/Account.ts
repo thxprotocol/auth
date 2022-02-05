@@ -23,7 +23,7 @@ export interface IAccount {
     acceptTermsPrivacy: boolean;
     acceptUpdates: boolean;
     recoveryPhrase: string;
-    comparePassword: Function;
+    comparePassword: any;
 }
 
 export interface IAccountUpdates {

@@ -5,7 +5,7 @@ import AccountService from '../../services/AccountService';
 
 export default async function postResetController(req: Request, res: Response, next: NextFunction) {
     try {
-        const { sub, error } = await AccountService.getSubForPasswordResetToken(
+        const { error } = await AccountService.getSubForPasswordResetToken(
             req.body.password,
             req.body.passwordConfirm,
             req.body.passwordResetToken,

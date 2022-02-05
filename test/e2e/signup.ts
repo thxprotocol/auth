@@ -4,12 +4,10 @@ import server from '../../src/server';
 import AccountService from '../../src/services/AccountService';
 import db from '../../src/util/database';
 import { INITIAL_ACCESS_TOKEN } from '../../src/util/secrets';
-import { getPath } from './lib';
 
 describe('Sign up', () => {
     let CID = '';
     let CLIENT_ID = '';
-    let CLIENT_SECRET = '';
     const REDIRECT_URL = 'https://localhost:8082/signin-oidc';
     const NEW_ACCOUNT_EMAIL = 'test@thx.network';
     const NEW_ACCOUNT_PASSWORD = '123asdASD@#@#!!';
@@ -29,7 +27,6 @@ describe('Sign up', () => {
             });
 
         CLIENT_ID = res.body.client_id;
-        CLIENT_SECRET = res.body.client_secret;
     });
 
     afterAll(async () => {

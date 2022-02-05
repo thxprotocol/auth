@@ -15,7 +15,7 @@
 ## 1. Prerequisites
 
 -   Docker
--   Nodejs 12.x
+-   Nodejs 16.x
 
 ## 2. Installing
 

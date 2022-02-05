@@ -1,17 +1,11 @@
 name: CI
 
-on:
-    pull_request:
-        branches:
-            - develop
+on: push
 
 jobs:
     buildAndTest:
         name: CI Pipeline
         runs-on: ubuntu-latest
-        strategy:
-            matrix:
-                node-version: ['12.x']
 
         steps:
             - name: Checkout repository
@@ -19,16 +13,71 @@ jobs:
               with:
                   submodules: true
 
-            - name: Install Node.js ${{ matrix.node-version }}
-              uses: actions/setup-node@v1
-              with:
-                  node-version: ${{ matrix.node-version }}
-
-            - name: Install dependencies
-              run: npm install
-
-            - name: Build keys
-              run: npm run build:keys
+            - name: Run dependencies
+              run: docker compose -f docker-compose.ci.yml up auth_ci_mongo -d
 
             - name: Run test
-              run: npm run test
+              run: |
+                  docker-compose -f docker-compose.ci.yml run auth_ci npm run test
+
+            - name: Shut down dependencies
+              run: docker compose -f docker-compose.ci.yml down
+
+    buildAndPushImage:
+        name: Build and Push docker image
+        runs-on: ubuntu-latest
+        if: github.ref == 'refs/heads/main' || startsWith(github.ref,'refs/heads/hotfix/')
+        needs: buildAndTest
+        steps:
+            - name: Configure AWS credentials
+              uses: aws-actions/configure-aws-credentials@v1
+              with:
+                  aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+                  aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+                  aws-region: eu-west-3
+
+            - name: Login to ECR
+              uses: docker/login-action@v1
+              with:
+                  registry: 275440070213.dkr.ecr.eu-west-3.amazonaws.com
+
+            - name: Docker meta
+              id: meta
+              uses: docker/metadata-action@v3
+              with:
+                  images: |
+                      275440070213.dkr.ecr.eu-west-3.amazonaws.com/auth
+                  tags: |
+                      type=ref,event=branch
+                      type=sha
+
+            - name: Build
+              uses: docker/build-push-action@v2
+              with:
+                  push: true
+                  tags: ${{ steps.meta.outputs.tags }}
+                  labels: ${{ steps.meta.outputs.labels }}
+
+    autodeploy:
+        name: Auto deploy main to dev.auth.thx.network
+        runs-on: ubuntu-latest
+        if: github.ref == 'refs/heads/main'
+        needs: buildAndPushImage
+        steps:
+            - name: Install Node.js 16.x
+              uses: actions/setup-node@v1
+              with:
+                  node-version: 16.x
+
+            - name: Install deploy-scripts
+              run: npm install -g thxprotocol/deploy-scripts
+
+            - name: Configure AWS credentials
+              uses: aws-actions/configure-aws-credentials@v1
+              with:
+                  aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_DEPLOY }}
+                  aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_DEPLOY }}
+                  aws-region: eu-west-3
+
+            - name: Deploy-script
+              run: thx-deploy AuthDev sha-$(echo ${{github.sha}} | cut -c1-7)

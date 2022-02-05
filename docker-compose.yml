@@ -21,7 +21,7 @@ services:
 
     auth_node:
         container_name: thx_auth_node
-        image: node:12
+        image: node:16
         networks:
             - thx_network
         volumes:

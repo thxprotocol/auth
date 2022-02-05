@@ -22,23 +22,21 @@ describe('OAuth2 Grants', () => {
     });
 
     describe('GET /.well-known/openid-configuration', () => {
-        it('HTTP 200', async (done) => {
+        it('HTTP 200', async () => {
             const res = await http.get('/.well-known/openid-configuration');
             expect(res.status).toBe(200);
-            done();
         });
     });
 
     describe('GET /account', () => {
-        it('HTTP 401 Unauthorized', async (done) => {
+        it('HTTP 401 Unauthorized', async () => {
             const res = await http.get('/account');
             expect(res.status).toBe(401);
-            done();
         });
     });
 
     describe('GET /reg', () => {
-        it('HTTP 201', async (done) => {
+        it('HTTP 201', async () => {
             const res = await http
                 .post('/reg')
                 .set({ Authorization: `Bearer ${INITIAL_ACCESS_TOKEN}` })
@@ -53,12 +51,11 @@ describe('OAuth2 Grants', () => {
             authHeader = 'Basic ' + Buffer.from(`${res.body.client_id}:${res.body.client_secret}`).toString('base64');
 
             expect(res.status).toBe(201);
-            done();
         });
     });
 
     describe('GET /token', () => {
-        it('HTTP 401 (invalid access token)', async (done) => {
+        it('HTTP 401 (invalid access token)', async () => {
             const res = await http
                 .post('/token')
                 .set({
@@ -74,9 +71,8 @@ describe('OAuth2 Grants', () => {
                 error: 'invalid_request',
                 error_description: 'invalid authorization header value format',
             });
-            done();
         });
-        it('HTTP 401 (invalid grant)', async (done) => {
+        it('HTTP 401 (invalid grant)', async () => {
             const res = await http
                 .post('/token')
                 .set({
@@ -92,10 +88,9 @@ describe('OAuth2 Grants', () => {
                 error_description: 'requested grant type is not allowed for this client',
             });
             expect(res.status).toBe(400);
-            done();
         });
 
-        it('HTTP 401 (invalid scope)', async (done) => {
+        it('HTTP 401 (invalid scope)', async () => {
             const res = await http
                 .post('/token')
                 .set({
@@ -112,10 +107,9 @@ describe('OAuth2 Grants', () => {
                 scope: 'admin',
             });
             expect(res.status).toBe(400);
-            done();
         });
 
-        it('HTTP 200 (success)', async (done) => {
+        it('HTTP 200 (success)', async () => {
             const res = await http
                 .post('/token')
                 .set({
@@ -130,18 +124,16 @@ describe('OAuth2 Grants', () => {
 
             expect(res.status).toBe(200);
             expect(accessToken).toBeDefined();
-            done();
         });
     });
 
     describe('GET /account/:id', () => {
-        it('HTTP 403', async (done) => {
+        it('HTTP 403', async () => {
             const res = await http
                 .get(`/account/${accountId}`)
                 .set({ Authorization: `Bearer ${accessToken}` })
                 .send();
             expect(res.status).toBe(200);
-            done();
         });
     });
 });

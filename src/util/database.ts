@@ -12,24 +12,22 @@ const connect = async (url: string) => {
         useUnifiedTopology: true,
     };
 
-    if (mongoose.connection.readyState === 0) {
-        await mongoose.connect(url, mongooseOpts);
-    }
-
     mongoose.connection.on('error', (err) => {
-        if (err) {
-            logger.error(`${url}: ${err}`);
-        }
-        if (err.message.code === 'ETIMEDOUT') {
-            mongoose.connect(url, mongooseOpts);
-        }
         logger.error(`MongoDB connection error. Please make sure MongoDB is running. ${err}`);
+    });
+
+    mongoose.connection.on('reconnectFailed', () => {
+        logger.error('Unable to recoonect to MongoDB');
         process.exit();
     });
 
-    mongoose.connection.once('open', () => {
-        logger.info(`MongoDB successfully connected to ${url}`);
+    mongoose.connection.on('open', () => {
+        logger.info(`MongoDB successfully connected to ${url.split('@')[1]}`);
     });
+
+    if (mongoose.connection.readyState === 0) {
+        await mongoose.connect(url, mongooseOpts);
+    }
 };
 
 const truncate = async () => {
@@ -43,6 +41,10 @@ const truncate = async () => {
     }
 };
 
+const readyState = () => {
+    return mongoose.connection.readyState;
+};
+
 const disconnect = async () => {
     if (mongoose.connection.readyState !== 0) {
         await mongoose.disconnect();
@@ -53,4 +55,5 @@ export default {
     connect,
     truncate,
     disconnect,
+    readyState,
 };

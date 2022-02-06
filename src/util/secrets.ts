@@ -16,6 +16,12 @@ const required = [
     'TWITTER_CLIENT_ID',
 ];
 
+// For production (docker containers) we should require JWKS_JSON to be set since otherwise each container
+// would generate their own jwks.json. For now this is commented to not break the current production env.
+// if (process.env.NODE_ENV === 'production') {
+//     required.push('JWKS_JSON');
+// }
+
 required.forEach((value: string) => {
     if (!process.env[value]) {
         console.log(`Set ${value} environment variable.`);
@@ -51,6 +57,7 @@ export const INITIAL_ACCESS_TOKEN = process.env.INITIAL_ACCESS_TOKEN;
 export const TWITTER_CLIENT_ID = process.env.TWITTER_CLIENT_ID;
 export const TWITTER_REDIRECT_URI = process.env.TWITTER_REDIRECT_URI;
 export const TWITTER_CLIENT_SECRET = process.env.TWITTER_CLIENT_SECRET;
+export const JWKS_JSON = process.env.JWKS_JSON;
 
 export function locals(req: Request, res: Response, next: NextFunction) {
     res.locals = {

@@ -1,9 +1,9 @@
-import jwks from '../../jwks.json';
 import MongoAdapter from './adapter';
 import { Account } from '../../models/Account';
 import { AccountDocument } from '../../models/Account';
 import { NODE_ENV, INITIAL_ACCESS_TOKEN, SECURE_KEY } from '../../util/secrets';
 import { interactionPolicy } from 'oidc-provider';
+import { getJwks } from '../../util/jwks';
 
 const basePolicy = interactionPolicy.base();
 const promptReset = new interactionPolicy.Prompt({ name: 'reset', requestable: true });
@@ -29,7 +29,7 @@ basePolicy.add(promptReset);
 // https://github.com/panva/node-oidc-provider/blob/master/lib/helpers/defaults.js
 export default {
     debug: false,
-    jwks,
+    jwks: getJwks(),
     adapter: MongoAdapter,
     async findAccount(ctx: any, id: string) {
         const account: AccountDocument = await Account.findById(id);

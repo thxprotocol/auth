@@ -4,10 +4,9 @@ services:
     auth_mongo:
         container_name: thx_auth_mongo
         image: mongo
-        env_file: .env
         restart: always
         networks:
-            - thx_network
+            - thx_network_auth
         ports:
             - 27019:27017
         environment:
@@ -18,28 +17,35 @@ services:
             - ./cache/mongo-data:/data/db
             - ./fixture/db:/docker-entrypoint-initdb.d/fixture
             - ./scripts/mongo-init.sh:/docker-entrypoint-initdb.d/mongo-init.sh
-
+    
+    auth:
+        container_name: thx_auth
+        build:
+            context: .
+            target: develop
+        env_file: 
+          - .env.example
+          - .env.docker
+        ports:
+            - 3031:3030
+        depends_on:
+            - auth_mongo
+        networks:
+            - thx_network_auth
+    
     auth_node:
         container_name: thx_auth_node
         image: node:16
         networks:
-            - thx_network
+            - thx_network_auth
         volumes:
             - ./:/usr/src/service
         working_dir: /usr/src/service
         command: bash -c "npm run watch:debug"
-        environment:
-            - NODE_ENV=local
         depends_on:
-            - auth_mongo
-        links:
             - auth_mongo
         ports:
             - 3030:3030
 
-volumes:
-    mongo-data:
-
 networks:
-    thx_network:
-        name: thx_network
+    thx_network_auth:

@@ -13,15 +13,8 @@ jobs:
               with:
                   submodules: true
 
-            - name: Run dependencies
-              run: docker compose -f docker-compose.ci.yml up auth_ci_mongo -d
-
             - name: Run test
-              run: |
-                  docker-compose -f docker-compose.ci.yml run auth_ci npm run test
-
-            - name: Shut down dependencies
-              run: docker compose -f docker-compose.ci.yml down
+              run: docker-compose run auth npm run test
 
     buildAndPushImage:
         name: Build and Push docker image

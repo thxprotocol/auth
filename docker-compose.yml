@@ -14,7 +14,7 @@ services:
             MONGO_INITDB_ROOT_PASSWORD: root
             MONGO_INITDB_DATABASE: admin
         volumes:
-            - ./cache/mongo-data:/data/db
+            - mongo-data:/data/db
             - ./fixture/db:/docker-entrypoint-initdb.d/fixture
             - ./scripts/mongo-init.sh:/docker-entrypoint-initdb.d/mongo-init.sh
     
@@ -46,6 +46,9 @@ services:
             - auth_mongo
         ports:
             - 3030:3030
+
+volumes:
+    mongo-data:
 
 networks:
     thx_network_auth:

@@ -1,8 +1,8 @@
-import { Response, NextFunction } from 'express';
-import { HttpRequest, HttpError } from '../../models/Error';
+import { Request, Response, NextFunction } from 'express';
+import { HttpError } from '../../models/Error';
 import AccountService from '../../services/AccountService';
 
-export const deleteAccount = async (req: HttpRequest, res: Response, next: NextFunction) => {
+export const deleteAccount = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { error } = await AccountService.remove(req.user.sub);
 

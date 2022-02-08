@@ -1,6 +1,6 @@
-import { Response, NextFunction } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import { AccountDocument } from '../../models/Account';
-import { HttpError, HttpRequest } from '../../models/Error';
+import { HttpError } from '../../models/Error';
 import AccountService from '../../services/AccountService';
 
 function formatAccountRes(account: AccountDocument) {
@@ -12,7 +12,7 @@ function formatAccountRes(account: AccountDocument) {
     };
 }
 
-export const getAccount = async (req: HttpRequest, res: Response, next: NextFunction) => {
+export const getAccount = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { account, error } = await AccountService.get(req.params.id);
 
@@ -26,7 +26,7 @@ export const getAccount = async (req: HttpRequest, res: Response, next: NextFunc
     }
 };
 
-export const getAccountByAddress = async (req: HttpRequest, res: Response, next: NextFunction) => {
+export const getAccountByAddress = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { account, error } = await AccountService.getByAddress(req.params.address);
 
@@ -40,7 +40,7 @@ export const getAccountByAddress = async (req: HttpRequest, res: Response, next:
     }
 };
 
-export const getAccountByEmail = async (req: HttpRequest, res: Response, next: NextFunction) => {
+export const getAccountByEmail = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { account, error } = await AccountService.getByEmail(req.params.email);
 

@@ -1,9 +1,9 @@
-import { Response, NextFunction } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import { ERROR_CREATE_ACCOUNT, ERROR_DUPLICATE_EMAIL } from '../../util/messages';
-import { HttpError, HttpRequest } from '../../models/Error';
+import { HttpError } from '../../models/Error';
 import AccountService from '../../services/AccountService';
 
-export const postAccount = async (req: HttpRequest, res: Response, next: NextFunction) => {
+export const postAccount = async (req: Request, res: Response, next: NextFunction) => {
     async function checkDuplicateEmail() {
         const { result, error } = await AccountService.isEmailDuplicate(req.body.email);
 

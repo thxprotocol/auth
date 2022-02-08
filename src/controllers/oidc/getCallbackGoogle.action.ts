@@ -1,14 +1,14 @@
 import AccountService from '../../services/AccountService';
-import { Response, NextFunction } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import { getGoogleTokens } from '../../util/google';
-import { HttpError, HttpRequest } from '../../models/Error';
+import { HttpError } from '../../models/Error';
 import { oidc } from '.';
 import { parseJwt } from '../../util/jwt';
 import { AccountDocument } from '../../models/Account';
 import { ERROR_NO_ACCOUNT } from '../../util/messages';
 import { validateEmail } from '../../util/validate';
 
-export default async function getGoogleCallback(req: HttpRequest, res: Response, next: NextFunction) {
+export default async function getGoogleCallback(req: Request, res: Response, next: NextFunction) {
     async function isEmailDuplicate(email: string) {
         const { result, error } = await AccountService.isEmailDuplicate(email);
 

@@ -1,10 +1,10 @@
-import { Response, NextFunction } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import { AccountDocument } from '../../../models/Account';
-import { HttpError, HttpRequest } from '../../../models/Error';
+import { HttpError } from '../../../models/Error';
 import AccountService from '../../../services/AccountService';
 import YouTubeDataService from '../../../services/YouTubeDataService';
 
-export const getYoutube = async (req: HttpRequest, res: Response, next: NextFunction) => {
+export const getYoutube = async (req: Request, res: Response, next: NextFunction) => {
     async function getAccount() {
         const { account, error } = await AccountService.get(req.params.sub);
         if (error) throw new Error(error.message);

@@ -1,9 +1,9 @@
-import { Response, NextFunction } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import { AccountDocument, IAccountUpdates } from '../../models/Account';
-import { HttpError, HttpRequest } from '../../models/Error';
+import { HttpError } from '../../models/Error';
 import AccountService from '../../services/AccountService';
 
-export const patchAccount = async (req: HttpRequest, res: Response, next: NextFunction) => {
+export const patchAccount = async (req: Request, res: Response, next: NextFunction) => {
     async function getAccount() {
         const { account, error } = await AccountService.get(req.params.id);
 

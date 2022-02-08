@@ -1,13 +1,13 @@
 import AccountService from '../../services/AccountService';
 import TwitterService from '../../services/TwitterService';
 import { oidc } from '.';
-import { Response, NextFunction } from 'express';
-import { HttpError, HttpRequest } from '../../models/Error';
+import { Request, Response, NextFunction } from 'express';
+import { HttpError } from '../../models/Error';
 import { AccountDocument } from '../../models/Account';
 import { ERROR_NO_ACCOUNT } from '../../util/messages';
 import { validateEmail } from '../../util/validate';
 
-export default async function getTwitterCallback(req: HttpRequest, res: Response, next: NextFunction) {
+export default async function getTwitterCallback(req: Request, res: Response, next: NextFunction) {
     async function isEmailDuplicate(email: string) {
         const { result, error } = await AccountService.isEmailDuplicate(email);
 

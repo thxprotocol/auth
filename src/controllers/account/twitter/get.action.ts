@@ -1,10 +1,10 @@
-import { Response, NextFunction } from 'express';
-import { HttpError, HttpRequest } from '../../../models/Error';
+import { Request, Response, NextFunction } from 'express';
+import { HttpError } from '../../../models/Error';
 import { AccountDocument } from '../../../models/Account';
 import TwitterService from '../../../services/TwitterService';
 import AccountService from '../../../services/AccountService';
 
-export const getTwitter = async (req: HttpRequest, res: Response, next: NextFunction) => {
+export const getTwitter = async (req: Request, res: Response, next: NextFunction) => {
     async function getAccount() {
         const { account, error } = await AccountService.get(req.params.sub);
         if (error) throw new Error(error.message);

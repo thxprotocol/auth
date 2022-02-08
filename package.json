@@ -62,6 +62,7 @@
         "mongoose": "^5.13.9",
         "morgan": "^1.10.0",
         "morgan-json": "^1.1.0",
+        "newrelic": "^8.7.1",
         "nock": "^13.2.2",
         "nodemailer": "^6.6.1",
         "npm-force-resolutions": "^0.0.10",

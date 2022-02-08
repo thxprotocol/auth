@@ -5,8 +5,6 @@ services:
         container_name: thx_auth_mongo
         image: mongo
         restart: always
-        networks:
-            - thx_network_auth
         ports:
             - 27019:27017
         environment:
@@ -30,14 +28,10 @@ services:
             - 3031:3030
         depends_on:
             - auth_mongo
-        networks:
-            - thx_network_auth
     
     auth_node:
         container_name: thx_auth_node
         image: node:16
-        networks:
-            - thx_network_auth
         volumes:
             - ./:/usr/src/service
         working_dir: /usr/src/service
@@ -50,5 +44,3 @@ services:
 volumes:
     mongo-data:
 
-networks:
-    thx_network_auth:

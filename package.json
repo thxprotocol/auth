@@ -22,7 +22,6 @@
         "watch:node": "nodemon dist/server.js",
         "watch:test": "npm run test -- --watchAll",
         "watch:debug": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"yellow.bold,cyan.bold,green.bold\" \"npm run watch:ts\" \"npm run watch:sass\" \"npm run serve:debug\"",
-        "reset": "rm -rf ./cache && unzip cache.zip -d ./cache && rm -rf ./cache/__MACOSX",
         "test": "npx jest --coverage --runInBand --forceExit",
         "migrate": "migrate-mongo up -f src/migrate-mongo-config.js",
         "migrate:create": "sh -c 'migrate-mongo create -f src/migrate-mongo-config.js $0'",

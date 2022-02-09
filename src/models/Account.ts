@@ -8,6 +8,7 @@ export interface IAccount {
     password: string;
     address: string;
     privateKey: string;
+    gasAdmin?: string;
     signupToken: string;
     signupTokenExpires: number;
     authenticationToken: string;
@@ -31,6 +32,7 @@ export interface IAccountUpdates {
     acceptUpdates?: boolean;
     address?: string;
     privateKey?: string;
+    gasAdmin?: string;
     googleAccess?: boolean;
     twitterAccess?: boolean;
     authenticationToken?: string;
@@ -46,6 +48,7 @@ const accountSchema = new mongoose.Schema(
         password: String,
         address: String,
         privateKey: String,
+        gasAdmin: String,
         signupToken: String,
         signupTokenExpires: Date,
         authenticationToken: String,

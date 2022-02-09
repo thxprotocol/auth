@@ -27,13 +27,13 @@ export const patchAccount = async (req: Request, res: Response, next: NextFuncti
 
     try {
         const account = await getAccount();
-
         await patchAccount(account, {
             address: req.body.address,
             googleAccess: req.body.googleAccess,
             twitterAccess: req.body.twitterAccess,
             authenticationToken: req.body.authenticationToken,
             authenticationTokenExpires: req.body.authenticationTokenExpires,
+            gasAdmin: req.body.gasAdmin,
         });
 
         res.status(204).end();

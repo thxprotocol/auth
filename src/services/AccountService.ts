@@ -77,6 +77,7 @@ export default class AccountService {
             twitterAccess,
             authenticationToken,
             authenticationTokenExpires,
+            gasAdmin,
         }: IAccountUpdates,
     ) {
         try {
@@ -111,6 +112,10 @@ export default class AccountService {
                 account.twitterAccessToken = '';
                 account.twitterRefreshToken = '';
                 account.twitterAccessTokenExpires = null;
+            }
+
+            if (gasAdmin) {
+                account.gasAdmin = gasAdmin;
             }
 
             return { result: await account.save() };

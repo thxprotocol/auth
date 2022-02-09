@@ -1,3 +1,4 @@
+import newrelic from 'newrelic';
 import { HealthCheck } from '@godaddy/terminus';
 import { config, status } from 'migrate-mongo';
 import { connection } from 'mongoose';
@@ -31,5 +32,6 @@ const migrationsApplied: HealthCheck = async () => {
 };
 
 export const healthCheck: HealthCheck = () => {
+    newrelic.getTransaction().ignore();
     return Promise.all([dbConnected, migrationsApplied]);
 };

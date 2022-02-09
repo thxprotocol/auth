@@ -33,6 +33,7 @@
         "@sendgrid/mail": "^7.4.2",
         "@thxnetwork/artifacts": "^1.0.1",
         "@types/express-ejs-layouts": "^2.5.0",
+        "@types/newrelic": "^7.0.3",
         "async": "^3.1.0",
         "axios": "^0.21.3",
         "bcrypt-nodejs": "^0.0.3",

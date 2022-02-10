@@ -1,0 +1,15 @@
+version: '3.5'
+
+services:    
+    auth:
+        container_name: thx_auth
+        build:
+            context: .
+            target: develop
+        env_file: 
+          - .env.example
+          - .env.ci
+        ports:
+            - 3031:3030
+        depends_on:
+            - auth_mongo

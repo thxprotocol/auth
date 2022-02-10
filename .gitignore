@@ -1,6 +1,6 @@
 node_modules
 .env*
-!.env.docker
+!.env.ci
 !.env.example
 src/jwks.json
 dist

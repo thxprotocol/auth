@@ -5,6 +5,8 @@ services:
         container_name: thx_auth_mongo
         image: mongo
         restart: always
+        networks:
+            - thx_network
         ports:
             - 27019:27017
         environment:
@@ -24,6 +26,8 @@ services:
         env_file: 
           - .env.example
           - .env.docker
+        networks:
+            - thx_network
         ports:
             - 3031:3030
         depends_on:
@@ -38,9 +42,13 @@ services:
         command: bash -c "npm run watch:debug"
         depends_on:
             - auth_mongo
+        networks:
+            - thx_network
         ports:
             - 3030:3030
 
 volumes:
     mongo-data:
 
+networks:
+    thx_network:

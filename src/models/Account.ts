@@ -33,6 +33,8 @@ export interface IAccountUpdates {
     privateKey?: string;
     googleAccess?: boolean;
     twitterAccess?: boolean;
+    authenticationToken?: string;
+    authenticationTokenExpires?: number;
 }
 
 export type AccountDocument = mongoose.Document & IAccount;

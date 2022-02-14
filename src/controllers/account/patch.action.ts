@@ -32,6 +32,8 @@ export const patchAccount = async (req: Request, res: Response, next: NextFuncti
             address: req.body.address,
             googleAccess: req.body.googleAccess,
             twitterAccess: req.body.twitterAccess,
+            authenticationToken: req.body.authenticationToken,
+            authenticationTokenExpires: req.body.authenticationTokenExpires,
         });
 
         res.status(204).end();

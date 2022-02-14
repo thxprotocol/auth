@@ -3,18 +3,28 @@
         <img src="/img/logo.png" width="60" alt="THX Logo" />
     </div>
     <div class="card shadow-sm mb-5">
-        <div class="card-body pt-sm-5 px-sm-5 pb-sm-3">
+        <div class="card-body p-sm-5">
+            <% if (params.authentication_token && params.secure_key) { %>
+            <strong class="h2 d-block text-dark text-center mb-4">
+                Set a password
+            </strong>
+            <p>You are invited to access your THX Web Wallet. Set a password and accept the invite!</p>
+            <% } else { %>
             <strong class="h2 d-block text-dark text-center mb-4">
                 Hello!
             </strong>
+            <% } %>
             <% if (alert && alert.message) { %>
             <div class="alert alert-<%= alert.variant %>">
                 <%- alert.message %>
             </div>
             <% } %>
+
+            <!--
+                This part is used for the invite flow
+            -->
             <% if (params.authentication_token && params.secure_key) { %>
             <form autocomplete="off" action="/oidc/<%= uid %>/password" method="post">
-                <strong class="h2 d-block text-dark text-center mb-4">Set a password</strong>
                 <div class="form-group">
                     <label>Password:</label>
                     <input class="form-control" autocomplete="off" required type="password" name="password">
@@ -44,15 +54,15 @@
                 <input type="hidden" name="secureKey" value="<%= params.secure_key %>" />
                 <input type="hidden" name="returnUrl" value="<%= params.return_url %>" />
 
-                <hr>
-
                 <button type="submit" class="btn rounded-pill btn-primary btn-block">
-                    Sign in
+                    Accept invite
                     <i class="fas fa-chevron-right" aria-hidden="true"></i>
                 </button>
             </form>
             <% } else { %>
-
+            <!--
+                    This part is used for regular login flow and only visibile if links are available
+                -->
             <% if (params.googleLoginUrl || params.twitterLoginUrl) { %>
             <p>
                 Sign in with your social account or an existing THX account.
@@ -62,20 +72,27 @@
                 </a>
 
             </p>
+            <% if (params.googleLoginUrl) { %>
             <a class="btn btn-sign-in btn-google btn-block" href="<%= params.googleLoginUrl %>">
                 <div class="logo">
                     <img src="/img/g-logo.png" alt="Google logo" />
                 </div>
                 <div class="label">Sign in with Google</div>
             </a>
+            <% } %>
+            <% if (params.twitterLoginUrl) { %>
             <a class="btn btn-sign-in btn-twitter btn-block" href="<%= params.twitterLoginUrl %>">
                 <div class="logo">
                     <img src="/img/t-logo.png" alt="Twitter logo" />
                 </div>
                 <div class="label">Sign in with Twitter</div>
             </a>
+            <% } %>
             <hr>
             <% } %>
+            <!--
+                    This part is used for regular login flow
+                -->
             <form autocomplete="off" action="/oidc/<%= uid %>/login" method="post" class="mb-4">
 
                 <div class="form-group">
@@ -87,7 +104,6 @@
                     <input class="form-control" required type="password" name="password">
                 </div>
                 <input type="hidden" name="returnUrl" value="<%= params.return_url %>" />
-
                 <button type="submit" class="btn rounded-pill btn-primary btn-block">
                     Sign in
                     <i class="fas fa-chevron-right" aria-hidden="true"></i>

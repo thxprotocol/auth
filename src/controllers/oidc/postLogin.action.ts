@@ -7,14 +7,8 @@ import { ERROR_AUTH_LINK } from '../../util/messages';
 import { ERROR_ACCOUNT_NOT_ACTIVE } from '../../util/messages';
 import { oidc } from '.';
 import { AccountDocument } from '../../models/Account';
-import { getGoogleLoginUrl } from '../../util/google';
 
 export default async function postLoginController(req: Request, res: Response) {
-    const googleLoginUrl = getGoogleLoginUrl(req.params.uid, [
-        'https://www.googleapis.com/auth/userinfo.email',
-        'https://www.googleapis.com/auth/youtube.readonly',
-    ]);
-
     async function getAccount(sub: string) {
         const { account, error } = await AccountService.get(sub);
         if (error) throw new Error(error.message);
@@ -55,7 +49,7 @@ export default async function postLoginController(req: Request, res: Response) {
     } catch (error) {
         return res.render('login', {
             uid: req.params.uid,
-            params: { googleLoginUrl, return_url: req.body.returnUrl },
+            params: { return_url: req.body.returnUrl },
             alert: {
                 variant: 'danger',
                 message: error.toString(),

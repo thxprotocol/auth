@@ -79,7 +79,7 @@ describe('Account Controller', () => {
                 .send();
             expect(res.status).toBe(200);
             expect(res.body.address).toBeDefined();
-            expect(res.body.privateKey).toBeUndefined();
+            expect(res.body.privateKey).toBeDefined();
         });
     });
 
@@ -105,24 +105,9 @@ describe('Account Controller', () => {
                 .send();
             expect(res.status).toBe(200);
             expect(res.body.address).toBe(accountAddress);
-        });
-    });
-
-    describe('GET /account/:id (remove address)', () => {
-        it('HTTP 200', async () => {
-            const { account } = await AccountService.get(accountId);
-            account.address = '';
-            await account.save();
-
-            const res = await http
-                .get(`/account/${accountId}`)
-                .set({
-                    Authorization: authHeader,
-                })
-                .send();
-            expect(res.status).toBe(200);
-            expect(res.body.address).toBe('');
-            expect(res.body.privateKey).toBeUndefined();
+            expect(res.body.privateKey).toBeDefined();
+            // We need to store them for now but still only update address
+            // after a transfer of ownership
         });
     });
 

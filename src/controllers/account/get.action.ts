@@ -4,11 +4,18 @@ import { HttpError } from '../../models/Error';
 import AccountService from '../../services/AccountService';
 
 function formatAccountRes(account: AccountDocument) {
+    let protectedPrivateKey;
+    if (account.privateKey) {
+        protectedPrivateKey = { privateKey: account.privateKey };
+    }
     return {
-        id: account._id,
-        address: account.address,
-        googleAccess: account.googleAccessToken && account.googleAccessTokenExpires > Date.now(),
-        twitterAccess: account.twitterAccessToken && account.twitterAccessTokenExpires > Date.now(),
+        ...{
+            id: account._id,
+            address: account.address,
+            googleAccess: account.googleAccessToken && account.googleAccessTokenExpires > Date.now(),
+            twitterAccess: account.twitterAccessToken && account.twitterAccessTokenExpires > Date.now(),
+        },
+        ...protectedPrivateKey,
     };
 }
 

@@ -68,7 +68,16 @@ export default class AccountService {
 
     static async update(
         account: AccountDocument,
-        { acceptTermsPrivacy, acceptUpdates, address, privateKey, googleAccess, twitterAccess }: IAccountUpdates,
+        {
+            acceptTermsPrivacy,
+            acceptUpdates,
+            address,
+            privateKey,
+            googleAccess,
+            twitterAccess,
+            authenticationToken,
+            authenticationTokenExpires,
+        }: IAccountUpdates,
     ) {
         try {
             // No strict checking here since null == undefined
@@ -85,6 +94,8 @@ export default class AccountService {
                 account.acceptUpdates = acceptUpdates || account.acceptTermsPrivacy;
             }
 
+            account.authenticationToken = authenticationToken || account.authenticationToken;
+            account.authenticationTokenExpires = authenticationTokenExpires || account.authenticationTokenExpires;
             account.address = address || account.address;
             account.privateKey = privateKey || account.privateKey;
 

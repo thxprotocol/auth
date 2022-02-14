@@ -8,3 +8,4 @@ cache
 ci-cache
 logs
 coverage
+.DS_Store

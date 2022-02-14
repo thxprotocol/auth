@@ -5,7 +5,7 @@ import TwitterService from '../../../services/TwitterService';
 import AccountService from '../../../services/AccountService';
 
 export const getTwitter = async (req: Request, res: Response, next: NextFunction) => {
-    async function getAccount() {
+    async function getAccount(): Promise<AccountDocument> {
         const { account, error } = await AccountService.get(req.params.sub);
         if (error) throw new Error(error.message);
         return account;
@@ -27,7 +27,7 @@ export const getTwitter = async (req: Request, res: Response, next: NextFunction
         return tokens;
     }
 
-    async function updateTokens(account: AccountDocument, tokens: any) {
+    async function updateTokens(account: AccountDocument, tokens: any): Promise<AccountDocument> {
         account.twitterAccessToken = tokens.access_token || account.twitterAccessToken;
         account.twitterRefreshToken = tokens.refresh_token || account.twitterRefreshToken;
         account.twitterAccessTokenExpires = tokens.expires_in

@@ -86,8 +86,6 @@
         "@types/newrelic": "^7.0.3",
         "@types/node": "^15.6.1",
         "@types/nodemailer": "^6.2.1",
-        "@types/request": "^2.48.3",
-        "@types/request-promise": "^4.1.44",
         "@types/supertest": "^2.0.8",
         "@typescript-eslint/eslint-plugin": "^5.10.2",
         "@typescript-eslint/parser": "^5.10.2",

@@ -13,8 +13,8 @@
         "skipLibCheck": true,
         "allowJs": true,
         "paths": {
-            "*": ["./src/*", "./node_modules/*", "./src/types/*"]
+            "*": ["./src/*", "./node_modules/*"]
         }
     },
-    "include": ["./src/*", "./src/migrations/*"]
+    "include": ["./src/*", "./src/migrations/*", "./src/types/*.d.ts"]
 }

@@ -9,10 +9,10 @@
     "license": "AGPL-3.0",
     "scripts": {
         "serve:debug": "nodemon --inspect=7030 dist/src/server.js",
-        "lint": "npx tsc --noEmit && npx eslint \"src/**/*.ts\" \"test/**/*.ts\"",
-        "lint:fix": "npx tsc --noEmit && npx eslint \"src/**/*.ts\" \"test/**/*.ts\" --fix",
+        "lint": "tsc --noEmit && npx eslint \"src/**/*.ts\" \"test/**/*.ts\"",
+        "lint:fix": "tsc --noEmit && npx eslint \"src/**/*.ts\" \"test/**/*.ts\" --fix",
         "dev": "docker compose up -d && npm run watch:debug",
-        "build": "npm run build:sass && npm run build:assets && npx tsc",
+        "build": "npm run build:sass && npm run build:assets && tsc",
         "build:assets": "mkdir -p dist/src/public && cp -R src/public/* dist/src/public/. && cp -R src/views dist/src/.",
         "build:sass": "sass src/main.scss src/public/main.css",
         "build:keys": "node ./scripts/generateKeys.js",
@@ -61,6 +61,7 @@
         "nock": "^13.2.2",
         "nodemailer": "^6.6.1",
         "oidc-provider": "^6.31.1",
+        "tsconfig-paths": "^3.12.0",
         "web3": "^1.5.1",
         "winston": "^3.2.1",
         "y18n": "^5.0.8"
@@ -199,6 +200,14 @@
         "testEnvironment": "node",
         "setupFilesAfterEnv": [
             "<rootDir>/test/e2e/lib/setup.ts"
-        ]
+        ],
+        "moduleNameMapper": {
+            "^@/(.*)$": "<rootDir>/src/$1"
+        }
+    },
+    "nodemonConfig": {
+        "execMap": {
+            "js": "TS_NODE_BASEURL=./dist node -r tsconfig-paths/register"
+        }
     }
 }

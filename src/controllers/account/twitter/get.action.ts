@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
-import { HttpError } from '../../../models/Error';
-import { AccountDocument } from '../../../models/Account';
-import TwitterService from '../../../services/TwitterService';
-import AccountService from '../../../services/AccountService';
+import { HttpError } from '@/models/Error';
+import { AccountDocument } from '@/models/Account';
+import TwitterService from '@/services/TwitterService';
+import AccountService from '@/services/AccountService';
 
 export const getTwitter = async (req: Request, res: Response, next: NextFunction) => {
     async function getAccount(): Promise<AccountDocument> {

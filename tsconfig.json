@@ -16,5 +16,6 @@
             "*": ["./src/*", "./node_modules/*", "./src/types/*"]
         }
     },
-    "include": ["./src/*", "./src/migrations/*", "./src/types/*"]
+    "include": ["./src/*", "./src/migrations/*", "./src/types/*"],
+    "ts-node": { "files": true }
 }

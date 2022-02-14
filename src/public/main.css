@@ -8926,4 +8926,10 @@ a i.fa-question-circle {
   color: #ced4da;
 }
 
+body {
+  background-image: url("./public/img/thx_landing_crater.webp");
+  background-position: center center;
+  background-size: cover;
+}
+
 /*# sourceMappingURL=main.css.map */

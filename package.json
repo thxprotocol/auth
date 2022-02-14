@@ -9,7 +9,7 @@
     "license": "AGPL-3.0",
     "scripts": {
         "preinstall": "npx npm-force-resolutions",
-        "serve:debug": "nodemon --inspect=7030 dist/server.js",
+        "serve:debug": "nodemon --inspect=7030 dist/src/server.js",
         "lint": "npx tsc --noEmit && npx eslint \"src/**/*.ts\" \"test/**/*.ts\"",
         "lint:fix": "npx tsc --noEmit && npx eslint \"src/**/*.ts\" \"test/**/*.ts\" --fix",
         "dev": "docker compose up -d && npm run watch:debug",
@@ -19,8 +19,8 @@
         "build:keys": "node ./scripts/generateKeys.js",
         "watch": "concurrently -k -p \"[{name}]\" -n \"Sass,TypeScript,Node\" -c \"yellow.bold,cyan.bold,green.bold\" \"npm run watch:ts\" \"npm run watch:sass\" \"npm run watch:node\"",
         "watch:ts": "tsc -w",
-        "watch:sass": "sass --watch src/main.scss dist/public/main.css",
-        "watch:node": "nodemon dist/server.js",
+        "watch:sass": "sass --watch src/main.scss dist/src/public/main.css",
+        "watch:node": "nodemon dist/src/server.js",
         "watch:test": "npm run test -- --watchAll",
         "watch:debug": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"yellow.bold,cyan.bold,green.bold\" \"npm run watch:ts\" \"npm run watch:sass\" \"npm run serve:debug\"",
         "test": "npx jest --coverage --runInBand --forceExit",
@@ -106,7 +106,7 @@
         "concurrently": "^7.0.0",
         "eslint": "^8.6.0",
         "jest": "^27.1.2",
-        "nodemon": "^1.19.2",
+        "nodemon": "^2.0.15",
         "prettier": "^2.2.1",
         "sass": "^1.32.8",
         "shelljs": "^0.8.4",
@@ -213,12 +213,6 @@
         "testEnvironment": "node",
         "setupFilesAfterEnv": [
             "<rootDir>/test/e2e/lib/setup.ts"
-        ]
-    },
-    "nodemonConfig": {
-        "ignore": [
-            "logs/*",
-            "scripts/*"
         ]
     }
 }

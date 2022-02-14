@@ -35,3 +35,9 @@
 @import './scss/buttons';
 @import './scss/card';
 @import './scss/forms';
+
+body {
+    background-image: url('./img/thx_landing_crater.webp') !important;
+    background-position: center center;
+    background-size: cover;
+}

@@ -59,9 +59,7 @@ export default class MongoAdapter {
     }
 
     static async connect() {
-        const client = new MongoClient(MONGODB_URI, {
-            useUnifiedTopology: true,
-        });
+        const client = new MongoClient(MONGODB_URI);
         const connection: any = await client.connect();
         const dbName = connection.s.options.dbName;
 

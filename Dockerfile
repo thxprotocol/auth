@@ -12,7 +12,7 @@ WORKDIR /usr/src/app
 COPY --from=node_modules ./usr/src/app/ ./
 COPY . .
 
-CMD [ "npx", "ts-node", "-r", "tsconfig-paths/register", "src/server.ts" ]
+CMD [ "npx", "ts-node", "src/server.ts" ]
 
 
 FROM node:16-alpine as build
@@ -33,6 +33,5 @@ RUN apk add --virtual .build g++ make py3-pip && \
     npm install --production --ci && \
     apk del .build
 COPY --from=build ./usr/src/app/dist ./
-COPY tsconfig.json ./
 
-CMD [ "-r", "tsconfig-paths/register", "src/server.js" ]
+CMD [ "src/server.js" ]

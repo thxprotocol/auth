@@ -10,12 +10,10 @@
         "moduleResolution": "node",
         "sourceMap": true,
         "outDir": "dist",
-        "baseUrl": ".",
         "skipLibCheck": true,
         "allowJs": true,
         "paths": {
-            "@/*": ["./src/*"],
-            "*": ["./src/*", "./node_modules/*", "src/types/*"]
+            "*": ["./src/*", "./node_modules/*", "./src/types/*"]
         }
     },
     "include": ["./src/*", "./src/migrations/*"]

@@ -8,7 +8,7 @@ const ERROR_TOKEN_REQUEST_FAILED = 'Failed to request access token';
 export const TWITTER_API_ENDPOINT = 'https://api.twitter.com';
 axios.defaults.baseURL = TWITTER_API_ENDPOINT;
 
-export default class YouTubeDataService {
+export default class TwitterDataService {
     static async validateLike(accessToken: string, channelItem: string) {
         try {
             const { user } = await this.getUser(accessToken);

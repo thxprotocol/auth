@@ -67,8 +67,8 @@ async function getTokens(code: string) {
 
 async function getSpotifyUser(accessToken: string) {
     const { user, error } = await SpotifyService.getUser(accessToken);
-    if (error) throw new Error('Could not get Twitter user profile');
-    if (!user) throw new Error('No Twitter user returned for access token');
+    if (error) throw new Error('Could not get Spotify user profile');
+    if (!user) throw new Error('No Spotify user returned for access token');
     return user;
 }
 

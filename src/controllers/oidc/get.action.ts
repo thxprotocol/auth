@@ -4,6 +4,7 @@ import { oidc } from '.';
 import { getGoogleLoginUrl } from '../../util/google';
 import { ChannelType, ChannelAction } from '../../models/Reward';
 import { getTwitterLoginURL, twitterScopes } from '../../util/twitter';
+import SpotifyService from '../../services/SpotifyService';
 import { WALLET_URL } from '../../util/secrets';
 
 const youtubeScope = ['https://www.googleapis.com/auth/userinfo.email', 'https://www.googleapis.com/auth/youtube'];
@@ -81,6 +82,11 @@ export default async function getController(req: Request, res: Response) {
                 if (params.channel == ChannelType.Twitter && !account.twitterAccessToken) {
                     const twitterLoginUrl = getTwitterLoginURL(uid);
                     return res.redirect(twitterLoginUrl);
+                }
+
+                if (params.channel == ChannelType.Spotify && !account.spotifyAccessToken) {
+                    const spotifyLoginUrl = SpotifyService.getSpotifyUrl(uid);
+                    return res.redirect(spotifyLoginUrl);
                 }
 
                 await oidc.interactionResult(req, res, {}, { mergeWithLastSubmission: true });

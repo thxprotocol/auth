@@ -13,9 +13,9 @@ import getSpotifyCallback from './getCallbackSpotify.action';
 
 const router = express.Router();
 
-router.get('/oidc/callback/spotify', getSpotifyCallback);
 router.get('/oidc/callback/google', getGoogleCallback);
 router.get('/oidc/callback/twitter', getTwitterCallback);
+router.get('/oidc/callback/spotify', getSpotifyCallback);
 router.get('/oidc/:uid', getController);
 router.post('/oidc/:uid/create', urlencoded({ extended: false }), postCreateController);
 router.post('/oidc/:uid/password', urlencoded({ extended: false }), postPasswordController);

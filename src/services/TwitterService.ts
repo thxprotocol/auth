@@ -84,7 +84,7 @@ export default class YouTubeDataService {
     static async getUser(accessToken: string) {
         try {
             const r = await axios({
-                url: '/2/users/me',
+                url: '/me',
                 method: 'GET',
                 headers: {
                     Authorization: `Bearer ${accessToken}`,

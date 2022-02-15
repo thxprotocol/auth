@@ -9,9 +9,11 @@ import postPasswordController from './postPassword.action';
 import postResetController from './postReset.action';
 import getGoogleCallback from './getCallbackGoogle.action';
 import getTwitterCallback from './getCallbackTwitter.action';
+import getSpotifyCallback from './getCallbackSpotify.action';
 
 const router = express.Router();
 
+router.get('/oidc/callback/spotify', getSpotifyCallback);
 router.get('/oidc/callback/google', getGoogleCallback);
 router.get('/oidc/callback/twitter', getTwitterCallback);
 router.get('/oidc/:uid', getController);

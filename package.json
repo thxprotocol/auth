@@ -11,7 +11,7 @@
         "serve:debug": "nodemon --inspect=7030 dist/src/server.js",
         "lint": "tsc --noEmit && npx eslint \"src/**/*.ts\" \"test/**/*.ts\"",
         "lint:fix": "tsc --noEmit && npx eslint \"src/**/*.ts\" \"test/**/*.ts\" --fix",
-        "dev": "docker compose up -d && npm run watch:debug",
+        "dev": "docker-compose up -d && npm run watch:debug",
         "build": "npm run build:sass && npm run build:assets && tsc",
         "build:assets": "mkdir -p dist/src/public && cp -R src/public/* dist/src/public/. && cp -R src/views dist/src/.",
         "build:sass": "sass src/main.scss src/public/main.css",

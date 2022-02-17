@@ -45,10 +45,14 @@ export const getSpotify = async (req: Request, res: Response, next: NextFunction
         // const tweets = await getSpotifyTweets(account.spotifyAccessToken);
         const user = await getSpotifyUser(account.spotifyAccessToken);
         const playlists = await SpotifyService.getPlaylists(account.spotifyAccessToken);
-        console.log(playlists);
+        const playlistITems = await Promise.all(
+            playlists.map((playlist) => SpotifyService.getPlaylistItems(account.spotifyAccessToken, playlist.id)),
+        );
+
         res.json({
             isAuthorized: true,
             playlists: playlists,
+            items: playlistITems.flat(),
             users: [user],
         });
     } catch (error) {

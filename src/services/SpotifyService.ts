@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { Playlist } from 'types';
+import { PlaylistItem } from 'types/PlaylistItem';
 import { SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, SPOTIFY_REDIRECT_URI } from '../util/secrets';
 
 export const SPOTIFY_API_ENDPOINT = 'https://api.spotify.com/v1/';
@@ -18,6 +19,31 @@ export default class SpotifyDataService {
 
             const r = await axios({
                 url: `https://api.spotify.com/v1/me/playlists?${params.toString()}`,
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${accessToken}`,
+                },
+            });
+
+            if (r.status !== 200) throw new Error(ERROR_NOT_AUTHORIZED);
+            if (!r.data) throw new Error(ERROR_NO_DATA);
+
+            return { ...r.data };
+        } catch (error) {
+            return { error };
+        }
+    }
+
+    static async _fetchPlaylistItems(accessToken: string, playlistId: string, offset = 0) {
+        try {
+            const params = new URLSearchParams();
+            params.set('fields', 'items(track(id, name, album(images)))');
+            params.set('offset', `${offset}`);
+
+            const r = await axios({
+                url: `https://api.spotify.com/v1/playlists/${playlistId}/tracks?${params.toString()}`,
                 method: 'GET',
                 headers: {
                     'Accept': 'application/json',
@@ -104,16 +130,36 @@ export default class SpotifyDataService {
             const { error, ...data } = await this._fetchPlaylist(accessToken, offset);
             if (error) throw new Error(error.message);
 
-            const newPlaylists: Playlist[] = data.items;
-            // newPlaylists = newPlaylists.filter((playlist) => playlist.collaborative && playlist.public);
+            let newPlaylists = data.items as Playlist[];
+            newPlaylists = newPlaylists.filter((playlist) => playlist.public);
 
             playlists = [...playlists, ...newPlaylists];
             if (!data.next) break;
 
-            offset += 20;
+            offset += 20; //20 is the max limit per request of spotify
         }
 
         return playlists;
+    }
+
+    static async getPlaylistItems(accessToken: string, playlistId: string) {
+        let items: PlaylistItem[] = [];
+        let offset = 0;
+
+        // eslint-disable-next-line no-constant-condition
+        while (true) {
+            const { error, ...data } = await this._fetchPlaylistItems(accessToken, playlistId, offset);
+            if (error) throw new Error(error.message);
+
+            const newItems = data.items as PlaylistItem[];
+
+            items = [...items, ...newItems];
+            if (!data.next) break;
+
+            offset += 100; //20 is the max limit per request of spotify
+        }
+
+        return items;
     }
 
     static async refreshTokens(refreshToken: string) {

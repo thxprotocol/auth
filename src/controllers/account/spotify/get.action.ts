@@ -5,11 +5,12 @@ import SpotifyService from '../../../services/SpotifyService';
 import AccountService from '../../../services/AccountService';
 
 export const getSpotify = async (req: Request, res: Response, next: NextFunction) => {
-    async function getAccount() {
+    async function getAccount(): Promise<AccountDocument> {
         const { account, error } = await AccountService.get(req.params.sub);
         if (error) throw new Error(error.message);
         return account;
     }
+
     async function getSpotifyUser(accessToken: string) {
         const { user, error } = await SpotifyService.getUser(accessToken);
         if (error) throw new Error(error.message);
@@ -22,12 +23,9 @@ export const getSpotify = async (req: Request, res: Response, next: NextFunction
         return tokens;
     }
 
-    async function updateTokens(account: AccountDocument, tokens: any) {
-        account.spotifyAccessToken = tokens.access_token || account.spotifyAccessToken;
-        account.spotifyRefreshToken = tokens.refresh_token || account.spotifyRefreshToken;
-        account.spotifyAccessTokenExpires = tokens.expires_in
-            ? Date.now() + Number(tokens.expires_in) * 1000
-            : account.spotifyAccessTokenExpires;
+    async function updateTokens(account: AccountDocument, newAccessToken: string) {
+        account.spotifyAccessToken = newAccessToken || account.spotifyAccessToken;
+        account.spotifyAccessTokenExpires = Date.now() + Number(3600) * 1000;
 
         return await account.save();
     }
@@ -39,16 +37,18 @@ export const getSpotify = async (req: Request, res: Response, next: NextFunction
             return res.json({ isAuthorized: false });
         }
 
-        if (Date.now() >= account.spotifyAccessTokenExpires) {
+        if (Date.now() * 1000 >= account.spotifyAccessTokenExpires) {
             const tokens = await refreshToken(account.spotifyRefreshToken);
             account = await updateTokens(account, tokens);
         }
 
         // const tweets = await getSpotifyTweets(account.spotifyAccessToken);
         const user = await getSpotifyUser(account.spotifyAccessToken);
-
+        const playlists = await SpotifyService.getPlaylists(account.spotifyAccessToken);
+        console.log(playlists);
         res.json({
             isAuthorized: true,
+            playlists: playlists,
             users: [user],
         });
     } catch (error) {

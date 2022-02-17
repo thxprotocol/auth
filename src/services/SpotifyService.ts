@@ -1,8 +1,9 @@
 import axios from 'axios';
+import { Playlist } from 'types';
 import { SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, SPOTIFY_REDIRECT_URI } from '../util/secrets';
 
 export const SPOTIFY_API_ENDPOINT = 'https://api.spotify.com/v1/';
-export const SPOTIFY_API_SCOPE = 'user-read-private user-read-email';
+export const SPOTIFY_API_SCOPE = 'user-read-private user-read-email playlist-modify-public playlist-modify-private';
 const ERROR_NO_DATA = 'Could not find an youtube data for this accesstoken';
 const ERROR_NOT_AUTHORIZED = 'Not authorized for Twitter API';
 const ERROR_TOKEN_REQUEST_FAILED = 'Failed to request access token';
@@ -10,6 +11,30 @@ const ERROR_TOKEN_REQUEST_FAILED = 'Failed to request access token';
 axios.defaults.baseURL = SPOTIFY_API_ENDPOINT;
 
 export default class SpotifyDataService {
+    static async _fetchPlaylist(accessToken: string, offset = 0) {
+        try {
+            const params = new URLSearchParams();
+            params.set('offset', `${offset}`);
+
+            const r = await axios({
+                url: `https://api.spotify.com/v1/me/playlists?${params.toString()}`,
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${accessToken}`,
+                },
+            });
+
+            if (r.status !== 200) throw new Error(ERROR_NOT_AUTHORIZED);
+            if (!r.data) throw new Error(ERROR_NO_DATA);
+
+            return { ...r.data };
+        } catch (error) {
+            return { error };
+        }
+    }
+
     static getSpotifyUrl(state?: string) {
         const body = new URLSearchParams();
 
@@ -70,20 +95,42 @@ export default class SpotifyDataService {
         }
     }
 
+    static async getPlaylists(accessToken: string) {
+        let playlists: Playlist[] = [];
+        let offset = 0;
+
+        // eslint-disable-next-line no-constant-condition
+        while (true) {
+            const { error, ...data } = await this._fetchPlaylist(accessToken, offset);
+            if (error) throw new Error(error.message);
+
+            const newPlaylists: Playlist[] = data.items;
+            // newPlaylists = newPlaylists.filter((playlist) => playlist.collaborative && playlist.public);
+
+            playlists = [...playlists, ...newPlaylists];
+            if (!data.next) break;
+
+            offset += 20;
+        }
+
+        return playlists;
+    }
+
     static async refreshTokens(refreshToken: string) {
         try {
+            const body = new URLSearchParams();
+            body.append('grant_type', 'refresh_token');
+            body.append('refresh_token', refreshToken);
+
             const r = await axios({
                 url: 'https://accounts.spotify.com/api/token',
-                method: 'GET',
+                method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
                     'Authorization':
                         'Basic ' + Buffer.from(`${SPOTIFY_CLIENT_ID}:${SPOTIFY_CLIENT_SECRET}`).toString('base64'),
                 },
-                data: {
-                    grant_type: 'refresh_token',
-                    refresh_token: refreshToken,
-                },
+                data: body,
             });
 
             if (r.status !== 200) throw new Error(ERROR_TOKEN_REQUEST_FAILED);

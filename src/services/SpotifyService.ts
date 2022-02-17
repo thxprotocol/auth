@@ -100,6 +100,33 @@ export default class SpotifyDataService {
         }
     }
 
+    static async validateFollow(
+        accessToken: string,
+        toIds: string[],
+    ): Promise<Partial<{ followed: boolean[]; error: any }>> {
+        try {
+            const params = new URLSearchParams();
+            params.set('ids', `${toIds.join(',')}`);
+
+            const r = await axios({
+                url: `https://api.spotify.com/v1/me/following/contains?${params.toString()}`,
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${accessToken}`,
+                },
+            });
+
+            if (r.status !== 200) throw new Error(ERROR_NOT_AUTHORIZED);
+            if (!r.data) throw new Error(ERROR_NO_DATA);
+
+            return { followed: r.data };
+        } catch (error) {
+            return { error };
+        }
+    }
+
     static async getUser(accessToken: string) {
         try {
             const r = await axios({

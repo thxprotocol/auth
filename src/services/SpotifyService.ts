@@ -103,7 +103,7 @@ export default class SpotifyDataService {
     static async validateFollow(
         accessToken: string,
         toIds: string[],
-    ): Promise<Partial<{ followed: boolean[]; error: any }>> {
+    ): Promise<Partial<{ followed: { [toId: string]: boolean }; error: any }>> {
         try {
             const params = new URLSearchParams();
             params.set('ids', `${toIds.join(',')}`);
@@ -121,7 +121,9 @@ export default class SpotifyDataService {
             if (r.status !== 200) throw new Error(ERROR_NOT_AUTHORIZED);
             if (!r.data) throw new Error(ERROR_NO_DATA);
 
-            return { followed: r.data };
+            const followed = (r.data as boolean[]).reduce((pre, cur, index) => ({ ...pre, [toIds[index]]: cur }), {});
+
+            return { followed };
         } catch (error) {
             return { error };
         }

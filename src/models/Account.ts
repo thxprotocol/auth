@@ -36,6 +36,7 @@ export interface IAccountUpdates {
     privateKey?: string;
     googleAccess?: boolean;
     twitterAccess?: boolean;
+    spotifyAccess?: boolean;
     authenticationToken?: string;
     authenticationTokenExpires?: number;
 }

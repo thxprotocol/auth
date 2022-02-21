@@ -1,3 +1,4 @@
+import 'express-async-errors';
 import express, { json, urlencoded } from 'express';
 import compression from 'compression';
 import path from 'path';
@@ -11,8 +12,8 @@ import { xframe, xssProtection } from 'lusca';
 import { oidc } from './controllers/oidc';
 import { requestLogger } from './util/logger';
 import { corsHandler } from './util/cors';
-import { errorHandler, notFoundHandler } from './util/error';
 import { PORT, MONGODB_URI, locals } from './util/secrets';
+import { errorLogger, errorNormalizer, errorOutput, notFoundHandler } from './middlewares';
 
 const app = express();
 
@@ -36,6 +37,8 @@ app.use('/account', json(), urlencoded({ extended: true }), accountRouter);
 app.use('/health', json(), urlencoded({ extended: true }), healthRouter);
 app.use('/', oidc.callback);
 app.use(notFoundHandler);
-app.use(errorHandler);
+app.use(errorLogger);
+app.use(errorNormalizer);
+app.use(errorOutput);
 
 export default app;

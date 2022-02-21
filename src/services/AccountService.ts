@@ -75,6 +75,7 @@ export default class AccountService {
             privateKey,
             googleAccess,
             twitterAccess,
+            spotifyAccess,
             authenticationToken,
             authenticationTokenExpires,
         }: IAccountUpdates,
@@ -111,6 +112,12 @@ export default class AccountService {
                 account.twitterAccessToken = '';
                 account.twitterRefreshToken = '';
                 account.twitterAccessTokenExpires = null;
+            }
+
+            if (spotifyAccess === false) {
+                account.spotifyAccessToken = '';
+                account.spotifyRefreshToken = '';
+                account.spotifyAccessTokenExpires = null;
             }
 
             return { result: await account.save() };

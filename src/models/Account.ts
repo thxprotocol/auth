@@ -20,6 +20,9 @@ export interface IAccount {
     twitterAccessToken: string;
     twitterRefreshToken: string;
     twitterAccessTokenExpires: number;
+    spotifyAccessToken: string;
+    spotifyRefreshToken: string;
+    spotifyAccessTokenExpires: number;
     acceptTermsPrivacy: boolean;
     acceptUpdates: boolean;
     recoveryPhrase: string;
@@ -33,6 +36,7 @@ export interface IAccountUpdates {
     privateKey?: string;
     googleAccess?: boolean;
     twitterAccess?: boolean;
+    spotifyAccess?: boolean;
     authenticationToken?: string;
     authenticationTokenExpires?: number;
 }
@@ -58,6 +62,9 @@ const accountSchema = new mongoose.Schema(
         twitterAccessToken: String,
         twitterRefreshToken: String,
         twitterAccessTokenExpires: Number,
+        spotifyAccessToken: String,
+        spotifyRefreshToken: String,
+        spotifyAccessTokenExpires: Number,
         acceptTermsPrivacy: Boolean,
         acceptUpdates: Boolean,
         recoveryPhrase: String,

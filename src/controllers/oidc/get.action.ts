@@ -70,9 +70,7 @@ export default async function getController(req: Request, res: Response) {
         // Regular prompts are used for authenticated routes
         switch (prompt.name) {
             case 'connect': {
-                const { account, error } = await AccountService.get(interaction.session.accountId);
-
-                if (error) throw new Error(error.message);
+                const account = await AccountService.get(interaction.session.accountId);
 
                 if (params.channel == ChannelType.Google && !account.googleAccessToken) {
                     const googleLoginUrl = getGoogleLoginUrl(req.params.uid, youtubeReadOnlyScope);

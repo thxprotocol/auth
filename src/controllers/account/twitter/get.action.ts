@@ -1,32 +1,9 @@
-import { Request, Response, NextFunction } from 'express';
-import { HttpError } from '../../../models/Error';
+import { Request, Response } from 'express';
 import { AccountDocument } from '../../../models/Account';
 import TwitterService from '../../../services/TwitterService';
 import AccountService from '../../../services/AccountService';
 
-export const getTwitter = async (req: Request, res: Response, next: NextFunction) => {
-    async function getAccount(): Promise<AccountDocument> {
-        const { account, error } = await AccountService.get(req.params.sub);
-        if (error) throw new Error(error.message);
-        return account;
-    }
-    async function getTwitterUser(accessToken: string) {
-        const { user, error } = await TwitterService.getUser(accessToken);
-        if (error) throw new Error(error.message);
-        return user;
-    }
-    async function getTwitterTweets(accessToken: string) {
-        const { tweets, error } = await TwitterService.getTweets(accessToken);
-        if (error) throw new Error(error.message);
-        return tweets;
-    }
-
-    async function refreshToken(refreshToken: string) {
-        const { tokens, error } = await TwitterService.refreshTokens(refreshToken);
-        if (error) throw new Error(error.message);
-        return tokens;
-    }
-
+export const getTwitter = async (req: Request, res: Response) => {
     async function updateTokens(account: AccountDocument, tokens: any): Promise<AccountDocument> {
         account.twitterAccessToken = tokens.access_token || account.twitterAccessToken;
         account.twitterRefreshToken = tokens.refresh_token || account.twitterRefreshToken;
@@ -37,27 +14,23 @@ export const getTwitter = async (req: Request, res: Response, next: NextFunction
         return await account.save();
     }
 
-    try {
-        let account = await getAccount();
+    let account: AccountDocument = await AccountService.get(req.params.sub);
 
-        if (!account.twitterAccessToken || !account.twitterRefreshToken) {
-            return res.json({ isAuthorized: false });
-        }
-
-        if (Date.now() >= account.twitterAccessTokenExpires) {
-            const tokens = await refreshToken(account.twitterRefreshToken);
-            account = await updateTokens(account, tokens);
-        }
-
-        const tweets = await getTwitterTweets(account.twitterAccessToken);
-        const user = await getTwitterUser(account.twitterAccessToken);
-
-        res.json({
-            isAuthorized: true,
-            tweets,
-            users: [user],
-        });
-    } catch (error) {
-        next(new HttpError(502, error.message, error));
+    if (!account.twitterAccessToken || !account.twitterRefreshToken) {
+        return res.json({ isAuthorized: false });
     }
+
+    if (Date.now() >= account.twitterAccessTokenExpires) {
+        const tokens = await TwitterService.refreshTokens(account.twitterRefreshToken);
+        account = await updateTokens(account, tokens);
+    }
+
+    const tweets = await TwitterService.getTweets(account.twitterAccessToken);
+    const user = await TwitterService.getUser(account.twitterAccessToken);
+
+    res.json({
+        isAuthorized: true,
+        tweets,
+        users: [user],
+    });
 };

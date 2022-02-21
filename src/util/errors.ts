@@ -46,6 +46,13 @@ class NotFoundError extends THXHttpError {
     }
 }
 
+class UnprocessableEntityError extends THXHttpError {
+    status = 422;
+    constructor(message?: string) {
+        super(message || 'Unprocessable Entity');
+    }
+}
+
 class InternalServerError extends THXHttpError {
     status = 500;
     constructor(message?: string) {
@@ -74,6 +81,7 @@ export {
     UnauthorizedError,
     ForbiddenError,
     NotFoundError,
+    UnprocessableEntityError,
     NotImplementedError,
     BadGatewayError,
     InternalServerError,

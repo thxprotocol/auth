@@ -6,13 +6,11 @@ import MailService from '../../services/MailService';
 import { ERROR_SENDING_FORGOT_MAIL_FAILED } from '../../util/messages';
 
 export default async function postForgotController(req: Request, res: Response, next: NextFunction) {
-    const { account, error } = await AccountService.getByEmail(req.body.email);
+    const account = await AccountService.getByEmail(req.body.email);
     const alert = { variant: 'danger', message: '' };
 
     if (!account) {
         alert.message = 'An account with this e-mail address not exists.';
-    } else if (error) {
-        alert.message = 'Could not check your e-mail address for existence.';
     }
 
     if (alert.message) {

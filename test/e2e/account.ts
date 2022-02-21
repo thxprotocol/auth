@@ -132,7 +132,7 @@ describe('Account Controller', () => {
         let testAccountId = '';
 
         beforeAll(async () => {
-            const { account } = await AccountService.getByEmail(accountEmail);
+            const account = await AccountService.getByEmail(accountEmail);
             await account.save();
 
             testAccountId = account._id;
@@ -161,7 +161,7 @@ describe('Account Controller', () => {
         });
 
         it('Successfully get linked Twitter info with a correct infomation', async () => {
-            const { account } = await AccountService.getByEmail(accountEmail);
+            const account = await AccountService.getByEmail(accountEmail);
             account.twitterAccessToken = 'TOKEN';
             account.twitterRefreshToken = 'REFRESH';
             account.twitterAccessTokenExpires = (Date.now() + 1000000) * 1000;
@@ -181,7 +181,7 @@ describe('Account Controller', () => {
         let testAccountId = '';
 
         beforeAll(async () => {
-            const { account } = await AccountService.getByEmail(accountEmail);
+            const account = await AccountService.getByEmail(accountEmail);
             await account.save();
 
             testAccountId = account._id;

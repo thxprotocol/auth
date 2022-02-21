@@ -7,22 +7,11 @@ import { validateEmail } from '../../util/validate';
 import { oidc } from '.';
 import { HttpError } from '../../models/Error';
 
-async function isEmailDuplicate(email: string): Promise<AccountDocument> {
-    const { result, error } = await AccountService.isEmailDuplicate(email);
-
-    if (error) {
-        throw new Error(error.message);
-    }
-
-    return result;
-}
-
 async function getAccountByEmail(email: string): Promise<AccountDocument> {
     let account;
 
-    if (await isEmailDuplicate(email)) {
-        const result = await AccountService.getByEmail(email);
-        account = result.account;
+    if (await AccountService.isEmailDuplicate(email)) {
+        account = await AccountService.getByEmail(email);
     } else if (validateEmail(email)) {
         const result = await AccountService.signup(email, '', true, true, true);
         account = result.account;
@@ -41,7 +30,7 @@ async function updateTokens(account: AccountDocument, tokens: any): Promise<Acco
 }
 
 async function getAccountBySub(sub: string): Promise<AccountDocument> {
-    const { account } = await AccountService.get(sub);
+    const account = await AccountService.get(sub);
     if (!account) throw new Error(ERROR_NO_ACCOUNT);
     return account;
 }
@@ -66,8 +55,7 @@ async function getTokens(code: string) {
 }
 
 async function getSpotifyUser(accessToken: string) {
-    const { user, error } = await SpotifyService.getUser(accessToken);
-    if (error) throw new Error('Could not get Spotify user profile');
+    const user = await SpotifyService.getUser(accessToken);
     if (!user) throw new Error('No Spotify user returned for access token');
     return user;
 }

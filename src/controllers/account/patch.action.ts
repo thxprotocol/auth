@@ -1,34 +1,14 @@
-import { Request, Response, NextFunction } from 'express';
-import { AccountDocument, IAccountUpdates } from '../../models/Account';
-import { HttpError } from '../../models/Error';
+import { Request, Response } from 'express';
 import AccountService from '../../services/AccountService';
+import { NotFoundError, UnprocessableEntityError } from '../../util/errors';
 
-export const patchAccount = async (req: Request, res: Response, next: NextFunction) => {
-    async function getAccount() {
-        const { account, error } = await AccountService.get(req.params.id);
-
-        if (error) throw new Error(error.message);
-
-        return account;
+export const patchAccount = async (req: Request, res: Response) => {
+    const account = await AccountService.get(req.params.id);
+    if (!account) {
+        throw new NotFoundError();
     }
-
-    async function patchAccount(account: AccountDocument, updates: IAccountUpdates) {
-        const { result, error } = await AccountService.update(account, updates);
-        if (error) {
-            if (error.code === 11000) {
-                return next(new HttpError(422, 'A user for this e-mail already exists.', error));
-            }
-            return next(new HttpError(500, 'Could not update the account.', error));
-        }
-        if (!result) {
-            return next(new HttpError(500, 'Could not find a result for the account update', error));
-        }
-    }
-
     try {
-        const account = await getAccount();
-
-        await patchAccount(account, {
+        await AccountService.update(account, {
             address: req.body.address,
             googleAccess: req.body.googleAccess,
             twitterAccess: req.body.twitterAccess,
@@ -36,10 +16,11 @@ export const patchAccount = async (req: Request, res: Response, next: NextFuncti
             authenticationToken: req.body.authenticationToken,
             authenticationTokenExpires: req.body.authenticationTokenExpires,
         });
-
         res.status(204).end();
-    } catch (err) {
-        next(new HttpError(502, 'Account find failed.', err));
-        return;
+    } catch (error) {
+        if (error.code === 11000) {
+            throw new UnprocessableEntityError('A user for this e-mail already exists.');
+        }
+        throw error();
     }
 };

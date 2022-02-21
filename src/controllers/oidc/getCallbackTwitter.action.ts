@@ -8,18 +8,8 @@ import { ERROR_NO_ACCOUNT } from '../../util/messages';
 import { validateEmail } from '../../util/validate';
 
 export default async function getTwitterCallback(req: Request, res: Response, next: NextFunction) {
-    async function isEmailDuplicate(email: string) {
-        const { result, error } = await AccountService.isEmailDuplicate(email);
-
-        if (error) {
-            throw new Error(error.message);
-        }
-
-        return result;
-    }
-
     async function getAccountBySub(sub: string) {
-        const { account } = await AccountService.get(sub);
+        const account = await AccountService.get(sub);
         if (!account) throw new Error(ERROR_NO_ACCOUNT);
         return account;
     }
@@ -27,9 +17,8 @@ export default async function getTwitterCallback(req: Request, res: Response, ne
     async function getAccountByEmail(email: string) {
         let account;
 
-        if (await isEmailDuplicate(email)) {
-            const result = await AccountService.getByEmail(email);
-            account = result.account;
+        if (await AccountService.isEmailDuplicate(email)) {
+            account = await AccountService.getByEmail(email);
         } else if (validateEmail(email)) {
             const result = await AccountService.signup(email, '', true, true, true);
             account = result.account;
@@ -60,15 +49,12 @@ export default async function getTwitterCallback(req: Request, res: Response, ne
         return interaction;
     }
 
-    async function getTokens(code: string) {
-        const { tokens, error } = await TwitterService.requestTokens(code);
-        if (error) throw new Error('Could not get Twitter tokens');
-        return tokens;
+    function getTokens(code: string) {
+        return TwitterService.requestTokens(code);
     }
 
     async function getTwitterUser(accessToken: string) {
-        const { user, error } = await TwitterService.getUser(accessToken);
-        if (error) throw new Error('Could not get Twitter user profile');
+        const user = await TwitterService.getUser(accessToken);
         if (!user) throw new Error('No Twitter user returned for access token');
         return user;
     }

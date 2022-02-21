@@ -7,14 +7,12 @@ import { HttpError } from '../../models/Error';
 import { checkPasswordStrength } from '../../util/passwordcheck';
 
 export default async function postCreateController(req: Request, res: Response, next: NextFunction) {
-    const { result, error } = await AccountService.isEmailDuplicate(req.body.email);
+    const isDuplicate = await AccountService.isEmailDuplicate(req.body.email);
     const alert = { variant: 'danger', message: '' };
     const passwordStrength = checkPasswordStrength(req.body.password);
 
-    if (result) {
+    if (isDuplicate) {
         alert.message = 'An account with this e-mail address already exists.';
-    } else if (error) {
-        alert.message = 'Could not check your e-mail address for duplicates.';
     } else if (passwordStrength != 'strong') {
         alert.message = 'Please enter a strong password.';
     } else if (req.body.password !== req.body.confirmPassword) {

@@ -1,3 +1,4 @@
+import newrelic from 'newrelic';
 import { Account, AccountDocument, IAccountUpdates } from '../models/Account';
 import { createRandomToken } from '../util/tokens';
 import { decryptString } from '../util/decrypt';
@@ -17,53 +18,24 @@ import {
     ERROR_PASSWORD_STRENGTH,
 } from '../util/messages';
 import YouTubeDataService from './YouTubeDataService';
+import { logger } from '../util/logger';
 
 export default class AccountService {
-    static async get(sub: string) {
-        try {
-            const account = await Account.findById(sub);
-
-            return { account };
-        } catch (error) {
-            return { error };
-        }
+    static get(sub: string) {
+        return Account.findById(sub);
     }
 
-    static async getByEmail(email: string) {
-        try {
-            const account = await Account.findOne({ email });
-
-            if (!account) {
-                throw new Error(ERROR_NO_ACCOUNT);
-            }
-
-            return { account };
-        } catch (error) {
-            return { error };
-        }
+    static getByEmail(email: string) {
+        return Account.findOne({ email });
     }
 
-    static async getByAddress(address: string) {
-        try {
-            const account = await Account.findOne({ address });
-
-            if (!account) {
-                throw new Error(ERROR_NO_ACCOUNT);
-            }
-
-            return { account };
-        } catch (error) {
-            return { error };
-        }
+    static getByAddress(address: string) {
+        return Account.findOne({ address });
     }
 
     static async isEmailDuplicate(email: string) {
-        try {
-            const result = await Account.findOne({ email, active: true });
-            return { result };
-        } catch (error) {
-            return { error };
-        }
+        const result = await Account.findOne({ email, active: true });
+        return Boolean(result);
     }
 
     static async update(
@@ -101,8 +73,12 @@ export default class AccountService {
             account.privateKey = privateKey || account.privateKey;
 
             if (googleAccess === false) {
-                await YouTubeDataService.revokeAccess(account);
-
+                try {
+                    await YouTubeDataService.revokeAccess(account);
+                } catch (error) {
+                    newrelic.noticeError(error);
+                    logger.error('Unable to revoke YouTube access', error);
+                }
                 account.googleAccessToken = '';
                 account.googleRefreshToken = '';
                 account.googleAccessTokenExpires = null;
@@ -158,21 +134,17 @@ export default class AccountService {
     }
 
     static async signupFor(email: string, password: string, address?: string) {
-        try {
-            const wallet = new Web3().eth.accounts.create();
-            const privateKey = address ? null : wallet.privateKey;
-            const account = new Account({
-                active: true,
-                address: address ? address : wallet.address,
-                privateKey: address ? privateKey : wallet.privateKey,
-                email,
-                password,
-            });
+        const wallet = new Web3().eth.accounts.create();
+        const privateKey = address ? null : wallet.privateKey;
+        const account = new Account({
+            active: true,
+            address: address ? address : wallet.address,
+            privateKey: address ? privateKey : wallet.privateKey,
+            email,
+            password,
+        });
 
-            return { account: await account.save() };
-        } catch (error) {
-            return { error };
-        }
+        return await account.save();
     }
 
     static async verifySignupToken(signupToken: string) {
@@ -282,12 +254,8 @@ export default class AccountService {
         }
     }
 
-    static async remove(id: string) {
-        try {
-            await Account.remove({ _id: id });
-        } catch (error) {
-            return { error };
-        }
+    static remove(id: string) {
+        Account.remove({ _id: id });
     }
 
     static async post(

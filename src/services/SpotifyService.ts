@@ -1,6 +1,6 @@
 import axios from 'axios';
-import { Playlist } from 'types';
-import { PlaylistItem } from 'types/PlaylistItem';
+import { Playlist } from '../types';
+import { PlaylistItem } from '../types/PlaylistItem';
 import { SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, SPOTIFY_REDIRECT_URI } from '../util/secrets';
 
 export const SPOTIFY_API_ENDPOINT = 'https://api.spotify.com/v1/';
@@ -130,24 +130,20 @@ export default class SpotifyDataService {
     }
 
     static async getUser(accessToken: string) {
-        try {
-            const r = await axios({
-                url: 'https://api.spotify.com/v1/me',
-                method: 'GET',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${accessToken}`,
-                },
-            });
+        const r = await axios({
+            url: 'https://api.spotify.com/v1/me',
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${accessToken}`,
+            },
+        });
 
-            if (r.status !== 200) throw new Error(ERROR_NOT_AUTHORIZED);
-            if (!r.data) throw new Error(ERROR_NO_DATA);
+        if (r.status !== 200) throw new Error(ERROR_NOT_AUTHORIZED);
+        if (!r.data) throw new Error(ERROR_NO_DATA);
 
-            return { user: r.data };
-        } catch (error) {
-            return { error };
-        }
+        return r.data;
     }
 
     static async getPlaylists(accessToken: string) {
@@ -192,27 +188,23 @@ export default class SpotifyDataService {
     }
 
     static async refreshTokens(refreshToken: string) {
-        try {
-            const body = new URLSearchParams();
-            body.append('grant_type', 'refresh_token');
-            body.append('refresh_token', refreshToken);
+        const body = new URLSearchParams();
+        body.append('grant_type', 'refresh_token');
+        body.append('refresh_token', refreshToken);
 
-            const r = await axios({
-                url: 'https://accounts.spotify.com/api/token',
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'Authorization':
-                        'Basic ' + Buffer.from(`${SPOTIFY_CLIENT_ID}:${SPOTIFY_CLIENT_SECRET}`).toString('base64'),
-                },
-                data: body,
-            });
+        const r = await axios({
+            url: 'https://accounts.spotify.com/api/token',
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Authorization':
+                    'Basic ' + Buffer.from(`${SPOTIFY_CLIENT_ID}:${SPOTIFY_CLIENT_SECRET}`).toString('base64'),
+            },
+            data: body,
+        });
 
-            if (r.status !== 200) throw new Error(ERROR_TOKEN_REQUEST_FAILED);
+        if (r.status !== 200) throw new Error(ERROR_TOKEN_REQUEST_FAILED);
 
-            return { tokens: r.data.access_token };
-        } catch (error) {
-            return { error };
-        }
+        return r.data.access_token;
     }
 }

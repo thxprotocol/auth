@@ -122,7 +122,7 @@ describe('Sign up', () => {
             });
 
             it('Create a new Interaction for Signup Verify', async () => {
-                const { account } = await AccountService.getByEmail(NEW_ACCOUNT_EMAIL);
+                const account = await AccountService.getByEmail(NEW_ACCOUNT_EMAIL);
                 const signUpKey = account.signupToken;
 
                 const params = new URLSearchParams({

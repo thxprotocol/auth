@@ -1,9 +1,8 @@
-import { Request, Response, NextFunction } from 'express';
-import { AccountDocument } from '../../models/Account';
-import { HttpError } from '../../models/Error';
+import { Request, Response } from 'express';
+import { NotFoundError } from '../../util/errors';
 import AccountService from '../../services/AccountService';
 
-function formatAccountRes(account: AccountDocument) {
+function formatAccountRes(account: any) {
     let protectedPrivateKey;
     if (account.privateKey) {
         protectedPrivateKey = { privateKey: account.privateKey };
@@ -19,44 +18,30 @@ function formatAccountRes(account: AccountDocument) {
     };
 }
 
-export const getAccount = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const { account, error } = await AccountService.get(req.params.id);
-
-        if (error) throw new Error(error.message);
-
-        if (account) {
-            res.send(formatAccountRes(account));
-        }
-    } catch (e) {
-        next(new HttpError(502, 'Account find failed', e));
+export const getAccount = async (req: Request, res: Response) => {
+    const account = await AccountService.get(req.params.id);
+    if (!account) {
+        throw new NotFoundError();
     }
+
+    res.send(formatAccountRes(account));
 };
 
-export const getAccountByAddress = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const { account, error } = await AccountService.getByAddress(req.params.address);
-
-        if (error) throw new Error(error.message);
-
-        if (account) {
-            res.send(formatAccountRes(account));
-        }
-    } catch (e) {
-        next(new HttpError(502, 'Account find failed', e));
+export const getAccountByAddress = async (req: Request, res: Response) => {
+    const account = AccountService.getByAddress(req.params.address);
+    if (!account) {
+        throw new NotFoundError();
     }
+
+    res.send(formatAccountRes(account));
 };
 
-export const getAccountByEmail = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const { account, error } = await AccountService.getByEmail(req.params.email);
+export const getAccountByEmail = async (req: Request, res: Response) => {
+    const account = await AccountService.getByEmail(req.params.email);
 
-        if (error) throw new Error(error.message);
-
-        if (account) {
-            res.send(formatAccountRes(account));
-        }
-    } catch (e) {
-        next(new HttpError(502, 'Account find failed', e));
+    if (!account) {
+        throw new NotFoundError();
     }
+
+    res.send(formatAccountRes(account));
 };

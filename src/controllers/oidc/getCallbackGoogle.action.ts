@@ -10,17 +10,13 @@ import { validateEmail } from '../../util/validate';
 
 export default async function getGoogleCallback(req: Request, res: Response, next: NextFunction) {
     async function isEmailDuplicate(email: string) {
-        const { result, error } = await AccountService.isEmailDuplicate(email);
-
-        if (error) {
-            throw new Error(error.message);
-        }
+        const result = await AccountService.isEmailDuplicate(email);
 
         return result;
     }
 
     async function getAccountBySub(sub: string) {
-        const { account } = await AccountService.get(sub);
+        const account = await AccountService.get(sub);
         if (!account) throw new Error(ERROR_NO_ACCOUNT);
         return account;
     }
@@ -29,8 +25,7 @@ export default async function getGoogleCallback(req: Request, res: Response, nex
         let account;
 
         if (await isEmailDuplicate(email)) {
-            const result = await AccountService.getByEmail(email);
-            account = result.account;
+            account = await AccountService.getByEmail(email);
         } else if (validateEmail(email)) {
             const result = await AccountService.signup(email, '', true, true, true);
             account = result.account;

@@ -9,12 +9,6 @@ async function getAccount(sub: string): Promise<AccountDocument> {
     return account;
 }
 
-async function getSpotifyUser(accessToken: string) {
-    const { user, error } = await SpotifyService.getUser(accessToken);
-    if (error) throw new Error(error.message);
-    return user;
-}
-
 export async function getSpotifyTrackPlaying(req: Request, res: Response) {
     const account = await getAccount(req.params.sub);
     const { result, error } = await SpotifyService.validateTrackPlaying(account.spotifyAccessToken, req.params.item);

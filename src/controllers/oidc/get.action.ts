@@ -4,7 +4,7 @@ import { oidc } from '.';
 import { getGoogleLoginUrl } from '../../util/google';
 import { ChannelType, ChannelAction } from '../../models/Reward';
 import { getTwitterLoginURL, twitterScopes } from '../../util/twitter';
-import SpotifyService from '../../services/SpotifyService';
+import SpotifyService, { SPOTIFY_API_SCOPE } from '../../services/SpotifyService';
 import { WALLET_URL } from '../../util/secrets';
 
 const youtubeScope = ['https://www.googleapis.com/auth/userinfo.email', 'https://www.googleapis.com/auth/youtube'];
@@ -23,6 +23,12 @@ function getChannelScopes(channelAction: ChannelAction) {
         case ChannelAction.TwitterRetweet:
         case ChannelAction.TwitterFollow:
             return { channelScopes: twitterScopes.split('%20') };
+        case ChannelAction.SpotifyPlaylistFollow:
+        case ChannelAction.SpotifyTrackPlaying:
+        case ChannelAction.SpotifyTrackRecent:
+        case ChannelAction.SpotifyTrackSaved:
+        case ChannelAction.SpotifyUserFollow:
+            return { channelScopes: SPOTIFY_API_SCOPE.join(' ') };
     }
 }
 
@@ -36,6 +42,12 @@ function getLoginLinkForChannelAction(uid: string, channelAction: ChannelAction)
         case ChannelAction.TwitterRetweet:
         case ChannelAction.TwitterFollow:
             return { twitterLoginUrl: getTwitterLoginURL(uid) };
+        case ChannelAction.SpotifyPlaylistFollow:
+        case ChannelAction.SpotifyTrackPlaying:
+        case ChannelAction.SpotifyTrackRecent:
+        case ChannelAction.SpotifyTrackSaved:
+        case ChannelAction.SpotifyUserFollow:
+            return { spotifyLoginUrl: SpotifyService.getSpotifyUrl(uid) };
     }
 }
 
@@ -98,6 +110,7 @@ export default async function getController(req: Request, res: Response) {
                     if (params.return_url === WALLET_URL) {
                         params.googleLoginUrl = getGoogleLoginUrl(req.params.uid, youtubeReadOnlyScope);
                         params.twitterLoginUrl = getTwitterLoginURL(uid);
+                        params.spotifyLoginUrl = SpotifyService.getSpotifyUrl(uid);
                     }
                     return res.render('login', { uid, params, alert: {} });
                 } else {

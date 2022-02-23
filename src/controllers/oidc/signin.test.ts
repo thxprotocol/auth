@@ -1,9 +1,9 @@
 import request from 'supertest';
-import app from '../../src/app';
-import AccountService from '../../src/services/AccountService';
-import db from '../../src/util/database';
-import { INITIAL_ACCESS_TOKEN } from '../../src/util/secrets';
-import { getPath, accountEmail, accountSecret } from './lib';
+import app from '../../app';
+import AccountService from '../../services/AccountService';
+import db from '../../util/database';
+import { INITIAL_ACCESS_TOKEN } from '../../util/secrets';
+import { getPath, accountEmail, accountSecret } from '../../util/jest';
 
 const REDIRECT_URL = 'https://localhost:8082/signin-oidc';
 
@@ -38,6 +38,7 @@ describe('Sign In', () => {
 
     afterAll(async () => {
         await db.truncate();
+        db.disconnect();
     });
 
     describe('GET /auth', () => {

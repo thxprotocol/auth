@@ -194,7 +194,7 @@
         ],
         "testEnvironment": "node",
         "setupFilesAfterEnv": [
-            "<rootDir>/test/e2e/lib/setup.ts"
+            "<rootDir>/src/util/jest/setup.ts"
         ]
     }
 }

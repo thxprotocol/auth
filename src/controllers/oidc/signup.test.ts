@@ -1,9 +1,9 @@
 import nock from 'nock';
 import request from 'supertest';
-import app from '../../src/app';
-import AccountService from '../../src/services/AccountService';
-import db from '../../src/util/database';
-import { INITIAL_ACCESS_TOKEN } from '../../src/util/secrets';
+import app from '../../app';
+import AccountService from '../../services/AccountService';
+import db from '../../util/database';
+import { INITIAL_ACCESS_TOKEN } from '../../util/secrets';
 
 describe('Sign up', () => {
     let CID = '';
@@ -31,6 +31,7 @@ describe('Sign up', () => {
 
     afterAll(async () => {
         await db.truncate();
+        db.disconnect();
     });
 
     describe('GET /auth', () => {

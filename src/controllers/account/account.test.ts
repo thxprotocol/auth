@@ -1,11 +1,11 @@
 import nock from 'nock';
 import request from 'supertest';
-import app from '../../src/app';
-import db from '../../src/util/database';
-import AccountService from '../../src/services/AccountService';
-import { INITIAL_ACCESS_TOKEN } from '../../src/util/secrets';
-import { accountAddress, accountEmail, accountSecret } from './lib/constants';
-import { TWITTER_API_ENDPOINT } from '../../src/services/TwitterService';
+import app from '../../app';
+import db from '../../util/database';
+import AccountService from '../../services/AccountService';
+import { INITIAL_ACCESS_TOKEN } from '../../util/secrets';
+import { accountAddress, accountEmail, accountSecret } from '../../util/jest';
+import { TWITTER_API_ENDPOINT } from '../../services/TwitterService';
 
 const http = request.agent(app);
 
@@ -49,6 +49,7 @@ describe('Account Controller', () => {
 
     afterAll(async () => {
         await db.truncate();
+        db.disconnect();
     });
 
     describe('POST /account', () => {

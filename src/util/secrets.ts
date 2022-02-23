@@ -17,10 +17,10 @@ const required = [
 ];
 
 // For production (docker containers) we should require JWKS_JSON to be set since otherwise each container
-// would generate their own jwks.json. For now this is commented to not break the current production env.
-// if (process.env.NODE_ENV === 'production') {
-//     required.push('JWKS_JSON');
-// }
+// would generate their own jwks.json.
+if (process.env.NODE_ENV === 'production') {
+    required.push('JWKS_JSON');
+}
 
 required.forEach((value: string) => {
     if (!process.env[value]) {

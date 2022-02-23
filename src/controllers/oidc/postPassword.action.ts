@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import { IAccountUpdates } from '../../models/Account';
 import AccountService from '../../services/AccountService';
 import { oidc } from '.';
-import { GTM } from '../../util/secrets';
 
 export default async function postPasswordController(req: Request, res: Response) {
     if (!req.body.acceptTermsPrivacy) {
@@ -14,7 +13,6 @@ export default async function postPasswordController(req: Request, res: Response
                 secure_key: req.body.secureKey,
             },
             alert: { variant: 'danger', message: 'Please accept the terms of use and privacy statement.' },
-            gtm: GTM,
         });
     }
 
@@ -38,7 +36,6 @@ export default async function postPasswordController(req: Request, res: Response
                 variant: 'danger',
                 message: error.toString(),
             },
-            gtm: GTM,
         });
     }
     const account = await AccountService.get(sub);

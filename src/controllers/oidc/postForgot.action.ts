@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import AccountService from '../../services/AccountService';
-import { GTM } from '../../util/secrets';
 import MailService from '../../services/MailService';
 
 export default async function postForgotController(req: Request, res: Response) {
@@ -14,7 +13,6 @@ export default async function postForgotController(req: Request, res: Response) 
                 return_url: req.body.returnUrl,
             },
             alert: { variant: 'danger', message: 'An account with this e-mail address not exists.' },
-            gtm: GTM,
         });
     }
 
@@ -29,6 +27,5 @@ export default async function postForgotController(req: Request, res: Response) 
             variant: 'success',
             message: 'We have send a password reset link to ' + account.email + '. It will be valid for 20 minutes.',
         },
-        gtm: GTM,
     });
 }

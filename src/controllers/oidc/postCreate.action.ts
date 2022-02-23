@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import MailService from '../../services/MailService';
 import AccountService from '../../services/AccountService';
-import { GTM } from '../../util/secrets';
 import { checkPasswordStrength } from '../../util/passwordcheck';
 
 export default async function postCreateController(req: Request, res: Response) {
@@ -29,7 +28,6 @@ export default async function postCreateController(req: Request, res: Response) 
                 signup_email: req.body.email,
             },
             alert,
-            gtm: GTM,
         });
     }
 
@@ -52,6 +50,5 @@ export default async function postCreateController(req: Request, res: Response) 
             variant: 'success',
             message: 'Verify your e-mail address by clicking the link we just sent you. You can close this window.',
         },
-        gtm: GTM,
     });
 }

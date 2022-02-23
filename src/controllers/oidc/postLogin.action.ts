@@ -1,7 +1,6 @@
 import AccountService from '../../services/AccountService';
 import MailService from '../../services/MailService';
 import { Request, Response } from 'express';
-import { GTM } from '../../util/secrets';
 import { ERROR_ACCOUNT_NOT_ACTIVE, ERROR_AUTH_LINK } from '../../util/messages';
 import { oidc } from '.';
 
@@ -14,7 +13,6 @@ export default async function postLoginController(req: Request, res: Response) {
                 variant: 'danger',
                 message: errorMessage,
             },
-            gtm: GTM,
         });
     }
 

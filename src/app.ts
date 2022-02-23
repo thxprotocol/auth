@@ -12,7 +12,7 @@ import { xframe, xssProtection } from 'lusca';
 import { oidc } from './controllers/oidc';
 import { requestLogger } from './util/logger';
 import { corsHandler } from './util/cors';
-import { PORT, MONGODB_URI, locals } from './util/secrets';
+import { PORT, MONGODB_URI, locals, GTM } from './util/secrets';
 import { errorLogger, errorNormalizer, errorOutput, notFoundHandler } from './middlewares';
 
 const app = express();
@@ -40,5 +40,7 @@ app.use(notFoundHandler);
 app.use(errorLogger);
 app.use(errorNormalizer);
 app.use(errorOutput);
+
+app.locals.gtm = GTM;
 
 export default app;

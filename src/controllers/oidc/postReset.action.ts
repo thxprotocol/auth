@@ -1,5 +1,4 @@
 import { Request, Response } from 'express';
-import { GTM } from '../../util/secrets';
 import AccountService from '../../services/AccountService';
 
 export default async function postResetController(req: Request, res: Response) {
@@ -13,7 +12,6 @@ export default async function postResetController(req: Request, res: Response) {
             variant: 'success',
             message: '',
         },
-        gtm: GTM,
     };
 
     try {

@@ -1,13 +1,17 @@
 import jwt from 'express-jwt';
 import jwksRsa from 'jwks-rsa';
-import { ISSUER, AUTH_URL } from '../util/secrets';
+import { ISSUER } from '../util/secrets';
+import { getJwks } from './jwks';
 
 export const checkJwt = jwt({
     secret: jwksRsa.expressJwtSecret({
         cache: true,
         rateLimit: true,
         jwksRequestsPerMinute: 5,
-        jwksUri: `${AUTH_URL}/jwks`,
+        jwksUri: '', // Unnecessary, keys are provided through getKeysInterceptor.
+        getKeysInterceptor: () => {
+            return getJwks().keys;
+        },
     }),
     issuer: ISSUER,
     algorithms: ['RS256'],

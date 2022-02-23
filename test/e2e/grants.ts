@@ -1,11 +1,11 @@
 import request from 'supertest';
-import server from '../../src/server';
+import app from '../../src/app';
 import db from '../../src/util/database';
 import AccountService from '../../src/services/AccountService';
 import { INITIAL_ACCESS_TOKEN } from '../../src/util/secrets';
 import { accountEmail, accountSecret } from './lib/constants';
 
-const http = request.agent(server);
+const http = request.agent(app);
 
 describe('OAuth2 Grants', () => {
     let authHeader: string, accessToken: string, accountId: string;
@@ -17,7 +17,6 @@ describe('OAuth2 Grants', () => {
 
     afterAll(async () => {
         await db.truncate();
-        server.close();
     });
 
     describe('GET /.well-known/openid-configuration', () => {

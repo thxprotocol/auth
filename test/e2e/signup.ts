@@ -1,6 +1,6 @@
 import nock from 'nock';
 import request from 'supertest';
-import server from '../../src/server';
+import app from '../../src/app';
 import AccountService from '../../src/services/AccountService';
 import db from '../../src/util/database';
 import { INITIAL_ACCESS_TOKEN } from '../../src/util/secrets';
@@ -11,7 +11,7 @@ describe('Sign up', () => {
     const REDIRECT_URL = 'https://localhost:8082/signin-oidc';
     const NEW_ACCOUNT_EMAIL = 'test@thx.network';
     const NEW_ACCOUNT_PASSWORD = '123asdASD@#@#!!';
-    const http = request.agent(server);
+    const http = request.agent(app);
 
     beforeAll(async () => {
         const res = await http
@@ -31,7 +31,6 @@ describe('Sign up', () => {
 
     afterAll(async () => {
         await db.truncate();
-        server.close();
     });
 
     describe('GET /auth', () => {

@@ -4,7 +4,15 @@ import { PlaylistItem } from 'types/PlaylistItem';
 import { SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, SPOTIFY_REDIRECT_URI } from '../util/secrets';
 
 export const SPOTIFY_API_ENDPOINT = 'https://api.spotify.com/v1/';
-export const SPOTIFY_API_SCOPE = 'user-read-private user-read-email playlist-modify-public playlist-modify-private';
+export const SPOTIFY_API_SCOPE = [
+    'user-library-read',
+    'user-read-recently-played',
+    'user-read-currently-playing',
+    'playlist-modify-private',
+    'playlist-modify-public',
+    'user-read-private',
+    'user-read-email',
+];
 const ERROR_NO_DATA = 'Could not find an Spotify data for this accesstoken';
 const ERROR_NOT_AUTHORIZED = 'Not authorized for Spotify API';
 const ERROR_TOKEN_REQUEST_FAILED = 'Failed to request access token';
@@ -12,6 +20,7 @@ const ERROR_TOKEN_REQUEST_FAILED = 'Failed to request access token';
 axios.defaults.baseURL = SPOTIFY_API_ENDPOINT;
 
 export default class SpotifyDataService {
+    /** CREATION FLOW */
     static async _fetchPlaylist(accessToken: string, offset = 0) {
         try {
             const params = new URLSearchParams();
@@ -68,7 +77,7 @@ export default class SpotifyDataService {
         body.append('response_type', 'code');
         body.append('client_id', SPOTIFY_CLIENT_ID);
         body.append('redirect_uri', SPOTIFY_REDIRECT_URI);
-        body.append('scope', SPOTIFY_API_SCOPE);
+        body.append('scope', SPOTIFY_API_SCOPE.join(' '));
 
         return `https://accounts.spotify.com/authorize?${body.toString()}`;
     }
@@ -95,35 +104,6 @@ export default class SpotifyDataService {
                 throw new Error('Failed to request access token');
             }
             return { tokens: r.data };
-        } catch (error) {
-            return { error };
-        }
-    }
-
-    static async validateFollow(
-        accessToken: string,
-        toIds: string[],
-    ): Promise<Partial<{ followed: { [toId: string]: boolean }; error: any }>> {
-        try {
-            const params = new URLSearchParams();
-            params.set('ids', `${toIds.join(',')}`);
-
-            const r = await axios({
-                url: `https://api.spotify.com/v1/me/following/contains?${params.toString()}`,
-                method: 'GET',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${accessToken}`,
-                },
-            });
-
-            if (r.status !== 200) throw new Error(ERROR_NOT_AUTHORIZED);
-            if (!r.data) throw new Error(ERROR_NO_DATA);
-
-            const followed = (r.data as boolean[]).reduce((pre, cur, index) => ({ ...pre, [toIds[index]]: cur }), {});
-
-            return { followed };
         } catch (error) {
             return { error };
         }
@@ -211,6 +191,128 @@ export default class SpotifyDataService {
             if (r.status !== 200) throw new Error(ERROR_TOKEN_REQUEST_FAILED);
 
             return { tokens: r.data.access_token };
+        } catch (error) {
+            return { error };
+        }
+    }
+
+    /** CLAIM FLOW */
+    static async validateUserFollow(
+        accessToken: string,
+        toIds: string[],
+    ): Promise<Partial<{ result: { [toId: string]: boolean }; error: any }>> {
+        try {
+            const params = new URLSearchParams();
+            params.set('ids', `${toIds.join(',')}`);
+
+            const r = await axios({
+                url: `https://api.spotify.com/v1/me/following/contains?${params.toString()}`,
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${accessToken}`,
+                },
+            });
+
+            if (r.status !== 200) throw new Error(ERROR_NOT_AUTHORIZED);
+            if (!r.data) throw new Error(ERROR_NO_DATA);
+
+            const followed = (r.data as boolean[]).reduce((pre, cur, index) => ({ ...pre, [toIds[index]]: cur }), {});
+
+            return { result: followed };
+        } catch (error) {
+            return { error };
+        }
+    }
+
+    static async validatePlaylistFollow(accessToken: string, playlistId: string, toIds: string[]) {
+        try {
+            const params = new URLSearchParams();
+            params.set('ids', `${toIds.join(',')}`);
+
+            const r = await axios({
+                url: `https://api.spotify.com/v1/playlists/${playlistId}/followers/contains?${params.toString()}`,
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${accessToken}`,
+                },
+            });
+
+            if (r.status !== 200) throw new Error(ERROR_NOT_AUTHORIZED);
+            if (!r.data) throw new Error(ERROR_NO_DATA);
+
+            const followed = (r.data as boolean[]).reduce((pre, cur, index) => ({ ...pre, [toIds[index]]: cur }), {});
+
+            return { result: followed };
+        } catch (error) {
+            return { error };
+        }
+    }
+
+    static async validateTrackPlaying(accessToken: string, trackId: string) {
+        try {
+            const r = await axios({
+                url: 'https://api.spotify.com/v1/me/player/currently-playing',
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${accessToken}`,
+                },
+            });
+
+            if (r.status !== 200) throw new Error(ERROR_NOT_AUTHORIZED);
+            if (!r.data) throw new Error(ERROR_NO_DATA);
+            return { result: r.data.item.id === trackId };
+        } catch (error) {
+            return { error };
+        }
+    }
+
+    static async validateRecentTrack(accessToken: string, trackId: string) {
+        try {
+            const r = await axios({
+                url: 'https://api.spotify.com/v1/me/player/recently-played',
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${accessToken}`,
+                },
+            });
+
+            if (r.status !== 200) throw new Error(ERROR_NOT_AUTHORIZED);
+            if (!r.data) throw new Error(ERROR_NO_DATA);
+            return { result: r.data.items.findIndex((item: any) => item.id === trackId) !== -1 };
+        } catch (error) {
+            return { error };
+        }
+    }
+
+    static async validateSavedTracks(accessToken: string, toIds: string[]) {
+        try {
+            const params = new URLSearchParams();
+            params.set('ids', `${toIds.join(',')}`);
+
+            const r = await axios({
+                url: `https://api.spotify.com/v1/me/tracks/contains?${params.toString()}`,
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${accessToken}`,
+                },
+            });
+
+            if (r.status !== 200) throw new Error(ERROR_NOT_AUTHORIZED);
+            if (!r.data) throw new Error(ERROR_NO_DATA);
+
+            const followed = (r.data as boolean[]).reduce((pre, cur, index) => ({ ...pre, [toIds[index]]: cur }), {});
+
+            return { result: followed };
         } catch (error) {
             return { error };
         }

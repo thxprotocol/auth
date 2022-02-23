@@ -8,28 +8,22 @@ import { encryptString } from '../util/encrypt';
 
 export default class MailService {
     static async sendConfirmationEmail(account: AccountDocument, returnUrl: string) {
-        try {
-            account.signupToken = createRandomToken();
-            account.signupTokenExpires = Date.now() + 1000 * 60 * 60 * 24; // 24 hours,
+        account.signupToken = createRandomToken();
+        account.signupTokenExpires = Date.now() + 1000 * 60 * 60 * 24; // 24 hours,
 
-            const html = await ejs.renderFile(
-                path.dirname(__dirname) + '/views/mail/signupConfirm.ejs',
-                {
-                    signupToken: account.signupToken,
-                    returnUrl,
-                    baseUrl: AUTH_URL,
-                },
-                { async: true },
-            );
+        const html = await ejs.renderFile(
+            path.dirname(__dirname) + '/views/mail/signupConfirm.ejs',
+            {
+                signupToken: account.signupToken,
+                returnUrl,
+                baseUrl: AUTH_URL,
+            },
+            { async: true },
+        );
 
-            await sendMail(account.email, 'Please complete the sign up for your THX Account', html);
+        await sendMail(account.email, 'Please complete the sign up for your THX Account', html);
 
-            await account.save();
-
-            return { result: true };
-        } catch (error) {
-            return { error };
-        }
+        await account.save();
     }
 
     static async sendLoginLinkEmail(account: AccountDocument, password: string) {
@@ -62,27 +56,21 @@ export default class MailService {
     }
 
     static async sendResetPasswordEmail(account: AccountDocument, returnUrl: string, uid: string) {
-        try {
-            account.passwordResetToken = createRandomToken();
-            account.passwordResetExpires = Date.now() + 1000 * 60 * 20; // 20 minutes,
-            const html = await ejs.renderFile(
-                path.dirname(__dirname) + '/views/mail/resetPassword.ejs',
-                {
-                    passwordResetToken: account.passwordResetToken,
-                    uid,
-                    returnUrl,
-                    baseUrl: AUTH_URL,
-                },
-                { async: true },
-            );
+        account.passwordResetToken = createRandomToken();
+        account.passwordResetExpires = Date.now() + 1000 * 60 * 20; // 20 minutes,
+        const html = await ejs.renderFile(
+            path.dirname(__dirname) + '/views/mail/resetPassword.ejs',
+            {
+                passwordResetToken: account.passwordResetToken,
+                uid,
+                returnUrl,
+                baseUrl: AUTH_URL,
+            },
+            { async: true },
+        );
 
-            await sendMail(account.email, 'Reset your THX Password', html);
+        await sendMail(account.email, 'Reset your THX Password', html);
 
-            await account.save();
-
-            return { result: true };
-        } catch (error) {
-            return { error };
-        }
+        await account.save();
     }
 }

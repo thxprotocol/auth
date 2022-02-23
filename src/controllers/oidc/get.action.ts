@@ -6,6 +6,7 @@ import { ChannelType, ChannelAction } from '../../models/Reward';
 import { getTwitterLoginURL, twitterScopes } from '../../util/twitter';
 import SpotifyService from '../../services/SpotifyService';
 import { WALLET_URL } from '../../util/secrets';
+import { SUCCESS_SIGNUP_COMPLETED } from '../../util/messages';
 
 const youtubeScope = ['https://www.googleapis.com/auth/userinfo.email', 'https://www.googleapis.com/auth/youtube'];
 const youtubeReadOnlyScope = [
@@ -53,12 +54,12 @@ export default async function getController(req: Request, res: Response) {
                 return res.render('signup', { uid, params, alert });
             }
             case 'confirm': {
-                const { error } = await AccountService.verifySignupToken(params.signup_token);
+                const message = await AccountService.verifySignupToken(params.signup_token);
                 let alert;
-                if (error) {
+                if (message != SUCCESS_SIGNUP_COMPLETED) {
                     alert = {
                         variant: 'danger',
-                        message: error,
+                        message: message,
                     };
                 }
                 return res.render('confirm', { uid, params, alert });

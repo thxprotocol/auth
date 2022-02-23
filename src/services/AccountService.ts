@@ -13,7 +13,6 @@ import {
     SUCCESS_SIGNUP_COMPLETED,
     ERROR_AUTHENTICATION_TOKEN_INVALID_OR_EXPIRED,
     ERROR_PASSWORD_NOT_MATCHING,
-    ERROR_PASSWORD_MATCHING,
     ERROR_PASSWORD_RESET_TOKEN_INVALID_OR_EXPIRED,
     ERROR_PASSWORD_STRENGTH,
 } from '../util/messages';
@@ -52,54 +51,50 @@ export default class AccountService {
             authenticationTokenExpires,
         }: IAccountUpdates,
     ) {
-        try {
-            // No strict checking here since null == undefined
-            if (account.acceptTermsPrivacy == null) {
-                account.acceptTermsPrivacy = acceptTermsPrivacy == null ? false : account.acceptTermsPrivacy;
-            } else {
-                account.acceptTermsPrivacy = acceptTermsPrivacy || account.acceptTermsPrivacy;
-            }
-
-            // No strict checking here since null == undefined
-            if (account.acceptUpdates == null) {
-                account.acceptUpdates = acceptUpdates == null ? false : account.acceptUpdates;
-            } else {
-                account.acceptUpdates = acceptUpdates || account.acceptTermsPrivacy;
-            }
-
-            account.authenticationToken = authenticationToken || account.authenticationToken;
-            account.authenticationTokenExpires = authenticationTokenExpires || account.authenticationTokenExpires;
-            account.address = address || account.address;
-            account.privateKey = privateKey || account.privateKey;
-
-            if (googleAccess === false) {
-                try {
-                    await YouTubeDataService.revokeAccess(account);
-                } catch (error) {
-                    newrelic.noticeError(error);
-                    logger.error('Unable to revoke YouTube access', error);
-                }
-                account.googleAccessToken = '';
-                account.googleRefreshToken = '';
-                account.googleAccessTokenExpires = null;
-            }
-
-            if (twitterAccess === false) {
-                account.twitterAccessToken = '';
-                account.twitterRefreshToken = '';
-                account.twitterAccessTokenExpires = null;
-            }
-
-            if (spotifyAccess === false) {
-                account.spotifyAccessToken = '';
-                account.spotifyRefreshToken = '';
-                account.spotifyAccessTokenExpires = null;
-            }
-
-            return { result: await account.save() };
-        } catch (error) {
-            return { error };
+        // No strict checking here since null == undefined
+        if (account.acceptTermsPrivacy == null) {
+            account.acceptTermsPrivacy = acceptTermsPrivacy == null ? false : account.acceptTermsPrivacy;
+        } else {
+            account.acceptTermsPrivacy = acceptTermsPrivacy || account.acceptTermsPrivacy;
         }
+
+        // No strict checking here since null == undefined
+        if (account.acceptUpdates == null) {
+            account.acceptUpdates = acceptUpdates == null ? false : account.acceptUpdates;
+        } else {
+            account.acceptUpdates = acceptUpdates || account.acceptTermsPrivacy;
+        }
+
+        account.authenticationToken = authenticationToken || account.authenticationToken;
+        account.authenticationTokenExpires = authenticationTokenExpires || account.authenticationTokenExpires;
+        account.address = address || account.address;
+        account.privateKey = privateKey || account.privateKey;
+
+        if (googleAccess === false) {
+            try {
+                await YouTubeDataService.revokeAccess(account);
+            } catch (error) {
+                newrelic.noticeError(error);
+                logger.error('Unable to revoke YouTube access', error);
+            }
+            account.googleAccessToken = '';
+            account.googleRefreshToken = '';
+            account.googleAccessTokenExpires = null;
+        }
+
+        if (twitterAccess === false) {
+            account.twitterAccessToken = '';
+            account.twitterRefreshToken = '';
+            account.twitterAccessTokenExpires = null;
+        }
+
+        if (spotifyAccess === false) {
+            account.spotifyAccessToken = '';
+            account.spotifyRefreshToken = '';
+            account.spotifyAccessTokenExpires = null;
+        }
+
+        return await account.save();
     }
 
     static async signup(
@@ -109,28 +104,24 @@ export default class AccountService {
         acceptUpdates: boolean,
         active = false,
     ) {
-        try {
-            let account = await Account.findOne({ email, active: false });
+        let account = await Account.findOne({ email, active: false });
 
-            if (!account) {
-                account = new Account();
-            }
-
-            account.active = active;
-            account.email = email;
-            account.password = password;
-            account.acceptTermsPrivacy = acceptTermsPrivacy || false;
-            account.acceptUpdates = acceptUpdates || false;
-
-            if (!active) {
-                account.signupToken = createRandomToken();
-                account.signupTokenExpires = DURATION_TWENTYFOUR_HOURS;
-            }
-
-            return { account };
-        } catch (error) {
-            return { error };
+        if (!account) {
+            account = new Account();
         }
+
+        account.active = active;
+        account.email = email;
+        account.password = password;
+        account.acceptTermsPrivacy = acceptTermsPrivacy || false;
+        account.acceptUpdates = acceptUpdates || false;
+
+        if (!active) {
+            account.signupToken = createRandomToken();
+            account.signupTokenExpires = DURATION_TWENTYFOUR_HOURS;
+        }
+
+        return account;
     }
 
     static async signupFor(email: string, password: string, address?: string) {
@@ -148,29 +139,23 @@ export default class AccountService {
     }
 
     static async verifySignupToken(signupToken: string) {
-        try {
-            const account = await Account.findOne({ signupToken });
+        const account = await Account.findOne({ signupToken });
 
-            if (!account) {
-                throw new Error(ERROR_SIGNUP_TOKEN_INVALID);
-            }
-
-            if (account.signupTokenExpires < Date.now()) {
-                throw new Error(ERROR_SIGNUP_TOKEN_EXPIRED);
-            }
-
-            account.signupToken = '';
-            account.signupTokenExpires = null;
-            account.active = true;
-
-            await account.save();
-
-            return {
-                result: SUCCESS_SIGNUP_COMPLETED,
-            };
-        } catch (error) {
-            return { error };
+        if (!account) {
+            throw new Error(ERROR_SIGNUP_TOKEN_INVALID);
         }
+
+        if (account.signupTokenExpires < Date.now()) {
+            throw new Error(ERROR_SIGNUP_TOKEN_EXPIRED);
+        }
+
+        account.signupToken = '';
+        account.signupTokenExpires = null;
+        account.active = true;
+
+        await account.save();
+
+        return SUCCESS_SIGNUP_COMPLETED;
     }
 
     static async getSubForAuthenticationToken(
@@ -179,79 +164,61 @@ export default class AccountService {
         authenticationToken: string,
         secureKey: string,
     ) {
-        try {
-            const account: AccountDocument = await Account.findOne({ authenticationToken })
-                .where('authenticationTokenExpires')
-                .gt(Date.now())
-                .exec();
+        const account: AccountDocument = await Account.findOne({ authenticationToken })
+            .where('authenticationTokenExpires')
+            .gt(Date.now())
+            .exec();
 
-            if (!account) {
-                throw new Error(ERROR_AUTHENTICATION_TOKEN_INVALID_OR_EXPIRED);
-            }
-
-            if (password !== passwordConfirm) {
-                throw new Error(ERROR_PASSWORD_NOT_MATCHING);
-            }
-
-            const oldPassword = decryptString(secureKey, SECURE_KEY.split(',')[0]);
-
-            account.privateKey = decryptString(account.privateKey, oldPassword);
-            account.password = password;
-
-            await account.save();
-
-            return { sub: account._id.toString() };
-        } catch (error) {
-            return { error };
+        if (!account) {
+            throw new Error(ERROR_AUTHENTICATION_TOKEN_INVALID_OR_EXPIRED);
         }
+
+        if (password !== passwordConfirm) {
+            throw new Error(ERROR_PASSWORD_NOT_MATCHING);
+        }
+
+        const oldPassword = decryptString(secureKey, SECURE_KEY.split(',')[0]);
+
+        account.privateKey = decryptString(account.privateKey, oldPassword);
+        account.password = password;
+
+        await account.save();
+
+        return account._id.toString();
     }
 
     static async getSubForCredentials(email: string, password: string) {
-        try {
-            const account: AccountDocument = await Account.findOne({ email });
+        const account: AccountDocument = await Account.findOne({ email });
 
-            if (!account) throw new Error(ERROR_NO_ACCOUNT);
+        if (!account) throw new Error(ERROR_NO_ACCOUNT);
 
-            const { error, isMatch } = account.comparePassword(password);
-
-            if (error) {
-                throw new Error(ERROR_PASSWORD_MATCHING);
-            }
-
-            if (!isMatch) {
-                throw new Error(ERROR_PASSWORD_NOT_MATCHING);
-            }
-
-            return { sub: account._id.toString() };
-        } catch (error) {
-            return { error };
+        if (!account.comparePassword(password)) {
+            throw new Error(ERROR_PASSWORD_NOT_MATCHING);
         }
+
+        return account._id.toString();
     }
 
     static async getSubForPasswordResetToken(password: string, passwordConfirm: string, passwordResetToken: string) {
-        try {
-            const account: AccountDocument = await Account.findOne({ passwordResetToken })
-                .where('passwordResetExpires')
-                .gt(Date.now())
-                .exec();
-            const passwordStrength = checkPasswordStrength(password);
-            if (!account) {
-                throw new Error(ERROR_PASSWORD_RESET_TOKEN_INVALID_OR_EXPIRED);
-            }
-            if (passwordStrength != 'strong') {
-                throw new Error(ERROR_PASSWORD_STRENGTH);
-            }
-            if (password !== passwordConfirm) {
-                throw new Error(ERROR_PASSWORD_NOT_MATCHING);
-            }
-            account.password = password;
-
-            await account.save();
-
-            return { sub: account._id.toString() };
-        } catch (error) {
-            return { error };
+        const account: AccountDocument = await Account.findOne({ passwordResetToken })
+            .where('passwordResetExpires')
+            .gt(Date.now())
+            .exec();
+        const passwordStrength = checkPasswordStrength(password);
+        if (!account) {
+            throw new Error(ERROR_PASSWORD_RESET_TOKEN_INVALID_OR_EXPIRED);
         }
+        if (passwordStrength != 'strong') {
+            throw new Error(ERROR_PASSWORD_STRENGTH);
+        }
+        if (password !== passwordConfirm) {
+            throw new Error(ERROR_PASSWORD_NOT_MATCHING);
+        }
+        account.password = password;
+
+        await account.save();
+
+        return account._id.toString();
     }
 
     static remove(id: string) {

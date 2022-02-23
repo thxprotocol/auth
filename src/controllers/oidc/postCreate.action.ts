@@ -1,12 +1,10 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response } from 'express';
 import MailService from '../../services/MailService';
-import { ERROR_SENDING_MAIL_FAILED } from '../../util/messages';
 import AccountService from '../../services/AccountService';
 import { GTM } from '../../util/secrets';
-import { HttpError } from '../../models/Error';
 import { checkPasswordStrength } from '../../util/passwordcheck';
 
-export default async function postCreateController(req: Request, res: Response, next: NextFunction) {
+export default async function postCreateController(req: Request, res: Response) {
     const isDuplicate = await AccountService.isEmailDuplicate(req.body.email);
     const alert = { variant: 'danger', message: '' };
     const passwordStrength = checkPasswordStrength(req.body.password);
@@ -35,38 +33,25 @@ export default async function postCreateController(req: Request, res: Response, 
         });
     }
 
-    const { account } = await AccountService.signup(
+    const account = await AccountService.signup(
         req.body.email,
         req.body.password,
         req.body.acceptTermsPrivacy,
         req.body.acceptUpdates,
     );
 
-    try {
-        const { error } = await MailService.sendConfirmationEmail(account, req.body.returnUrl);
+    await MailService.sendConfirmationEmail(account, req.body.returnUrl);
 
-        if (error) {
-            throw new Error(ERROR_SENDING_MAIL_FAILED);
-        }
-
-        try {
-            return res.render('signup', {
-                uid: req.params.uid,
-                params: {
-                    return_url: req.body.returnUrl,
-                    signup_email: req.body.email,
-                },
-                alert: {
-                    variant: 'success',
-                    message:
-                        'Verify your e-mail address by clicking the link we just sent you. You can close this window.',
-                },
-                gtm: GTM,
-            });
-        } catch (error) {
-            return next(new HttpError(502, error.toString(), error));
-        }
-    } catch (error) {
-        return next(new HttpError(502, error.toString(), error));
-    }
+    return res.render('signup', {
+        uid: req.params.uid,
+        params: {
+            return_url: req.body.returnUrl,
+            signup_email: req.body.email,
+        },
+        alert: {
+            variant: 'success',
+            message: 'Verify your e-mail address by clicking the link we just sent you. You can close this window.',
+        },
+        gtm: GTM,
+    });
 }

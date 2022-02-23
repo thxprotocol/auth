@@ -1,18 +1,14 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response } from 'express';
 import { oidc } from '.';
 import { GTM } from '../../util/secrets';
 
-export default async function getForgotController(req: Request, res: Response, next: NextFunction) {
-    try {
-        const { uid, params } = await oidc.interactionDetails(req, res);
+export default async function getForgotController(req: Request, res: Response) {
+    const { uid, params } = await oidc.interactionDetails(req, res);
 
-        res.render('forgot', {
-            uid,
-            params,
-            alert: {},
-            gtm: GTM,
-        });
-    } catch (err) {
-        return next(err);
-    }
+    res.render('forgot', {
+        uid,
+        params,
+        alert: {},
+        gtm: GTM,
+    });
 }

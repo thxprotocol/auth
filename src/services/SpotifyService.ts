@@ -74,30 +74,26 @@ export default class SpotifyDataService {
     }
 
     static async requestTokens(code: string) {
-        try {
-            const body = new URLSearchParams();
-            body.append('code', code);
-            body.append('grant_type', 'authorization_code');
-            body.append('redirect_uri', SPOTIFY_REDIRECT_URI);
+        const body = new URLSearchParams();
+        body.append('code', code);
+        body.append('grant_type', 'authorization_code');
+        body.append('redirect_uri', SPOTIFY_REDIRECT_URI);
 
-            const r = await axios({
-                url: 'https://accounts.spotify.com/api/token',
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'Authorization':
-                        'Basic ' + Buffer.from(`${SPOTIFY_CLIENT_ID}:${SPOTIFY_CLIENT_SECRET}`).toString('base64'),
-                },
-                data: body,
-            });
+        const r = await axios({
+            url: 'https://accounts.spotify.com/api/token',
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Authorization':
+                    'Basic ' + Buffer.from(`${SPOTIFY_CLIENT_ID}:${SPOTIFY_CLIENT_SECRET}`).toString('base64'),
+            },
+            data: body,
+        });
 
-            if (r.status !== 200) {
-                throw new Error('Failed to request access token');
-            }
-            return { tokens: r.data };
-        } catch (error) {
-            return { error };
+        if (r.status !== 200) {
+            throw new Error('Failed to request access token');
         }
+        return r.data;
     }
 
     static async validateFollow(

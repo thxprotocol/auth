@@ -1,11 +1,10 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response } from 'express';
 import { AccountDocument } from '../../models/Account';
 import SpotifyService from '../../services/SpotifyService';
 import AccountService from '../../services/AccountService';
 import { ERROR_NO_ACCOUNT } from '../../util/messages';
 import { validateEmail } from '../../util/validate';
 import { oidc } from '.';
-import { HttpError } from '../../models/Error';
 
 async function getAccountByEmail(email: string): Promise<AccountDocument> {
     let account;
@@ -13,8 +12,7 @@ async function getAccountByEmail(email: string): Promise<AccountDocument> {
     if (await AccountService.isEmailDuplicate(email)) {
         account = await AccountService.getByEmail(email);
     } else if (validateEmail(email)) {
-        const result = await AccountService.signup(email, '', true, true, true);
-        account = result.account;
+        account = await AccountService.signup(email, '', true, true, true);
     }
 
     return account;
@@ -48,47 +46,31 @@ async function getInteraction(uid: string) {
     return interaction;
 }
 
-async function getTokens(code: string) {
-    const { tokens, error } = await SpotifyService.requestTokens(code);
-    if (error) throw new Error('Could not get Spotify tokens');
-    return tokens;
-}
+export default async function getSpotifyCallback(req: Request, res: Response) {
+    const code = req.query.code as string;
+    const uid = req.query.state as string;
+    const error = req.query.error as string;
+    if (error) return res.redirect(`/oidc/${uid}`);
 
-async function getSpotifyUser(accessToken: string) {
-    const user = await SpotifyService.getUser(accessToken);
-    if (!user) throw new Error('No Spotify user returned for access token');
-    return user;
-}
+    // Get all token information
+    const tokens = await SpotifyService.requestTokens(code);
+    const user = await SpotifyService.getUser(tokens.access_token);
+    const email = user.id + '@spotify.thx.network';
 
-export default async function getSpotifyCallback(req: Request, res: Response, next: NextFunction) {
-    try {
-        const code = req.query.code as string;
-        const uid = req.query.state as string;
-        const error = req.query.error as string;
-        if (error) return res.redirect(`/oidc/${uid}`);
+    // Get the interaction based on the state
+    const interaction = await getInteraction(uid);
 
-        // Get all token information
-        const tokens = await getTokens(code);
-        const user = await getSpotifyUser(tokens.access_token);
-        const email = user.id + '@spotify.thx.network';
+    // Check if there is an active session for this interaction
+    const account =
+        interaction.session && interaction.session.accountId
+            ? // If so, get account for sub
+              await getAccountBySub(interaction.session.accountId)
+            : // If not, get account for email claim
+              await getAccountByEmail(email);
 
-        // Get the interaction based on the state
-        const interaction = await getInteraction(uid);
+    const returnTo = await saveInteraction(interaction, account._id.toString());
 
-        // Check if there is an active session for this interaction
-        const account =
-            interaction.session && interaction.session.accountId
-                ? // If so, get account for sub
-                  await getAccountBySub(interaction.session.accountId)
-                : // If not, get account for email claim
-                  await getAccountByEmail(email);
+    await updateTokens(account, tokens);
 
-        const returnTo = await saveInteraction(interaction, account._id.toString());
-
-        await updateTokens(account, tokens);
-
-        return res.redirect(returnTo);
-    } catch (error) {
-        return next(new HttpError(502, error.message, error));
-    }
+    return res.redirect(returnTo);
 }

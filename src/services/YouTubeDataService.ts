@@ -94,7 +94,7 @@ export default class YouTubeDataService {
             if (!r.data) {
                 throw new Error(ERROR_NO_DATA);
             }
-            return r.data.items;
+            return r.data.items || [];
         }
 
         async function getVideos(youtube: IYoutubeClient, videoIds: string[]) {
@@ -107,7 +107,7 @@ export default class YouTubeDataService {
                 throw new Error(ERROR_NO_DATA);
             }
 
-            return r.data.items;
+            return r.data.items || [];
         }
 
         try {

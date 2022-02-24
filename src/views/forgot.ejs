@@ -4,7 +4,7 @@
     </div>
     <div class="card shadow-sm mb-5">
         <div class="card-body p-sm-5">
-            <% if (alert && alert.message) { %>
+            <% if (locals.alert && alert.message) { %>
             <div class="alert alert-<%= alert.variant %>">
                 <%= alert.message %>
             </div>
@@ -16,7 +16,7 @@
                     No worries, we got your back! Please submit the e-mail
                     address of your account and we will send you a password reset link.
                 </p>
-                <% if (alert && alert.variant !="success" ) { %>
+                <% if (locals.alert && alert.variant !="success" ) { %>
                 <div class="form-group">
                     <label>Email:</label>
                     <input class="form-control" autocomplete="off" required type="email" name="email" />

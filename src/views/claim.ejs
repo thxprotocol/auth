@@ -4,7 +4,7 @@
     </div>
     <div class="card shadow-sm mb-5">
         <div class="card-body pt-sm-5 px-sm-5 pb-md-4">
-            <% if (alert && alert.message) { %>
+            <% if (locals.alert && alert.message) { %>
             <div class="alert alert-<%= alert.variant %>">
                 <%= alert.message %>
             </div>

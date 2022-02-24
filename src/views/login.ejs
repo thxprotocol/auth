@@ -14,7 +14,7 @@
                 Hello!
             </strong>
             <% } %>
-            <% if (alert && alert.message) { %>
+            <% if (locals.alert && alert.message) { %>
             <div class="alert alert-<%= alert.variant %>">
                 <%- alert.message %>
             </div>

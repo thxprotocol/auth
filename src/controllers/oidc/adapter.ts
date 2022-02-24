@@ -1,4 +1,3 @@
-import { HttpError } from '../../models/Error';
 import { snakeCase } from 'lodash';
 import db from '../../util/database';
 
@@ -66,16 +65,12 @@ export default class MongoAdapter {
     }
 
     async upsert(_id: string, payload: any, expiresIn: number) {
-        try {
-            const expiresAt = expiresIn ? new Date(Date.now() + expiresIn * 1000) : null;
-            await this.coll().updateOne(
-                { _id },
-                { $set: { payload, ...(expiresAt ? { expiresAt } : undefined) } },
-                { upsert: true },
-            );
-        } catch (e) {
-            return new HttpError(502, 'OIDC Model save failed.', e);
-        }
+        const expiresAt = expiresIn ? new Date(Date.now() + expiresIn * 1000) : null;
+        await this.coll().updateOne(
+            { _id },
+            { $set: { payload, ...(expiresAt ? { expiresAt } : undefined) } },
+            { upsert: true },
+        );
     }
 
     async find(_id: string) {

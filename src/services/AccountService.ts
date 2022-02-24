@@ -16,10 +16,10 @@ import {
     ERROR_PASSWORD_RESET_TOKEN_INVALID_OR_EXPIRED,
     ERROR_PASSWORD_STRENGTH,
 } from '../util/messages';
-import YouTubeDataService from './YouTubeDataService';
+import { YouTubeService } from './YouTubeService';
 import { logger } from '../util/logger';
 
-export default class AccountService {
+export class AccountService {
     static get(sub: string) {
         return Account.findById(sub);
     }
@@ -32,7 +32,7 @@ export default class AccountService {
         return Account.findOne({ address });
     }
 
-    static async isEmailDuplicate(email: string) {
+    static async isActiveUserByEmail(email: string) {
         const result = await Account.findOne({ email, active: true });
         return Boolean(result);
     }
@@ -72,7 +72,7 @@ export default class AccountService {
 
         if (googleAccess === false) {
             try {
-                await YouTubeDataService.revokeAccess(account);
+                await YouTubeService.revokeAccess(account);
             } catch (error) {
                 newrelic.noticeError(error);
                 logger.error('Unable to revoke YouTube access', error);
@@ -142,11 +142,11 @@ export default class AccountService {
         const account = await Account.findOne({ signupToken });
 
         if (!account) {
-            throw new Error(ERROR_SIGNUP_TOKEN_INVALID);
+            return { error: ERROR_SIGNUP_TOKEN_INVALID };
         }
 
         if (account.signupTokenExpires < Date.now()) {
-            throw new Error(ERROR_SIGNUP_TOKEN_EXPIRED);
+            return { error: ERROR_SIGNUP_TOKEN_EXPIRED };
         }
 
         account.signupToken = '';
@@ -155,7 +155,7 @@ export default class AccountService {
 
         await account.save();
 
-        return SUCCESS_SIGNUP_COMPLETED;
+        return { result: SUCCESS_SIGNUP_COMPLETED };
     }
 
     static async getSubForAuthenticationToken(

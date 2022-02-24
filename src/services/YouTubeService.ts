@@ -1,12 +1,38 @@
 import axios from 'axios';
+import { google, youtube_v3 } from 'googleapis';
 import { AccountDocument } from '../models/Account';
-import { getYoutubeClient, IYoutubeClient } from '../util/google';
+import { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_REDIRECT_URI } from '../util/secrets';
+
+const client = new google.auth.OAuth2(GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_REDIRECT_URI);
+
+google.options({ auth: client });
 
 const ERROR_NO_DATA = 'Could not find an youtube data for this accesstoken';
 
-export default class YouTubeDataService {
+export class YouTubeService {
+    static async getYoutubeClient(account: AccountDocument) {
+        client.setCredentials({
+            access_token: account.googleAccessToken,
+        });
+
+        if (Date.now() > account.googleAccessTokenExpires) {
+            client.setCredentials({
+                access_token: account.googleAccessToken,
+                refresh_token: account.googleRefreshToken,
+            });
+            const { credentials } = await client.refreshAccessToken();
+
+            account.googleAccessToken = credentials.access_token;
+            account.googleAccessTokenExpires = credentials.expiry_date;
+
+            await account.save();
+        }
+
+        return google.youtube({ version: 'v3' });
+    }
+
     static async validateLike(account: AccountDocument, channelItem: string) {
-        const youtube = await getYoutubeClient(account);
+        const youtube = await this.getYoutubeClient(account);
         const r = await youtube.videos.getRating({
             id: [channelItem],
         });
@@ -19,7 +45,7 @@ export default class YouTubeDataService {
     }
 
     static async validateSubscribe(account: AccountDocument, channelItem: string) {
-        const youtube = await getYoutubeClient(account);
+        const youtube = await this.getYoutubeClient(account);
         const r = await youtube.subscriptions.list({
             forChannelId: channelItem,
             part: ['snippet'],
@@ -34,7 +60,7 @@ export default class YouTubeDataService {
     }
 
     static async getChannelList(account: AccountDocument) {
-        const youtube = await getYoutubeClient(account);
+        const youtube = await this.getYoutubeClient(account);
         const r = await youtube.channels.list({
             part: ['snippet'],
             mine: true,
@@ -54,7 +80,7 @@ export default class YouTubeDataService {
     }
 
     static async getVideoList(account: AccountDocument) {
-        async function getChannels(youtube: IYoutubeClient) {
+        async function getChannels(youtube: youtube_v3.Youtube) {
             const r = await youtube.channels.list({
                 part: ['contentDetails'],
                 mine: true,
@@ -67,7 +93,7 @@ export default class YouTubeDataService {
             return r.data;
         }
 
-        async function getPlaylistItems(youtube: IYoutubeClient, id: string) {
+        async function getPlaylistItems(youtube: youtube_v3.Youtube, id: string) {
             const r = await youtube.playlistItems.list({
                 playlistId: id,
                 part: ['contentDetails'],
@@ -78,7 +104,7 @@ export default class YouTubeDataService {
             return r.data.items;
         }
 
-        async function getVideos(youtube: IYoutubeClient, videoIds: string[]) {
+        async function getVideos(youtube: youtube_v3.Youtube, videoIds: string[]) {
             const r = await youtube.videos.list({
                 id: videoIds,
                 part: ['snippet'],
@@ -91,7 +117,7 @@ export default class YouTubeDataService {
             return r.data.items;
         }
 
-        const youtube = await getYoutubeClient(account);
+        const youtube = await this.getYoutubeClient(account);
         const channel = await getChannels(youtube);
 
         if (!channel.items.length) {
@@ -122,5 +148,18 @@ export default class YouTubeDataService {
         if (r.status !== 200) throw new Error('Could not revoke access token');
 
         return r.data;
+    }
+
+    static getLoginUrl(uid: string, scope: string[]) {
+        return client.generateAuthUrl({
+            state: uid,
+            access_type: 'offline',
+            scope,
+        });
+    }
+
+    static async getTokens(code: string) {
+        const res = await client.getToken(code);
+        return res.tokens;
     }
 }

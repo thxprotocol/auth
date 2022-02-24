@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import AccountService from '../../services/AccountService';
+import { AccountService } from '../../services/AccountService';
 
 export default async function postResetController(req: Request, res: Response) {
     const result = {

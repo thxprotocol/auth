@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import AccountService from '../../../services/AccountService';
-import YouTubeDataService from '../../../services/YouTubeDataService';
+import { AccountService } from '../../../services/AccountService';
+import { YouTubeService } from '../../../services/YouTubeService';
 
 export const getYoutube = async (req: Request, res: Response) => {
     const account = await AccountService.get(req.params.sub);
@@ -9,8 +9,8 @@ export const getYoutube = async (req: Request, res: Response) => {
         return res.json({ isAuthorized: false });
     }
 
-    const channels = await YouTubeDataService.getChannelList(account);
-    const videos = await YouTubeDataService.getVideoList(account);
+    const channels = await YouTubeService.getChannelList(account);
+    const videos = await YouTubeService.getVideoList(account);
 
     res.json({
         isAuthorized: true,

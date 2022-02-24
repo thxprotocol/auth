@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { IAccountUpdates } from '../../models/Account';
-import AccountService from '../../services/AccountService';
+import { AccountService } from '../../services/AccountService';
 import { oidc } from '.';
 
 export default async function postPasswordController(req: Request, res: Response) {

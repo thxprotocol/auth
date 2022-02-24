@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { AccountDocument } from '../../../models/Account';
-import SpotifyService from '../../../services/SpotifyService';
-import AccountService from '../../../services/AccountService';
+import { SpotifyService } from '../../../services/SpotifyService';
+import { AccountService } from '../../../services/AccountService';
 
 export const getSpotify = async (req: Request, res: Response) => {
     async function updateTokens(account: AccountDocument, newAccessToken: string) {

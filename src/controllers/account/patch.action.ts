@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import AccountService from '../../services/AccountService';
+import { AccountService } from '../../services/AccountService';
 import { NotFoundError, UnprocessableEntityError } from '../../util/errors';
 
 export const patchAccount = async (req: Request, res: Response) => {

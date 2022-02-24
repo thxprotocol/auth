@@ -11,9 +11,8 @@ import { helmetInstance } from './util/helmet';
 import { xframe, xssProtection } from 'lusca';
 import { oidc } from './controllers/oidc';
 import { requestLogger } from './util/logger';
-import { corsHandler } from './util/cors';
-import { PORT, MONGODB_URI, locals, GTM } from './util/secrets';
-import { errorLogger, errorNormalizer, errorOutput, notFoundHandler } from './middlewares';
+import { PORT, MONGODB_URI, GTM, DASHBOARD_URL, WALLET_URL, PUBLIC_URL } from './util/secrets';
+import { errorLogger, errorNormalizer, errorOutput, notFoundHandler, corsHandler } from './middlewares';
 
 const app = express();
 
@@ -32,7 +31,7 @@ app.use(expressEJSLayouts);
 app.use(xframe('SAMEORIGIN'));
 app.use(xssProtection(true));
 app.use(express.static(path.join(__dirname, 'public'), { maxAge: 31557600000 }));
-app.use('/', locals, oidcRouter);
+app.use('/', oidcRouter);
 app.use('/account', json(), urlencoded({ extended: true }), accountRouter);
 app.use('/health', json(), urlencoded({ extended: true }), healthRouter);
 app.use('/', oidc.callback);
@@ -41,6 +40,11 @@ app.use(errorLogger);
 app.use(errorNormalizer);
 app.use(errorOutput);
 
-app.locals.gtm = GTM;
+app.locals = Object.assign(app.locals, {
+    gtm: GTM,
+    dashboardUrl: DASHBOARD_URL,
+    walletUrl: WALLET_URL,
+    publicUrl: PUBLIC_URL,
+});
 
 export default app;

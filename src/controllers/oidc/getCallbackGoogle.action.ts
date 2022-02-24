@@ -1,24 +1,12 @@
-import AccountService from '../../services/AccountService';
+import { AccountService } from '../../services/AccountService';
 import { Request, Response } from 'express';
-import { getGoogleTokens } from '../../util/google';
 import { oidc } from '.';
 import { parseJwt } from '../../util/jwt';
 import { AccountDocument } from '../../models/Account';
-import { validateEmail } from '../../util/validate';
+import { getAccountByEmail, saveInteraction } from './utils';
+import { YouTubeService } from '../../services/YouTubeService';
 
 export default async function getGoogleCallback(req: Request, res: Response) {
-    async function getAccountByEmail(email: string) {
-        let account;
-
-        if (await AccountService.isEmailDuplicate(email)) {
-            account = await AccountService.getByEmail(email);
-        } else if (validateEmail(email)) {
-            account = await AccountService.signup(email, '', true, true, true);
-        }
-
-        return account;
-    }
-
     async function updateTokens(account: AccountDocument, tokens: any) {
         account.googleAccessToken = tokens.access_token || account.googleAccessToken;
         account.googleRefreshToken = tokens.refresh_token || account.googleRefreshToken;
@@ -27,22 +15,11 @@ export default async function getGoogleCallback(req: Request, res: Response) {
         await account.save();
     }
 
-    async function saveInteraction(interaction: any, sub: string) {
-        interaction.result = { login: { account: sub } };
-        // TODO Look into why this is suggested:
-        await interaction.save(interaction.exp - Math.floor(new Date().getTime() / 1000));
-        return interaction.returnTo;
-    }
-
-    async function getInteraction(uid: string) {
-        return await oidc.Interaction.find(uid);
-    }
-
     const code = req.query.code as string;
     const uid = req.query.state as string;
 
     // Get the interaction based on the state
-    const interaction = await getInteraction(uid);
+    const interaction = await await oidc.Interaction.find(uid);
 
     if (!interaction)
         return res.render('error', {
@@ -52,7 +29,7 @@ export default async function getGoogleCallback(req: Request, res: Response) {
     if (!code) return res.redirect(interaction.params.return_url);
 
     // Get all token information
-    const tokens = await getGoogleTokens(code);
+    const tokens = await YouTubeService.getTokens(code);
     const claims = await parseJwt(tokens.id_token);
 
     // Check if there is an active session for this interaction

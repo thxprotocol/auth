@@ -8,7 +8,7 @@ const ERROR_TOKEN_REQUEST_FAILED = 'Failed to request access token';
 export const TWITTER_API_ENDPOINT = 'https://api.twitter.com';
 axios.defaults.baseURL = TWITTER_API_ENDPOINT;
 
-export default class TwitterDataService {
+export class TwitterService {
     static async validateLike(accessToken: string, channelItem: string) {
         const user = await this.getUser(accessToken);
         if (!user) throw new Error('Could not find Twitter user.');
@@ -141,5 +141,13 @@ export default class TwitterDataService {
         }
 
         return r.data;
+    }
+
+    static getScopes() {
+        return 'tweet.read%20users.read%20like.read%20follows.read%20offline.access';
+    }
+
+    static getLoginURL(uid: string) {
+        return `https://twitter.com/i/oauth2/authorize?response_type=code&client_id=${TWITTER_CLIENT_ID}&redirect_uri=${TWITTER_REDIRECT_URI}&scope=${this.getScopes()}&code_challenge=challenge&code_challenge_method=plain&state=${uid}`;
     }
 }

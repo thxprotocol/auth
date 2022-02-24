@@ -1,22 +1,9 @@
 import { Request, Response } from 'express';
 import { AccountDocument } from '../../models/Account';
-import SpotifyService from '../../services/SpotifyService';
-import AccountService from '../../services/AccountService';
+import { SpotifyService } from '../../services/SpotifyService';
+import { AccountService } from '../../services/AccountService';
 import { ERROR_NO_ACCOUNT } from '../../util/messages';
-import { validateEmail } from '../../util/validate';
-import { oidc } from '.';
-
-async function getAccountByEmail(email: string): Promise<AccountDocument> {
-    let account;
-
-    if (await AccountService.isEmailDuplicate(email)) {
-        account = await AccountService.getByEmail(email);
-    } else if (validateEmail(email)) {
-        account = await AccountService.signup(email, '', true, true, true);
-    }
-
-    return account;
-}
+import { getAccountByEmail, getInteraction, saveInteraction } from './utils';
 
 async function updateTokens(account: AccountDocument, tokens: any): Promise<AccountDocument> {
     account.spotifyAccessToken = tokens.access_token || account.spotifyAccessToken;
@@ -31,19 +18,6 @@ async function getAccountBySub(sub: string): Promise<AccountDocument> {
     const account = await AccountService.get(sub);
     if (!account) throw new Error(ERROR_NO_ACCOUNT);
     return account;
-}
-
-async function saveInteraction(interaction: any, sub: string) {
-    interaction.result = { login: { account: sub } };
-    // TODO Look into why this is suggested:
-    await interaction.save(interaction.exp - Math.floor(new Date().getTime() / 1000));
-    return interaction.returnTo;
-}
-
-async function getInteraction(uid: string) {
-    const interaction = await oidc.Interaction.find(uid);
-    if (!interaction) throw new Error('Could not find interaction for this state');
-    return interaction;
 }
 
 export default async function getSpotifyCallback(req: Request, res: Response) {

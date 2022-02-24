@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { NotFoundError } from '../../util/errors';
-import AccountService from '../../services/AccountService';
+import { AccountService } from '../../services/AccountService';
 
 function formatAccountRes(account: any) {
     let protectedPrivateKey;

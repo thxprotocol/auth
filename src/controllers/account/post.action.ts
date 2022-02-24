@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
-import AccountService from '../../services/AccountService';
+import { AccountService } from '../../services/AccountService';
 
 export const postAccount = async (req: Request, res: Response) => {
-    const isDuplicate = await AccountService.isEmailDuplicate(req.body.email);
-    const account = isDuplicate
+    const userExists = await AccountService.isActiveUserByEmail(req.body.email);
+    const account = userExists
         ? await AccountService.getByEmail(req.body.email)
         : await AccountService.signupFor(req.body.email, req.body.password, req.body.address);
 

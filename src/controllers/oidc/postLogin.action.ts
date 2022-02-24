@@ -1,5 +1,5 @@
-import AccountService from '../../services/AccountService';
-import MailService from '../../services/MailService';
+import { AccountService } from '../../services/AccountService';
+import { MailService } from '../../services/MailService';
 import { Request, Response } from 'express';
 import { ERROR_ACCOUNT_NOT_ACTIVE, ERROR_AUTH_LINK } from '../../util/messages';
 import { oidc } from '.';

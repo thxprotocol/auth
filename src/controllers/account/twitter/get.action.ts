@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { AccountDocument } from '../../../models/Account';
-import TwitterService from '../../../services/TwitterService';
-import AccountService from '../../../services/AccountService';
+import { TwitterService } from '../../../services/TwitterService';
+import { AccountService } from '../../../services/AccountService';
 
 export const getTwitter = async (req: Request, res: Response) => {
     async function updateTokens(account: AccountDocument, tokens: any): Promise<AccountDocument> {

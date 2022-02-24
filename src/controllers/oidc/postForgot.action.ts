@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import AccountService from '../../services/AccountService';
-import MailService from '../../services/MailService';
+import { AccountService } from '../../services/AccountService';
+import { MailService } from '../../services/MailService';
 
 export default async function postForgotController(req: Request, res: Response) {
     const account = await AccountService.getByEmail(req.body.email);

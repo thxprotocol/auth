@@ -1,27 +1,14 @@
-import AccountService from '../../services/AccountService';
-import TwitterService from '../../services/TwitterService';
-import { oidc } from '.';
+import { AccountService } from '../../services/AccountService';
+import { TwitterService } from '../../services/TwitterService';
 import { Request, Response } from 'express';
 import { AccountDocument } from '../../models/Account';
 import { ERROR_NO_ACCOUNT } from '../../util/messages';
-import { validateEmail } from '../../util/validate';
+import { getAccountByEmail, getInteraction, saveInteraction } from './utils';
 
 export default async function getTwitterCallback(req: Request, res: Response) {
     async function getAccountBySub(sub: string) {
         const account = await AccountService.get(sub);
         if (!account) throw new Error(ERROR_NO_ACCOUNT);
-        return account;
-    }
-
-    async function getAccountByEmail(email: string) {
-        let account;
-
-        if (await AccountService.isEmailDuplicate(email)) {
-            account = await AccountService.getByEmail(email);
-        } else if (validateEmail(email)) {
-            account = await AccountService.signup(email, '', true, true, true);
-        }
-
         return account;
     }
 
@@ -32,19 +19,6 @@ export default async function getTwitterCallback(req: Request, res: Response) {
             Date.now() + Number(tokens.expires_in) * 1000 || account.twitterAccessTokenExpires;
 
         return await account.save();
-    }
-
-    async function saveInteraction(interaction: any, sub: string) {
-        interaction.result = { login: { account: sub } };
-        // TODO Look into why this is suggested:
-        await interaction.save(interaction.exp - Math.floor(new Date().getTime() / 1000));
-        return interaction.returnTo;
-    }
-
-    async function getInteraction(uid: string) {
-        const interaction = await oidc.Interaction.find(uid);
-        if (!interaction) throw new Error('Could not find interaction for this state');
-        return interaction;
     }
 
     const code = req.query.code as string;

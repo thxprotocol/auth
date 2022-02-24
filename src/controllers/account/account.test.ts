@@ -2,7 +2,7 @@ import nock from 'nock';
 import request from 'supertest';
 import app from '../../app';
 import db from '../../util/database';
-import AccountService from '../../services/AccountService';
+import { AccountService } from '../../services/AccountService';
 import { INITIAL_ACCESS_TOKEN } from '../../util/secrets';
 import { accountAddress, accountEmail, accountSecret } from '../../util/jest';
 import { TWITTER_API_ENDPOINT } from '../../services/TwitterService';

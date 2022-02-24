@@ -1,6 +1,6 @@
 import request from 'supertest';
 import app from '../../app';
-import AccountService from '../../services/AccountService';
+import { AccountService } from '../../services/AccountService';
 import db from '../../util/database';
 import { INITIAL_ACCESS_TOKEN } from '../../util/secrets';
 import { getPath, accountEmail, accountSecret } from '../../util/jest';

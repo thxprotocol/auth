@@ -58,13 +58,14 @@ export default class YouTubeDataService {
             }
 
             return {
-                channels: r.data.items.map((item: any) => {
-                    return {
-                        id: item.id,
-                        title: item.snippet.title,
-                        thumbnailURI: item.snippet.thumbnails.default.url,
-                    };
-                }),
+                channels:
+                    r.data.items?.map((item: any) => {
+                        return {
+                            id: item.id,
+                            title: item.snippet.title,
+                            thumbnailURI: item.snippet.thumbnails.default.url,
+                        };
+                    }) || [],
             };
         } catch (error) {
             return { error };

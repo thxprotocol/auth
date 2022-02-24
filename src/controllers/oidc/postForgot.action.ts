@@ -16,7 +16,7 @@ export default async function postForgotController(req: Request, res: Response) 
         });
     }
 
-    await MailService.sendResetPasswordEmail(account, req.body.returnUrl, req.params.uid);
+    await MailService.sendResetPasswordEmail(account, req.body.returnUrl);
 
     return res.render('forgot', {
         uid: req.params.uid,

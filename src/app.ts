@@ -1,18 +1,15 @@
 import 'express-async-errors';
-import express, { json, urlencoded } from 'express';
+import express from 'express';
 import compression from 'compression';
 import path from 'path';
 import db from './util/database';
-import oidcRouter from './controllers/oidc/_.routing';
-import accountRouter from './controllers/account/_.routing';
-import healthRouter from './controllers/health/_.routing';
 import expressEJSLayouts from 'express-ejs-layouts';
 import { helmetInstance } from './util/helmet';
 import { xframe, xssProtection } from 'lusca';
-import { oidc } from './controllers/oidc';
 import { requestLogger } from './util/logger';
 import { PORT, MONGODB_URI, GTM, DASHBOARD_URL, WALLET_URL, PUBLIC_URL } from './util/secrets';
 import { errorLogger, errorNormalizer, errorOutput, notFoundHandler, corsHandler } from './middlewares';
+import { mainRouter } from './controllers/_.routing';
 
 const app = express();
 
@@ -31,10 +28,7 @@ app.use(expressEJSLayouts);
 app.use(xframe('SAMEORIGIN'));
 app.use(xssProtection(true));
 app.use(express.static(path.join(__dirname, 'public'), { maxAge: 31557600000 }));
-app.use('/', oidcRouter);
-app.use('/account', json(), urlencoded({ extended: true }), accountRouter);
-app.use('/health', json(), urlencoded({ extended: true }), healthRouter);
-app.use('/', oidc.callback);
+app.use('/', mainRouter);
 app.use(notFoundHandler);
 app.use(errorLogger);
 app.use(errorNormalizer);

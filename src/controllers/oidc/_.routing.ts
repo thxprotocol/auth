@@ -13,16 +13,16 @@ import getSpotifyCallback from './getCallbackSpotify.action';
 
 const router = express.Router();
 
-router.get('/oidc/callback/google', getGoogleCallback);
-router.get('/oidc/callback/twitter', getTwitterCallback);
-router.get('/oidc/callback/spotify', getSpotifyCallback);
-router.get('/oidc/:uid', getController);
-router.post('/oidc/:uid/create', urlencoded({ extended: false }), postCreateController);
-router.post('/oidc/:uid/password', urlencoded({ extended: false }), postPasswordController);
-router.post('/oidc/:uid/login', urlencoded({ extended: false }), postLoginController);
-router.get('/oidc/:uid/abort', getAbortController);
-router.get('/oidc/:uid/forgot', getForgotController);
-router.post('/oidc/:uid/forgot', urlencoded({ extended: false }), postForgotController);
-router.post('/oidc/:uid/reset', urlencoded({ extended: false }), postResetController);
+router.get('/callback/google', getGoogleCallback);
+router.get('/callback/twitter', getTwitterCallback);
+router.get('/callback/spotify', getSpotifyCallback);
+router.get('/:uid', getController);
+router.post('/:uid/create', urlencoded({ extended: false }), postCreateController);
+router.post('/:uid/password', urlencoded({ extended: false }), postPasswordController);
+router.post('/:uid/login', urlencoded({ extended: false }), postLoginController);
+router.get('/:uid/abort', getAbortController);
+router.get('/:uid/forgot', getForgotController);
+router.post('/:uid/forgot', urlencoded({ extended: false }), postForgotController);
+router.post('/:uid/reset', urlencoded({ extended: false }), postResetController);
 
 export default router;

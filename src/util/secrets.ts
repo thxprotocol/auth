@@ -11,14 +11,13 @@ const required = [
     'MONGODB_URI',
     'PORT',
     'SECURE_KEY',
-    'SENDGRID_API_KEY',
     'TWITTER_CLIENT_ID',
 ];
 
 // For production (docker containers) we should require JWKS_JSON to be set since otherwise each container
 // would generate their own jwks.json.
 if (process.env.NODE_ENV === 'production') {
-    required.push('JWKS_JSON');
+    required.push('SENDGRID_API_KEY', 'JWKS_JSON');
 }
 
 required.forEach((value: string) => {

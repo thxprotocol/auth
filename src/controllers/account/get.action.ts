@@ -14,6 +14,7 @@ function formatAccountRes(account: AccountDocument) {
             address: account.address,
             googleAccess: account.googleAccessToken && account.googleAccessTokenExpires > Date.now(),
             twitterAccess: account.twitterAccessToken && account.twitterAccessTokenExpires > Date.now(),
+            spotifyAccess: account.spotifyAccessToken && account.spotifyAccessTokenExpires > Date.now() * 1000,
         },
         ...protectedPrivateKey,
     };

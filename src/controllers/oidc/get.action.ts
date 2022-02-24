@@ -28,7 +28,7 @@ function getChannelScopes(channelAction: ChannelAction) {
         case ChannelAction.SpotifyTrackRecent:
         case ChannelAction.SpotifyTrackSaved:
         case ChannelAction.SpotifyUserFollow:
-            return { channelScopes: SPOTIFY_API_SCOPE.join(' ') };
+            return { channelScopes: SPOTIFY_API_SCOPE };
     }
 }
 

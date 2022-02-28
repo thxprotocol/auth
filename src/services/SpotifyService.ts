@@ -5,6 +5,7 @@ import { SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, SPOTIFY_REDIRECT_URI } from '
 
 export const SPOTIFY_API_ENDPOINT = 'https://api.spotify.com/v1/';
 export const SPOTIFY_API_SCOPE = [
+    'user-follow-read',
     'user-library-read',
     'user-read-recently-played',
     'user-read-currently-playing',
@@ -139,8 +140,7 @@ export default class SpotifyDataService {
             const { error, ...data } = await this._fetchPlaylist(accessToken, offset);
             if (error) throw new Error(error.message);
 
-            let newPlaylists = data.items as Playlist[];
-            newPlaylists = newPlaylists.filter((playlist) => playlist.public);
+            const newPlaylists = data.items as Playlist[];
 
             playlists = [...playlists, ...newPlaylists];
             if (!data.next) break;
@@ -204,6 +204,7 @@ export default class SpotifyDataService {
         try {
             const params = new URLSearchParams();
             params.set('ids', `${toIds.join(',')}`);
+            params.set('type', 'user');
 
             const r = await axios({
                 url: `https://api.spotify.com/v1/me/following/contains?${params.toString()}`,
@@ -215,7 +216,7 @@ export default class SpotifyDataService {
                 },
             });
 
-            if (r.status !== 200) throw new Error(ERROR_NOT_AUTHORIZED);
+            if (r.status === 403) throw new Error(ERROR_NOT_AUTHORIZED);
             if (!r.data) throw new Error(ERROR_NO_DATA);
 
             const followed = (r.data as boolean[]).reduce((pre, cur, index) => ({ ...pre, [toIds[index]]: cur }), {});
@@ -264,8 +265,9 @@ export default class SpotifyDataService {
                 },
             });
 
-            if (r.status !== 200) throw new Error(ERROR_NOT_AUTHORIZED);
-            if (!r.data) throw new Error(ERROR_NO_DATA);
+            if (r.status === 403) throw new Error(ERROR_NOT_AUTHORIZED);
+            if (!r.data) return { result: false };
+
             return { result: r.data.item.id === trackId };
         } catch (error) {
             return { error };
@@ -284,7 +286,7 @@ export default class SpotifyDataService {
                 },
             });
 
-            if (r.status !== 200) throw new Error(ERROR_NOT_AUTHORIZED);
+            if (r.status === 403) throw new Error(ERROR_NOT_AUTHORIZED);
             if (!r.data) throw new Error(ERROR_NO_DATA);
             return { result: r.data.items.findIndex((item: any) => item.id === trackId) !== -1 };
         } catch (error) {
@@ -307,7 +309,7 @@ export default class SpotifyDataService {
                 },
             });
 
-            if (r.status !== 200) throw new Error(ERROR_NOT_AUTHORIZED);
+            if (r.status === 403) throw new Error(ERROR_NOT_AUTHORIZED);
             if (!r.data) throw new Error(ERROR_NO_DATA);
 
             const followed = (r.data as boolean[]).reduce((pre, cur, index) => ({ ...pre, [toIds[index]]: cur }), {});

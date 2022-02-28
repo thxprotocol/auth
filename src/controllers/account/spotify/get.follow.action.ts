@@ -26,8 +26,8 @@ export const getSpotifyPlaylistFollow = async (req: Request, res: Response) => {
     const account = await getAccount(req.params.sub);
     const user = await getSpotifyUser(account.spotifyAccessToken);
 
-    const { result, error } = await SpotifyService.validatePlaylistFollow(account.spotifyAccessToken, user.id, [
-        req.params.item,
+    const { result, error } = await SpotifyService.validatePlaylistFollow(account.spotifyAccessToken, req.params.item, [
+        user.id,
     ]);
     if (error) throw new Error(error.message);
     res.json({ result });

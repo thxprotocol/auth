@@ -8,8 +8,8 @@
     "author": "Peter Polman",
     "license": "AGPL-3.0",
     "scripts": {
-        "lint": "tsc --noEmit && npx eslint \"src/**/*.ts\" \"test/**/*.ts\"",
-        "lint:fix": "tsc --noEmit && npx eslint \"src/**/*.ts\" \"test/**/*.ts\" --fix",
+        "lint": "npx eslint \"src/**/*.ts\"",
+        "lint:fix": "npx eslint \"src/**/*.ts\" --fix",
         "dev": "docker-compose up -d && npm run watch:debug",
         "build": "npm run build:sass && npm run build:assets && tsc",
         "build:assets": "mkdir -p dist/src/public && cp -R src/public/* dist/src/public/. && cp -R src/views dist/src/.",
@@ -155,23 +155,10 @@
             "@typescript-eslint/interface-name-prefix": "off"
         },
         "ignorePatterns": [
-            "test/**/*.{j,t}s?(x)",
             "dist/*",
             "src/types/",
-            "contracts/**/*.{j,t}s?(x)",
             "**/*.d.ts",
             "node_modules"
-        ],
-        "overrides": [
-            {
-                "files": [
-                    "**/__tests__/*.{j,t}s?(x)",
-                    "**/tests/unit/**/*.spec.{j,t}s?(x)"
-                ],
-                "env": {
-                    "mocha": true
-                }
-            }
         ]
     },
     "jest": {

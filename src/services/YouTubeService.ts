@@ -74,7 +74,7 @@ export class YouTubeService {
             return [];
         }
 
-        return r.data.items?.map((item: any) => {
+        return r.data.items.map((item: any) => {
             return {
                 id: item.id,
                 title: item.snippet.title,

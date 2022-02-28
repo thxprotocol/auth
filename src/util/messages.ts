@@ -1,13 +1,8 @@
-export const ERROR_SENDING_MAIL_FAILED = 'Could not send your confirmation e-mail.';
 export const ERROR_ACCOUNT_NOT_ACTIVE = 'Your e-mail is not verified. We have re-sent the activation link.';
 // export const ERROR_NO_ACCOUNT = 'We could not find an account for this e-mail and password combination.';
 export const ERROR_AUTH_LINK = 'Your wallet is encrypted by another party. Please ask them to send you a login link.';
-export const ERROR_SENDING_FORGOT_MAIL_FAILED = 'Could not send your reset password e-mail.';
-export const ERROR_DUPLICATE_EMAIL = 'An account with this e-mail address already exists.';
-export const ERROR_CREATE_ACCOUNT = 'Could not signup for an account';
 export const DURATION_TWENTYFOUR_HOURS = Date.now() + 1000 * 60 * 60 * 24;
 export const ERROR_AUTHENTICATION_TOKEN_INVALID_OR_EXPIRED = 'Your authentication token is invalid or expired.';
-export const ERROR_PASSWORD_MATCHING = 'Could not compare your passwords';
 export const ERROR_PASSWORD_NOT_MATCHING = 'Your provided passwords do not match';
 export const ERROR_SIGNUP_TOKEN_INVALID = 'Could not find an account for this signup_token.';
 export const ERROR_SIGNUP_TOKEN_EXPIRED = 'This signup_token has expired.';

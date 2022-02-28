@@ -1,11 +1,11 @@
-import AccountService from '../../services/AccountService';
+import { AccountService } from '../../services/AccountService';
 import { Request, Response } from 'express';
 import { oidc } from '.';
-import { getGoogleLoginUrl } from '../../util/google';
 import { ChannelType, ChannelAction } from '../../models/Reward';
-import { getTwitterLoginURL, twitterScopes } from '../../util/twitter';
-import SpotifyService from '../../services/SpotifyService';
+import { SpotifyService } from '../../services/SpotifyService';
 import { WALLET_URL } from '../../util/secrets';
+import { TwitterService } from '../../services/TwitterService';
+import { YouTubeService } from '../../services/YouTubeService';
 
 const youtubeScope = ['https://www.googleapis.com/auth/userinfo.email', 'https://www.googleapis.com/auth/youtube'];
 const youtubeReadOnlyScope = [
@@ -22,20 +22,20 @@ function getChannelScopes(channelAction: ChannelAction) {
         case ChannelAction.TwitterLike:
         case ChannelAction.TwitterRetweet:
         case ChannelAction.TwitterFollow:
-            return { channelScopes: twitterScopes.split('%20') };
+            return { channelScopes: TwitterService.getScopes().split('%20') };
     }
 }
 
 function getLoginLinkForChannelAction(uid: string, channelAction: ChannelAction) {
     switch (channelAction) {
         case ChannelAction.YouTubeLike:
-            return { googleLoginUrl: getGoogleLoginUrl(uid, youtubeScope) };
+            return { googleLoginUrl: YouTubeService.getLoginUrl(uid, youtubeScope) };
         case ChannelAction.YouTubeSubscribe:
-            return { googleLoginUrl: getGoogleLoginUrl(uid, youtubeReadOnlyScope) };
+            return { googleLoginUrl: YouTubeService.getLoginUrl(uid, youtubeReadOnlyScope) };
         case ChannelAction.TwitterLike:
         case ChannelAction.TwitterRetweet:
         case ChannelAction.TwitterFollow:
-            return { twitterLoginUrl: getTwitterLoginURL(uid) };
+            return { twitterLoginUrl: TwitterService.getLoginURL(uid) };
     }
 }
 
@@ -49,19 +49,19 @@ export default async function getController(req: Request, res: Response) {
         // Prompt params are used for unauthenticated routes
         switch (params.prompt) {
             case 'create': {
-                let alert;
-                return res.render('signup', { uid, params, alert });
+                return res.render('signup', { uid, params });
             }
             case 'confirm': {
-                const { error } = await AccountService.verifySignupToken(params.signup_token);
-                let alert;
-                if (error) {
-                    alert = {
-                        variant: 'danger',
-                        message: error,
-                    };
-                }
-                return res.render('confirm', { uid, params, alert });
+                const { error, result } = await AccountService.verifySignupToken(params.signup_token);
+
+                return res.render('confirm', {
+                    uid,
+                    params,
+                    alert: {
+                        variant: error ? 'danger' : 'success',
+                        message: error || result,
+                    },
+                });
             }
             case 'reset': {
                 return res.render('reset', { uid, params });
@@ -70,34 +70,29 @@ export default async function getController(req: Request, res: Response) {
         // Regular prompts are used for authenticated routes
         switch (prompt.name) {
             case 'connect': {
-                const { account, error } = await AccountService.get(interaction.session.accountId);
-
-                if (error) throw new Error(error.message);
+                const account = await AccountService.get(interaction.session.accountId);
+                let redirect = '';
 
                 if (params.channel == ChannelType.Google && !account.googleAccessToken) {
-                    const googleLoginUrl = getGoogleLoginUrl(req.params.uid, youtubeReadOnlyScope);
-                    return res.redirect(googleLoginUrl);
+                    redirect = YouTubeService.getLoginUrl(req.params.uid, youtubeReadOnlyScope);
+                } else if (params.channel == ChannelType.Twitter && !account.twitterAccessToken) {
+                    redirect = TwitterService.getLoginURL(uid);
+                } else if (params.channel == ChannelType.Spotify && !account.spotifyAccessToken) {
+                    redirect = SpotifyService.getSpotifyUrl(uid);
                 }
 
-                if (params.channel == ChannelType.Twitter && !account.twitterAccessToken) {
-                    const twitterLoginUrl = getTwitterLoginURL(uid);
-                    return res.redirect(twitterLoginUrl);
+                if (!redirect) {
+                    await oidc.interactionResult(req, res, {}, { mergeWithLastSubmission: true });
+                    redirect = params.return_url;
                 }
 
-                if (params.channel == ChannelType.Spotify && !account.spotifyAccessToken) {
-                    const spotifyLoginUrl = SpotifyService.getSpotifyUrl(uid);
-                    return res.redirect(spotifyLoginUrl);
-                }
-
-                await oidc.interactionResult(req, res, {}, { mergeWithLastSubmission: true });
-
-                return res.redirect(params.return_url);
+                return res.redirect(redirect);
             }
             case 'login': {
                 if (!params.reward_hash) {
                     if (params.return_url === WALLET_URL) {
-                        params.googleLoginUrl = getGoogleLoginUrl(req.params.uid, youtubeReadOnlyScope);
-                        params.twitterLoginUrl = getTwitterLoginURL(uid);
+                        params.googleLoginUrl = YouTubeService.getLoginUrl(req.params.uid, youtubeReadOnlyScope);
+                        params.twitterLoginUrl = TwitterService.getLoginURL(uid);
                     }
                     return res.render('login', { uid, params, alert: {} });
                 } else {

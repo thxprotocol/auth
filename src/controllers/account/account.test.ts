@@ -1,13 +1,13 @@
 import nock from 'nock';
 import request from 'supertest';
-import server from '../../src/server';
-import db from '../../src/util/database';
-import AccountService from '../../src/services/AccountService';
-import { INITIAL_ACCESS_TOKEN } from '../../src/util/secrets';
-import { accountAddress, accountEmail, accountSecret } from './lib/constants';
-import { TWITTER_API_ENDPOINT } from '../../src/services/TwitterService';
+import app from '../../app';
+import db from '../../util/database';
+import { AccountService } from '../../services/AccountService';
+import { INITIAL_ACCESS_TOKEN } from '../../util/secrets';
+import { accountAddress, accountEmail, accountSecret } from '../../util/jest';
+import { TWITTER_API_ENDPOINT } from '../../services/TwitterService';
 
-const http = request.agent(server);
+const http = request.agent(app);
 
 describe('Account Controller', () => {
     let authHeader: string, basicAuthHeader: string, accountId: string;
@@ -49,7 +49,7 @@ describe('Account Controller', () => {
 
     afterAll(async () => {
         await db.truncate();
-        server.close();
+        db.disconnect();
     });
 
     describe('POST /account', () => {
@@ -132,7 +132,7 @@ describe('Account Controller', () => {
         let testAccountId = '';
 
         beforeAll(async () => {
-            const { account } = await AccountService.getByEmail(accountEmail);
+            const account = await AccountService.getByEmail(accountEmail);
             await account.save();
 
             testAccountId = account._id;
@@ -161,7 +161,7 @@ describe('Account Controller', () => {
         });
 
         it('Successfully get linked Twitter info with a correct infomation', async () => {
-            const { account } = await AccountService.getByEmail(accountEmail);
+            const account = await AccountService.getByEmail(accountEmail);
             account.twitterAccessToken = 'TOKEN';
             account.twitterRefreshToken = 'REFRESH';
             account.twitterAccessTokenExpires = (Date.now() + 1000000) * 1000;
@@ -181,7 +181,7 @@ describe('Account Controller', () => {
         let testAccountId = '';
 
         beforeAll(async () => {
-            const { account } = await AccountService.getByEmail(accountEmail);
+            const account = await AccountService.getByEmail(accountEmail);
             await account.save();
 
             testAccountId = account._id;

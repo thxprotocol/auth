@@ -1,17 +1,17 @@
 import axios from 'axios';
-import { Playlist } from 'types';
-import { PlaylistItem } from 'types/PlaylistItem';
+import { Playlist } from '../types';
+import { PlaylistItem } from '../types/PlaylistItem';
 import { SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, SPOTIFY_REDIRECT_URI } from '../util/secrets';
 
-export const SPOTIFY_API_ENDPOINT = 'https://api.spotify.com/v1/';
-export const SPOTIFY_API_SCOPE = 'user-read-private user-read-email playlist-modify-public playlist-modify-private';
+const SPOTIFY_API_ENDPOINT = 'https://api.spotify.com/v1/';
+const SPOTIFY_API_SCOPE = 'user-read-private user-read-email playlist-modify-public playlist-modify-private';
 const ERROR_NO_DATA = 'Could not find an Spotify data for this accesstoken';
 const ERROR_NOT_AUTHORIZED = 'Not authorized for Spotify API';
 const ERROR_TOKEN_REQUEST_FAILED = 'Failed to request access token';
 
 axios.defaults.baseURL = SPOTIFY_API_ENDPOINT;
 
-export default class SpotifyDataService {
+export class SpotifyService {
     static async _fetchPlaylist(accessToken: string, offset = 0) {
         try {
             const params = new URLSearchParams();
@@ -74,30 +74,26 @@ export default class SpotifyDataService {
     }
 
     static async requestTokens(code: string) {
-        try {
-            const body = new URLSearchParams();
-            body.append('code', code);
-            body.append('grant_type', 'authorization_code');
-            body.append('redirect_uri', SPOTIFY_REDIRECT_URI);
+        const body = new URLSearchParams();
+        body.append('code', code);
+        body.append('grant_type', 'authorization_code');
+        body.append('redirect_uri', SPOTIFY_REDIRECT_URI);
 
-            const r = await axios({
-                url: 'https://accounts.spotify.com/api/token',
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'Authorization':
-                        'Basic ' + Buffer.from(`${SPOTIFY_CLIENT_ID}:${SPOTIFY_CLIENT_SECRET}`).toString('base64'),
-                },
-                data: body,
-            });
+        const r = await axios({
+            url: 'https://accounts.spotify.com/api/token',
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Authorization':
+                    'Basic ' + Buffer.from(`${SPOTIFY_CLIENT_ID}:${SPOTIFY_CLIENT_SECRET}`).toString('base64'),
+            },
+            data: body,
+        });
 
-            if (r.status !== 200) {
-                throw new Error('Failed to request access token');
-            }
-            return { tokens: r.data };
-        } catch (error) {
-            return { error };
+        if (r.status !== 200) {
+            throw new Error('Failed to request access token');
         }
+        return r.data;
     }
 
     static async validateFollow(
@@ -130,24 +126,20 @@ export default class SpotifyDataService {
     }
 
     static async getUser(accessToken: string) {
-        try {
-            const r = await axios({
-                url: 'https://api.spotify.com/v1/me',
-                method: 'GET',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${accessToken}`,
-                },
-            });
+        const r = await axios({
+            url: 'https://api.spotify.com/v1/me',
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${accessToken}`,
+            },
+        });
 
-            if (r.status !== 200) throw new Error(ERROR_NOT_AUTHORIZED);
-            if (!r.data) throw new Error(ERROR_NO_DATA);
+        if (r.status !== 200) throw new Error(ERROR_NOT_AUTHORIZED);
+        if (!r.data) throw new Error(ERROR_NO_DATA);
 
-            return { user: r.data };
-        } catch (error) {
-            return { error };
-        }
+        return r.data;
     }
 
     static async getPlaylists(accessToken: string) {
@@ -192,27 +184,23 @@ export default class SpotifyDataService {
     }
 
     static async refreshTokens(refreshToken: string) {
-        try {
-            const body = new URLSearchParams();
-            body.append('grant_type', 'refresh_token');
-            body.append('refresh_token', refreshToken);
+        const body = new URLSearchParams();
+        body.append('grant_type', 'refresh_token');
+        body.append('refresh_token', refreshToken);
 
-            const r = await axios({
-                url: 'https://accounts.spotify.com/api/token',
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'Authorization':
-                        'Basic ' + Buffer.from(`${SPOTIFY_CLIENT_ID}:${SPOTIFY_CLIENT_SECRET}`).toString('base64'),
-                },
-                data: body,
-            });
+        const r = await axios({
+            url: 'https://accounts.spotify.com/api/token',
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Authorization':
+                    'Basic ' + Buffer.from(`${SPOTIFY_CLIENT_ID}:${SPOTIFY_CLIENT_SECRET}`).toString('base64'),
+            },
+            data: body,
+        });
 
-            if (r.status !== 200) throw new Error(ERROR_TOKEN_REQUEST_FAILED);
+        if (r.status !== 200) throw new Error(ERROR_TOKEN_REQUEST_FAILED);
 
-            return { tokens: r.data.access_token };
-        } catch (error) {
-            return { error };
-        }
+        return r.data.access_token;
     }
 }

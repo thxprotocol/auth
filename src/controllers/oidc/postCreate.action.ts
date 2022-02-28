@@ -1,74 +1,53 @@
-import { Request, Response, NextFunction } from 'express';
-import MailService from '../../services/MailService';
-import { ERROR_SENDING_MAIL_FAILED } from '../../util/messages';
-import AccountService from '../../services/AccountService';
-import { GTM } from '../../util/secrets';
-import { HttpError } from '../../models/Error';
+import { Request, Response } from 'express';
+import { MailService } from '../../services/MailService';
+import { AccountService } from '../../services/AccountService';
 import { checkPasswordStrength } from '../../util/passwordcheck';
 
-export default async function postCreateController(req: Request, res: Response, next: NextFunction) {
-    const { result, error } = await AccountService.isEmailDuplicate(req.body.email);
-    const alert = { variant: 'danger', message: '' };
-    const passwordStrength = checkPasswordStrength(req.body.password);
-
-    if (result) {
-        alert.message = 'An account with this e-mail address already exists.';
-    } else if (error) {
-        alert.message = 'Could not check your e-mail address for duplicates.';
-    } else if (passwordStrength != 'strong') {
-        alert.message = 'Please enter a strong password.';
-    } else if (req.body.password !== req.body.confirmPassword) {
-        alert.message = 'The provided passwords are not identical.';
-    } else if (req.body.acceptTermsPrivacy !== 'true') {
-        alert.message = 'Please accept the terms of use and privacy statement.';
-    } else if (!req.body.email?.length) {
-        alert.message = 'Email cannot be blank.';
-    }
-
-    if (alert.message) {
+export default async function postCreateController(req: Request, res: Response) {
+    function renderError(message: string) {
         return res.render('signup', {
             uid: req.params.uid,
             params: {
                 return_url: req.body.returnUrl,
                 signup_email: req.body.email,
             },
-            alert,
-            gtm: GTM,
+            alert: { variant: 'danger', message },
         });
     }
 
-    const { account } = await AccountService.signup(
+    const isDuplicate = await AccountService.isActiveUserByEmail(req.body.email);
+    const passwordStrength = checkPasswordStrength(req.body.password);
+
+    if (isDuplicate) {
+        return renderError('An account with this e-mail address already exists.');
+    } else if (passwordStrength != 'strong') {
+        return renderError('Please enter a strong password.');
+    } else if (req.body.password !== req.body.confirmPassword) {
+        return renderError('The provided passwords are not identical.');
+    } else if (req.body.acceptTermsPrivacy !== 'true') {
+        return renderError('Please accept the terms of use and privacy statement.');
+    } else if (!req.body.email?.length) {
+        return renderError('Email cannot be blank.');
+    }
+
+    const account = await AccountService.signup(
         req.body.email,
         req.body.password,
         req.body.acceptTermsPrivacy,
         req.body.acceptUpdates,
     );
 
-    try {
-        const { error } = await MailService.sendConfirmationEmail(account, req.body.returnUrl);
+    await MailService.sendConfirmationEmail(account, req.body.returnUrl);
 
-        if (error) {
-            throw new Error(ERROR_SENDING_MAIL_FAILED);
-        }
-
-        try {
-            return res.render('signup', {
-                uid: req.params.uid,
-                params: {
-                    return_url: req.body.returnUrl,
-                    signup_email: req.body.email,
-                },
-                alert: {
-                    variant: 'success',
-                    message:
-                        'Verify your e-mail address by clicking the link we just sent you. You can close this window.',
-                },
-                gtm: GTM,
-            });
-        } catch (error) {
-            return next(new HttpError(502, error.toString(), error));
-        }
-    } catch (error) {
-        return next(new HttpError(502, error.toString(), error));
-    }
+    return res.render('signup', {
+        uid: req.params.uid,
+        params: {
+            return_url: req.body.returnUrl,
+            signup_email: req.body.email,
+        },
+        alert: {
+            variant: 'success',
+            message: 'Verify your e-mail address by clicking the link we just sent you. You can close this window.',
+        },
+    });
 }

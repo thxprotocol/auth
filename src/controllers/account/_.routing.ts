@@ -6,7 +6,7 @@ import { deleteAccount } from './delete.action';
 import { postAccount } from './post.action';
 import { validate } from '../../util/validate';
 import { validations } from './_.validation';
-import { checkJwt } from '../../util/jwt';
+import { validateJwt } from '../../middlewares/validateJwt';
 import { getTwitter } from './twitter/get.action';
 import { getTwitterLike } from './twitter/getLike.action';
 import { getTwitterRetweet } from './twitter/getRetweet.action';
@@ -18,7 +18,7 @@ import { getSpotify } from './spotify/get.action';
 
 const router = express.Router();
 
-router.use(checkJwt);
+router.use(validateJwt);
 router.post('/', checkScopes(['account:read', 'account:write']), validate(validations.postAccount), postAccount);
 router.get('/:id', checkScopes(['account:read']), getAccount);
 

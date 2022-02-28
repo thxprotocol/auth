@@ -1,40 +1,14 @@
-import AccountService from '../../services/AccountService';
-import TwitterService from '../../services/TwitterService';
-import { oidc } from '.';
-import { Request, Response, NextFunction } from 'express';
-import { HttpError } from '../../models/Error';
+import { AccountService } from '../../services/AccountService';
+import { TwitterService } from '../../services/TwitterService';
+import { Request, Response } from 'express';
 import { AccountDocument } from '../../models/Account';
 import { ERROR_NO_ACCOUNT } from '../../util/messages';
-import { validateEmail } from '../../util/validate';
+import { getAccountByEmail, getInteraction, saveInteraction } from './utils';
 
-export default async function getTwitterCallback(req: Request, res: Response, next: NextFunction) {
-    async function isEmailDuplicate(email: string) {
-        const { result, error } = await AccountService.isEmailDuplicate(email);
-
-        if (error) {
-            throw new Error(error.message);
-        }
-
-        return result;
-    }
-
+export default async function getTwitterCallback(req: Request, res: Response) {
     async function getAccountBySub(sub: string) {
-        const { account } = await AccountService.get(sub);
+        const account = await AccountService.get(sub);
         if (!account) throw new Error(ERROR_NO_ACCOUNT);
-        return account;
-    }
-
-    async function getAccountByEmail(email: string) {
-        let account;
-
-        if (await isEmailDuplicate(email)) {
-            const result = await AccountService.getByEmail(email);
-            account = result.account;
-        } else if (validateEmail(email)) {
-            const result = await AccountService.signup(email, '', true, true, true);
-            account = result.account;
-        }
-
         return account;
     }
 
@@ -47,61 +21,31 @@ export default async function getTwitterCallback(req: Request, res: Response, ne
         return await account.save();
     }
 
-    async function saveInteraction(interaction: any, sub: string) {
-        interaction.result = { login: { account: sub } };
-        // TODO Look into why this is suggested:
-        await interaction.save(interaction.exp - Math.floor(new Date().getTime() / 1000));
-        return interaction.returnTo;
-    }
+    const code = req.query.code as string;
+    const uid = req.query.state as string;
+    const error = req.query.error as string;
 
-    async function getInteraction(uid: string) {
-        const interaction = await oidc.Interaction.find(uid);
-        if (!interaction) throw new Error('Could not find interaction for this state');
-        return interaction;
-    }
+    if (error) return res.redirect(`/oidc/${uid}`);
 
-    async function getTokens(code: string) {
-        const { tokens, error } = await TwitterService.requestTokens(code);
-        if (error) throw new Error('Could not get Twitter tokens');
-        return tokens;
-    }
+    // Get all token information
+    const tokens = await TwitterService.requestTokens(code);
+    const user = await TwitterService.getUser(tokens.access_token);
+    const email = user.id + '@twitter.thx.network';
 
-    async function getTwitterUser(accessToken: string) {
-        const { user, error } = await TwitterService.getUser(accessToken);
-        if (error) throw new Error('Could not get Twitter user profile');
-        if (!user) throw new Error('No Twitter user returned for access token');
-        return user;
-    }
+    // Get the interaction based on the state
+    const interaction = await getInteraction(uid);
 
-    try {
-        const code = req.query.code as string;
-        const uid = req.query.state as string;
-        const error = req.query.error as string;
+    // Check if there is an active session for this interaction
+    const account =
+        interaction.session && interaction.session.accountId
+            ? // If so, get account for sub
+              await getAccountBySub(interaction.session.accountId)
+            : // If not, get account for email claim
+              await getAccountByEmail(email);
 
-        if (error) return res.redirect(`/oidc/${uid}`);
+    const returnTo = await saveInteraction(interaction, account._id.toString());
 
-        // Get all token information
-        const tokens = await getTokens(code);
-        const user = await getTwitterUser(tokens.access_token);
-        const email = user.id + '@twitter.thx.network';
+    await updateTokens(account, tokens);
 
-        // Get the interaction based on the state
-        const interaction = await getInteraction(uid);
-
-        // Check if there is an active session for this interaction
-        const account =
-            interaction.session && interaction.session.accountId
-                ? // If so, get account for sub
-                  await getAccountBySub(interaction.session.accountId)
-                : // If not, get account for email claim
-                  await getAccountByEmail(email);
-
-        const returnTo = await saveInteraction(interaction, account._id.toString());
-
-        await updateTokens(account, tokens);
-
-        return res.redirect(returnTo);
-    } catch (error) {
-        return next(new HttpError(502, error.message, error));
-    }
+    return res.redirect(returnTo);
 }

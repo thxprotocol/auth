@@ -70,7 +70,11 @@ export class YouTubeService {
             throw new Error(ERROR_NO_DATA);
         }
 
-        return r.data.items.map((item: any) => {
+        if (!r.data.items?.length) {
+            return [];
+        }
+
+        return r.data.items?.map((item: any) => {
             return {
                 id: item.id,
                 title: item.snippet.title,
@@ -120,7 +124,7 @@ export class YouTubeService {
         const youtube = await this.getYoutubeClient(account);
         const channel = await getChannels(youtube);
 
-        if (!channel.items.length) {
+        if (!channel.items?.length) {
             return [];
         }
 

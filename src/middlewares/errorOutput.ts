@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
+import { JSON_PATHS } from '../controllers/_.routing';
 import { THXHttpError } from '../util/errors';
 import { NODE_ENV } from '../util/secrets';
 
@@ -10,6 +11,13 @@ interface ErrorResponse {
         stack?: string;
     };
 }
+
+const isJsonPath = (path: string): boolean => {
+    for (const prefix of JSON_PATHS) {
+        if (path.startsWith(prefix)) return true;
+    }
+    return false;
+};
 
 // Error handler needs to have 4 arguments.
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -23,7 +31,10 @@ export const errorOutput = (error: any, req: Request, res: Response, next: NextF
         response.error.error = error;
         response.error.stack = error.stack;
     }
-
     res.status(status);
-    res.json(response);
+    if (isJsonPath(req.path)) {
+        res.json(response);
+    } else {
+        res.render('error', { alert: { variant: 'danger', message: response.error.message } });
+    }
 };

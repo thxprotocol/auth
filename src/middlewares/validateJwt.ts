@@ -3,7 +3,7 @@ import jwksRsa from 'jwks-rsa';
 import { ISSUER } from '../util/secrets';
 import { getJwks } from '../util/jwks';
 
-export const checkJwt = jwt({
+export const validateJwt = jwt({
     secret: jwksRsa.expressJwtSecret({
         cache: true,
         rateLimit: true,

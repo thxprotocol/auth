@@ -2,6 +2,7 @@ import { Response, Request } from 'express';
 import { name, version, license } from '../../../package.json';
 
 export const getHealth = (_req: Request, res: Response) => {
+    throw new Error('dude');
     const jsonData = {
         name,
         version,

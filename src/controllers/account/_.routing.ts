@@ -14,6 +14,8 @@ import { getTwitterFollow } from './twitter/getFollow.action';
 import { getYoutube } from './youtube/get.action';
 import { getYoutubeLike } from './youtube/getLike.action';
 import { getYoutubeSubscribe } from './youtube/getSubscribe.action';
+import { getSpotifyUserFollow, getSpotifyPlaylistFollow } from './spotify/get.follow.action';
+import { getSpotifyTrackPlaying, getSpotifyTrackRecent, getSpotifyTrackSaved } from './spotify/get.track.action';
 import { getSpotify } from './spotify/get.action';
 
 const router = express.Router();
@@ -32,6 +34,11 @@ router.get('/:sub/youtube/like/:item', checkScopes(['account:read']), getYoutube
 router.get('/:sub/youtube/subscribe/:item', checkScopes(['account:read']), getYoutubeSubscribe);
 
 router.get('/:sub/spotify', checkScopes(['account:read']), getSpotify);
+router.get('/:sub/spotify/user_follow/:item', checkScopes(['account:read']), getSpotifyUserFollow);
+router.get('/:sub/spotify/playlist_follow/:item', checkScopes(['account:read']), getSpotifyPlaylistFollow);
+router.get('/:sub/spotify/track_playing/:item', checkScopes(['account:read']), getSpotifyTrackPlaying);
+router.get('/:sub/spotify/track_recent/:item', checkScopes(['account:read']), getSpotifyTrackRecent);
+router.get('/:sub/spotify/track_saved/:item', checkScopes(['account:read']), getSpotifyTrackSaved);
 
 router.get('/address/:address', checkScopes(['account:read']), validate([]), getAccountByAddress);
 router.get('/email/:email', checkScopes(['account:read']), validate([]), getAccountByEmail);

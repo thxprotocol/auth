@@ -11,12 +11,13 @@ describe('OAuth2 Grants', () => {
     let authHeader: string, accessToken: string, accountId: string;
 
     beforeAll(async () => {
+        await db.truncate();
+
         const account = await AccountService.signupFor(accountEmail, accountSecret);
         accountId = account.id;
     });
 
     afterAll(async () => {
-        await db.truncate();
         db.disconnect();
     });
 

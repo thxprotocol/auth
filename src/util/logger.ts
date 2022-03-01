@@ -2,7 +2,7 @@ import morgan from 'morgan';
 import json from 'morgan-json';
 import winston from 'winston';
 import { Request } from 'express';
-import { VERSION } from './secrets';
+import { NODE_ENV, VERSION } from './secrets';
 
 const formatWinston = winston.format.combine(
     winston.format.timestamp({
@@ -11,8 +11,8 @@ const formatWinston = winston.format.combine(
     winston.format.json(),
 );
 
-const instance = winston.createLogger({
-    level: 'http',
+export const logger = winston.createLogger({
+    level: NODE_ENV === 'test' ? 'warn' : 'http',
     format: formatWinston,
     transports: [new winston.transports.Console()],
 });
@@ -28,8 +28,7 @@ const formatMorgan = json({
     'user-agent': ':user-agent',
 });
 
-export const logger = instance;
 export const requestLogger = morgan(formatMorgan, {
     skip: (req: Request) => req.baseUrl && req.baseUrl.startsWith(`/${VERSION}/ping`),
-    stream: { write: (message: string) => instance.http(JSON.parse(message)) },
+    stream: { write: (message: string) => logger.http(JSON.parse(message)) },
 });

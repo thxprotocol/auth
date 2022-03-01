@@ -14,6 +14,8 @@ describe('Sign In', () => {
     let CLIENT_SECRET = '';
 
     beforeAll(async () => {
+        await db.truncate();
+
         const res = await http
             .post('/reg')
             .set({ Authorization: `Bearer ${INITIAL_ACCESS_TOKEN}` })
@@ -28,16 +30,14 @@ describe('Sign In', () => {
 
         CLIENT_ID = res.body.client_id;
         CLIENT_SECRET = res.body.client_secret;
-    });
 
-    beforeAll(async () => {
         const account = await AccountService.signup(accountEmail, accountSecret, true, true, true);
         account.privateKey = undefined;
+
         await account.save();
     });
 
     afterAll(async () => {
-        await db.truncate();
         db.disconnect();
     });
 

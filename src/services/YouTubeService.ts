@@ -166,4 +166,12 @@ export class YouTubeService {
         const res = await client.getToken(code);
         return res.tokens;
     }
+
+    static getScope() {
+        return ['https://www.googleapis.com/auth/userinfo.email', 'https://www.googleapis.com/auth/youtube'];
+    }
+
+    static getReadOnlyScope() {
+        return ['https://www.googleapis.com/auth/userinfo.email', 'https://www.googleapis.com/auth/youtube.readonly'];
+    }
 }

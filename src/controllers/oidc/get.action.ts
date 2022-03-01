@@ -2,40 +2,46 @@ import { AccountService } from '../../services/AccountService';
 import { Request, Response } from 'express';
 import { oidc } from '.';
 import { ChannelType, ChannelAction } from '../../models/Reward';
-import { SpotifyService } from '../../services/SpotifyService';
-import { WALLET_URL } from '../../util/secrets';
 import { TwitterService } from '../../services/TwitterService';
 import { YouTubeService } from '../../services/YouTubeService';
-
-const youtubeScope = ['https://www.googleapis.com/auth/userinfo.email', 'https://www.googleapis.com/auth/youtube'];
-const youtubeReadOnlyScope = [
-    'https://www.googleapis.com/auth/userinfo.email',
-    'https://www.googleapis.com/auth/youtube.readonly',
-];
+import { SpotifyService, SPOTIFY_API_SCOPE } from '../../services/SpotifyService';
+import { WALLET_URL } from '../../util/secrets';
 
 function getChannelScopes(channelAction: ChannelAction) {
     switch (channelAction) {
         case ChannelAction.YouTubeLike:
-            return { channelScopes: youtubeScope };
+            return { channelScopes: YouTubeService.getScope() };
         case ChannelAction.YouTubeSubscribe:
-            return { channelScopes: youtubeReadOnlyScope };
+            return { channelScopes: YouTubeService.getReadOnlyScope() };
         case ChannelAction.TwitterLike:
         case ChannelAction.TwitterRetweet:
         case ChannelAction.TwitterFollow:
             return { channelScopes: TwitterService.getScopes().split('%20') };
+        case ChannelAction.SpotifyPlaylistFollow:
+        case ChannelAction.SpotifyTrackPlaying:
+        case ChannelAction.SpotifyTrackRecent:
+        case ChannelAction.SpotifyTrackSaved:
+        case ChannelAction.SpotifyUserFollow:
+            return { channelScopes: SPOTIFY_API_SCOPE };
     }
 }
 
 function getLoginLinkForChannelAction(uid: string, channelAction: ChannelAction) {
     switch (channelAction) {
         case ChannelAction.YouTubeLike:
-            return { googleLoginUrl: YouTubeService.getLoginUrl(uid, youtubeScope) };
+            return { googleLoginUrl: YouTubeService.getLoginUrl(uid, YouTubeService.getScope()) };
         case ChannelAction.YouTubeSubscribe:
-            return { googleLoginUrl: YouTubeService.getLoginUrl(uid, youtubeReadOnlyScope) };
+            return { googleLoginUrl: YouTubeService.getLoginUrl(uid, YouTubeService.getReadOnlyScope()) };
         case ChannelAction.TwitterLike:
         case ChannelAction.TwitterRetweet:
         case ChannelAction.TwitterFollow:
             return { twitterLoginUrl: TwitterService.getLoginURL(uid) };
+        case ChannelAction.SpotifyPlaylistFollow:
+        case ChannelAction.SpotifyTrackPlaying:
+        case ChannelAction.SpotifyTrackRecent:
+        case ChannelAction.SpotifyTrackSaved:
+        case ChannelAction.SpotifyUserFollow:
+            return { spotifyLoginUrl: SpotifyService.getSpotifyUrl(uid) };
     }
 }
 
@@ -74,7 +80,7 @@ export default async function getController(req: Request, res: Response) {
                 let redirect = '';
 
                 if (params.channel == ChannelType.Google && !account.googleAccessToken) {
-                    redirect = YouTubeService.getLoginUrl(req.params.uid, youtubeReadOnlyScope);
+                    redirect = YouTubeService.getLoginUrl(req.params.uid, YouTubeService.getReadOnlyScope());
                 } else if (params.channel == ChannelType.Twitter && !account.twitterAccessToken) {
                     redirect = TwitterService.getLoginURL(uid);
                 } else if (params.channel == ChannelType.Spotify && !account.spotifyAccessToken) {
@@ -91,8 +97,12 @@ export default async function getController(req: Request, res: Response) {
             case 'login': {
                 if (!params.reward_hash) {
                     if (params.return_url === WALLET_URL) {
-                        params.googleLoginUrl = YouTubeService.getLoginUrl(req.params.uid, youtubeReadOnlyScope);
+                        params.googleLoginUrl = YouTubeService.getLoginUrl(
+                            req.params.uid,
+                            YouTubeService.getReadOnlyScope(),
+                        );
                         params.twitterLoginUrl = TwitterService.getLoginURL(uid);
+                        params.spotifyLoginUrl = SpotifyService.getSpotifyUrl(uid);
                     }
                     return res.render('login', { uid, params, alert: {} });
                 } else {

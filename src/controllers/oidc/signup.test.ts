@@ -5,15 +5,18 @@ import { AccountService } from '../../services/AccountService';
 import db from '../../util/database';
 import { INITIAL_ACCESS_TOKEN } from '../../util/secrets';
 
+const http = request.agent(app);
+
 describe('Sign up', () => {
     let CID = '';
     let CLIENT_ID = '';
     const REDIRECT_URL = 'https://localhost:8082/signin-oidc';
     const NEW_ACCOUNT_EMAIL = 'test@thx.network';
     const NEW_ACCOUNT_PASSWORD = '123asdASD@#@#!!';
-    const http = request.agent(app);
 
     beforeAll(async () => {
+        await db.truncate();
+
         const res = await http
             .post('/reg')
             .set({ Authorization: `Bearer ${INITIAL_ACCESS_TOKEN}` })
@@ -30,7 +33,6 @@ describe('Sign up', () => {
     });
 
     afterAll(async () => {
-        await db.truncate();
         db.disconnect();
     });
 

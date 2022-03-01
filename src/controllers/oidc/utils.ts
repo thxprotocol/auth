@@ -7,7 +7,7 @@ export async function getAccountByEmail(email: string) {
 
     account = await AccountService.getByEmail(email);
 
-    if (!account.active && validateEmail(email)) {
+    if ((!account || (account && !account.active)) && validateEmail(email)) {
         account = await AccountService.signup(email, '', true, true, true);
     }
 

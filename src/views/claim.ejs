@@ -44,6 +44,22 @@
                     <a target="_blank" href="https://www.twitter.com/i/user/<%= params.channelItem %>"
                        class="font-weight-bold">follow this account</a>.
                     <% } %>
+                    <% if (params.channelAction == 'SpotifyUserFollow' ) { %>
+                    <a target="_blank" href="https://open.spotify.com/user/<%= params.channelItem %>"
+                        class="font-weight-bold">follow this account</a>.
+                    <% } %>
+                    <% if (params.channelAction == 'SpotifyPlaylistFollow' ) { %>
+                    <a target="_blank" href="https://open.spotify.com/playlist/<%= params.channelItem %>"
+                        class="font-weight-bold">follow this playlist</a>.
+                    <% } %>
+                    <% if (params.channelAction == 'SpotifyTrackPlaying' ) { %>
+                    <a target="_blank" href="https://open.spotify.com/track/<%= params.channelItem %>"
+                        class="font-weight-bold">play this track</a>.
+                    <% } %>
+                    <% if (params.channelAction == 'SpotifyTrackSaved' ) { %>
+                    <a target="_blank" href="https://open.spotify.com/track/<%= params.channelItem %>"
+                        class="font-weight-bold">save this track</a>.
+                    <% } %>
                 </p>
                 <p>
                     Make sure to grant these scopes:
@@ -69,6 +85,14 @@
                         <img src="/img/t-logo.png" alt="Twitter logo" />
                     </div>
                     <div class="label">Sign in with Twitter</div>
+                </a>
+                <% } %>
+                <% if (params.spotifyLoginUrl ) { %>
+                <a class="btn btn-sign-in btn-twitter btn-block" href="<%= params.spotifyLoginUrl %>">
+                    <div class="logo">
+                        <img src="/img/s-logo.png" alt="Spotify logo" />
+                    </div>
+                    <div class="label">Sign in with Spotify</div>
                 </a>
                 <% } %>
             </form>

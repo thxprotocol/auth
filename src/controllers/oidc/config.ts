@@ -1,7 +1,7 @@
 import MongoAdapter from './adapter';
 import { Account } from '../../models/Account';
 import { AccountDocument } from '../../models/Account';
-import { NODE_ENV, INITIAL_ACCESS_TOKEN, SECURE_KEY } from '../../util/secrets';
+import { INITIAL_ACCESS_TOKEN, SECURE_KEY } from '../../util/secrets';
 import { interactionPolicy } from 'oidc-provider';
 import { getJwks } from '../../util/jwks';
 
@@ -15,15 +15,6 @@ basePolicy.add(promptCreate);
 basePolicy.add(promptConfirm);
 basePolicy.add(promptConnect);
 basePolicy.add(promptReset);
-
-(async () => {
-    if (NODE_ENV !== 'test') {
-        await MongoAdapter.connect();
-    }
-})().catch((err) => {
-    console.error(err);
-    process.exitCode = 1;
-});
 
 // Configuration defaults:
 // https://github.com/panva/node-oidc-provider/blob/master/lib/helpers/defaults.js

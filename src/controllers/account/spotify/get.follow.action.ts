@@ -1,34 +1,18 @@
 import { Request, Response } from 'express';
-import { AccountDocument } from '../../../models/Account';
-import SpotifyService from '../../../services/SpotifyService';
-import AccountService from '../../../services/AccountService';
-
-async function getAccount(sub: string): Promise<AccountDocument> {
-    const { account, error } = await AccountService.get(sub);
-    if (error) throw new Error(error.message);
-    return account;
-}
-
-async function getSpotifyUser(accessToken: string) {
-    const { user, error } = await SpotifyService.getUser(accessToken);
-    if (error) throw new Error(error.message);
-    return user;
-}
+import { SpotifyService } from '../../../services/SpotifyService';
+import { AccountService } from '../../../services/AccountService';
 
 export const getSpotifyUserFollow = async (req: Request, res: Response) => {
-    const account = await getAccount(req.params.sub);
-    const { result, error } = await SpotifyService.validateUserFollow(account.spotifyAccessToken, [req.params.item]);
-    if (error) throw new Error(error.message);
+    const account = await AccountService.get(req.params.sub);
+    const result = await SpotifyService.validateUserFollow(account.spotifyAccessToken, [req.params.item]);
+
     res.json({ result });
 };
 
 export const getSpotifyPlaylistFollow = async (req: Request, res: Response) => {
-    const account = await getAccount(req.params.sub);
-    const user = await getSpotifyUser(account.spotifyAccessToken);
+    const account = await AccountService.get(req.params.sub);
+    const user = await SpotifyService.getUser(account.spotifyAccessToken);
+    const result = await SpotifyService.validatePlaylistFollow(account.spotifyAccessToken, req.params.item, [user.id]);
 
-    const { result, error } = await SpotifyService.validatePlaylistFollow(account.spotifyAccessToken, req.params.item, [
-        user.id,
-    ]);
-    if (error) throw new Error(error.message);
     res.json({ result });
 };

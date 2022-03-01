@@ -1,11 +1,13 @@
-import { HttpError } from '../../models/Error';
 import { snakeCase } from 'lodash';
-import { MongoClient } from 'mongodb';
-import { MONGODB_URI } from '../../util/secrets';
+import db from '../../util/database';
 
 const grantable = new Set(['access_token', 'authorization_code', 'refresh_token', 'device_code']);
 
 let DB: any;
+
+db.connection.once('open', async () => {
+    DB = db.connection.getClient().db();
+});
 
 class CollectionSet extends Set {
     add(name: string): any {
@@ -58,29 +60,17 @@ export default class MongoAdapter {
         collections.add(this.name);
     }
 
-    static async connect() {
-        const client = new MongoClient(MONGODB_URI);
-        const connection: any = await client.connect();
-        const dbName = connection.s.options.dbName;
-
-        DB = connection.db(dbName);
-    }
-
     coll() {
         return DB.collection(this.name);
     }
 
     async upsert(_id: string, payload: any, expiresIn: number) {
-        try {
-            const expiresAt = expiresIn ? new Date(Date.now() + expiresIn * 1000) : null;
-            await this.coll().updateOne(
-                { _id },
-                { $set: { payload, ...(expiresAt ? { expiresAt } : undefined) } },
-                { upsert: true },
-            );
-        } catch (e) {
-            return new HttpError(502, 'OIDC Model save failed.', e);
-        }
+        const expiresAt = expiresIn ? new Date(Date.now() + expiresIn * 1000) : null;
+        await this.coll().updateOne(
+            { _id },
+            { $set: { payload, ...(expiresAt ? { expiresAt } : undefined) } },
+            { upsert: true },
+        );
     }
 
     async find(_id: string) {

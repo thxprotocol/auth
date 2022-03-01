@@ -1,6 +1,6 @@
 {
     "name": "@thxnetwork/auth",
-    "version": "1.0.0",
+    "version": "1.0.5",
     "repository": {
         "type": "git",
         "url": "https://github.com/thxprotocol/api"
@@ -8,8 +8,8 @@
     "author": "Peter Polman",
     "license": "AGPL-3.0",
     "scripts": {
-        "lint": "tsc --noEmit && npx eslint \"src/**/*.ts\" \"test/**/*.ts\"",
-        "lint:fix": "tsc --noEmit && npx eslint \"src/**/*.ts\" \"test/**/*.ts\" --fix",
+        "lint": "npx eslint \"src/**/*.ts\"",
+        "lint:fix": "npx eslint \"src/**/*.ts\" --fix",
         "dev": "docker-compose up -d && npm run watch:debug",
         "build": "npm run build:sass && npm run build:assets && tsc",
         "build:assets": "mkdir -p dist/src/public && cp -R src/public/* dist/src/public/. && cp -R src/views dist/src/.",
@@ -20,7 +20,8 @@
         "watch:sass": "sass --watch src/main.scss src/public/main.css",
         "watch:node": "ts-node-dev src/server.ts",
         "watch:node-debug": "ts-node-dev --inspect=7030 src/server.ts",
-        "test": "npx jest --coverage --runInBand --forceExit",
+        "test": "npx jest --runInBand",
+        "test:coverage": "npx jest --coverage --runInBand",
         "migrate": "migrate-mongo up -f src/migrate-mongo-config.js",
         "migrate:create": "sh -c 'migrate-mongo create -f src/migrate-mongo-config.js $0'",
         "migrate:status": "migrate-mongo status -f src/migrate-mongo-config.js",
@@ -38,6 +39,7 @@
         "dotenv": "^8.2.0",
         "ejs": "^3.1.6",
         "express": "^4.17.1",
+        "express-async-errors": "^3.1.1",
         "express-ejs-layouts": "^2.5.1",
         "express-jwt": "^6.1.0",
         "express-jwt-authz": "^2.4.1",
@@ -47,7 +49,7 @@
         "googleapis": "^91.0.0",
         "helmet": "^4.6.0",
         "jose": "^2.0.5",
-        "jwks-rsa": "^1.12.0",
+        "jwks-rsa": "^2.0.5",
         "lodash": "^4.17.21",
         "lusca": "^1.6.1",
         "migrate-mongo": "^8.2.3",
@@ -154,23 +156,10 @@
             "@typescript-eslint/interface-name-prefix": "off"
         },
         "ignorePatterns": [
-            "test/**/*.{j,t}s?(x)",
             "dist/*",
             "src/types/",
-            "contracts/**/*.{j,t}s?(x)",
             "**/*.d.ts",
             "node_modules"
-        ],
-        "overrides": [
-            {
-                "files": [
-                    "**/__tests__/*.{j,t}s?(x)",
-                    "**/tests/unit/**/*.spec.{j,t}s?(x)"
-                ],
-                "env": {
-                    "mocha": true
-                }
-            }
         ]
     },
     "jest": {
@@ -188,12 +177,11 @@
             "^.+\\.(ts|tsx)$": "ts-jest"
         },
         "testMatch": [
-            "**/test/**/*.test.(ts|js)",
-            "**/controllers/**/*.test.(ts|js)"
+            "<rootDir>/src/**/*.test.(ts|js)"
         ],
         "testEnvironment": "node",
         "setupFilesAfterEnv": [
-            "<rootDir>/test/e2e/lib/setup.ts"
+            "<rootDir>/src/util/jest/setup.ts"
         ]
     }
 }

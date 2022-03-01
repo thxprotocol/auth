@@ -1,44 +1,16 @@
-import { Request, Response, NextFunction } from 'express';
-import { ERROR_CREATE_ACCOUNT, ERROR_DUPLICATE_EMAIL } from '../../util/messages';
-import { HttpError } from '../../models/Error';
-import AccountService from '../../services/AccountService';
+import { Request, Response } from 'express';
+import { AccountService } from '../../services/AccountService';
 
-export const postAccount = async (req: Request, res: Response, next: NextFunction) => {
-    async function checkDuplicateEmail() {
-        const { result, error } = await AccountService.isEmailDuplicate(req.body.email);
+export const postAccount = async (req: Request, res: Response) => {
+    const userExists = await AccountService.isActiveUserByEmail(req.body.email);
+    const account = userExists
+        ? await AccountService.getByEmail(req.body.email)
+        : await AccountService.signupFor(req.body.email, req.body.password, req.body.address);
 
-        if (error) {
-            throw new Error(ERROR_DUPLICATE_EMAIL);
-        }
-
-        return result;
-    }
-
-    async function createAccount() {
-        const { account, error } = await AccountService.signupFor(req.body.email, req.body.password, req.body.address);
-
-        if (error) throw new Error(ERROR_CREATE_ACCOUNT);
-
-        return account;
-    }
-
-    async function getAccount() {
-        const { account, error } = await AccountService.getByEmail(req.body.email);
-        if (error) throw new Error(ERROR_CREATE_ACCOUNT);
-        return account;
-    }
-
-    try {
-        const isDuplicate = await checkDuplicateEmail();
-        const account = isDuplicate ? await getAccount() : await createAccount();
-
-        res.status(201).json({
-            id: account._id,
-            address: account.address,
-        });
-    } catch (error) {
-        return next(new HttpError(502, error.message, error));
-    }
+    res.status(201).json({
+        id: account._id,
+        address: account.address,
+    });
 };
 
 /**

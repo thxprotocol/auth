@@ -1,18 +1,21 @@
 import nock from 'nock';
 import request from 'supertest';
-import server from '../../src/server';
-import db from '../../src/util/database';
-import AccountService from '../../src/services/AccountService';
-import { INITIAL_ACCESS_TOKEN } from '../../src/util/secrets';
-import { accountAddress, accountEmail, accountSecret } from './lib/constants';
-import { TWITTER_API_ENDPOINT } from '../../src/services/TwitterService';
+import app from '../../app';
+import db from '../../util/database';
+import { AccountService } from '../../services/AccountService';
+import { INITIAL_ACCESS_TOKEN } from '../../util/secrets';
+import { accountAddress, accountEmail, accountSecret } from '../../util/jest';
+import { TWITTER_API_ENDPOINT } from '../../services/TwitterService';
+import { SPOTIFY_API_ENDPOINT } from '../../services/SpotifyService';
 
-const http = request.agent(server);
+const http = request.agent(app);
 
 describe('Account Controller', () => {
     let authHeader: string, basicAuthHeader: string, accountId: string;
 
     beforeAll(async () => {
+        await db.truncate();
+
         async function requestToken() {
             const res = await http
                 .post('/token')
@@ -48,8 +51,7 @@ describe('Account Controller', () => {
     });
 
     afterAll(async () => {
-        await db.truncate();
-        server.close();
+        db.disconnect();
     });
 
     describe('POST /account', () => {
@@ -129,16 +131,11 @@ describe('Account Controller', () => {
     });
 
     describe('GET /account/:sub/twitter', () => {
-        let testAccountId = '';
-
         beforeAll(async () => {
-            const { account } = await AccountService.getByEmail(accountEmail);
-            await account.save();
-
-            testAccountId = account._id;
-        });
-
-        beforeEach(() => {
+            nock(SPOTIFY_API_ENDPOINT)
+                .persist()
+                .get(/.*?/)
+                .reply(200, { data: { items: [] } });
             nock(TWITTER_API_ENDPOINT)
                 .persist()
                 .get(/.*?/)
@@ -146,13 +143,13 @@ describe('Account Controller', () => {
         });
 
         it('Denice Access if there no authorization header', async () => {
-            const res = await http.get(`/account/${testAccountId}/twitter`).send();
+            const res = await http.get(`/account/${accountId}/twitter`).send();
             expect(res.status).toEqual(401);
         });
 
         it('Throw Error if there no linked twitter', async () => {
             const res = await http
-                .get(`/account/${testAccountId}/twitter`)
+                .get(`/account/${accountId}/twitter`)
                 .set({
                     Authorization: authHeader,
                 })
@@ -161,14 +158,14 @@ describe('Account Controller', () => {
         });
 
         it('Successfully get linked Twitter info with a correct infomation', async () => {
-            const { account } = await AccountService.getByEmail(accountEmail);
+            const account = await AccountService.getByEmail(accountEmail);
             account.twitterAccessToken = 'TOKEN';
             account.twitterRefreshToken = 'REFRESH';
             account.twitterAccessTokenExpires = (Date.now() + 1000000) * 1000;
             await account.save();
 
             const res = await http
-                .get(`/account/${testAccountId}/twitter`)
+                .get(`/account/${accountId}/twitter`)
                 .set({
                     Authorization: authHeader,
                 })
@@ -178,28 +175,68 @@ describe('Account Controller', () => {
     });
 
     describe('GET /account/:sub/youtube', () => {
-        let testAccountId = '';
-
-        beforeAll(async () => {
-            const { account } = await AccountService.getByEmail(accountEmail);
-            await account.save();
-
-            testAccountId = account._id;
-        });
-
         it('Denice Access if there no authorization header', async () => {
-            const res = await http.get(`/account/${testAccountId}/youtube`).send();
+            const res = await http.get(`/account/${accountId}/youtube`).send();
             expect(res.status).toEqual(401);
         });
 
         it('Throw Error if there no linked youtube', async () => {
             const res = await http
-                .get(`/account/${testAccountId}/youtube`)
+                .get(`/account/${accountId}/youtube`)
                 .set({
                     Authorization: authHeader,
                 })
                 .send();
             expect(res.body.isAuthorized).toEqual(false);
+        });
+
+        it('Successfully get linked Youtube info with a correct infomation', async () => {
+            const account = await AccountService.getByEmail(accountEmail);
+            account.googleAccessToken = 'TOKEN';
+            account.googleRefreshToken = 'REFRESH';
+            account.googleAccessTokenExpires = (Date.now() + 1000000) * 1000;
+            await account.save();
+
+            const res = await http
+                .get(`/account/${accountId}/twitter`)
+                .set({
+                    Authorization: authHeader,
+                })
+                .send();
+            expect(res.body.isAuthorized).toEqual(true);
+        });
+    });
+
+    describe('GET /account/:sub/spotify', () => {
+        it('Denice Access if there no authorization header', async () => {
+            const res = await http.get(`/account/${accountId}/spotify`).send();
+            expect(res.status).toEqual(401);
+        });
+
+        it('Throw Error if there no linked spotify', async () => {
+            const res = await http
+                .get(`/account/${accountId}/spotify`)
+                .set({
+                    Authorization: authHeader,
+                })
+                .send();
+            expect(res.body.isAuthorized).toEqual(false);
+        });
+
+        it('Successfully get linked Spotify info with a correct infomation', async () => {
+            const account = await AccountService.getByEmail(accountEmail);
+            account.spotifyAccessToken = 'TOKEN';
+            account.spotifyRefreshToken = 'REFRESH';
+            account.spotifyAccessTokenExpires = (Date.now() + 1000000) * 1000;
+            await account.save();
+
+            const res = await http
+                .get(`/account/${accountId}/spotify`)
+                .set({
+                    Authorization: authHeader,
+                })
+                .send();
+            expect(res.body.isAuthorized).toEqual(true);
         });
     });
 });

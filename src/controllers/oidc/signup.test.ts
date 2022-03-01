@@ -1,9 +1,11 @@
 import nock from 'nock';
 import request from 'supertest';
-import server from '../../src/server';
-import AccountService from '../../src/services/AccountService';
-import db from '../../src/util/database';
-import { INITIAL_ACCESS_TOKEN } from '../../src/util/secrets';
+import app from '../../app';
+import { AccountService } from '../../services/AccountService';
+import db from '../../util/database';
+import { INITIAL_ACCESS_TOKEN } from '../../util/secrets';
+
+const http = request.agent(app);
 
 describe('Sign up', () => {
     let CID = '';
@@ -11,9 +13,10 @@ describe('Sign up', () => {
     const REDIRECT_URL = 'https://localhost:8082/signin-oidc';
     const NEW_ACCOUNT_EMAIL = 'test@thx.network';
     const NEW_ACCOUNT_PASSWORD = '123asdASD@#@#!!';
-    const http = request.agent(server);
 
     beforeAll(async () => {
+        await db.truncate();
+
         const res = await http
             .post('/reg')
             .set({ Authorization: `Bearer ${INITIAL_ACCESS_TOKEN}` })
@@ -30,8 +33,7 @@ describe('Sign up', () => {
     });
 
     afterAll(async () => {
-        await db.truncate();
-        server.close();
+        db.disconnect();
     });
 
     describe('GET /auth', () => {
@@ -122,7 +124,7 @@ describe('Sign up', () => {
             });
 
             it('Create a new Interaction for Signup Verify', async () => {
-                const { account } = await AccountService.getByEmail(NEW_ACCOUNT_EMAIL);
+                const account = await AccountService.getByEmail(NEW_ACCOUNT_EMAIL);
                 const signUpKey = account.signupToken;
 
                 const params = new URLSearchParams({

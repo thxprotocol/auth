@@ -1,44 +1,12 @@
-import AccountService from '../../services/AccountService';
-import { Request, Response, NextFunction } from 'express';
-import { getGoogleTokens } from '../../util/google';
-import { HttpError } from '../../models/Error';
+import { AccountService } from '../../services/AccountService';
+import { Request, Response } from 'express';
 import { oidc } from '.';
 import { parseJwt } from '../../util/jwt';
 import { AccountDocument } from '../../models/Account';
-import { ERROR_NO_ACCOUNT } from '../../util/messages';
-import { validateEmail } from '../../util/validate';
+import { getAccountByEmail, saveInteraction } from './utils';
+import { YouTubeService } from '../../services/YouTubeService';
 
-export default async function getGoogleCallback(req: Request, res: Response, next: NextFunction) {
-    async function isEmailDuplicate(email: string) {
-        const { result, error } = await AccountService.isEmailDuplicate(email);
-
-        if (error) {
-            throw new Error(error.message);
-        }
-
-        return result;
-    }
-
-    async function getAccountBySub(sub: string) {
-        const { account } = await AccountService.get(sub);
-        if (!account) throw new Error(ERROR_NO_ACCOUNT);
-        return account;
-    }
-
-    async function getAccountByEmail(email: string) {
-        let account;
-
-        if (await isEmailDuplicate(email)) {
-            const result = await AccountService.getByEmail(email);
-            account = result.account;
-        } else if (validateEmail(email)) {
-            const result = await AccountService.signup(email, '', true, true, true);
-            account = result.account;
-        }
-
-        return account;
-    }
-
+export default async function getGoogleCallback(req: Request, res: Response) {
     async function updateTokens(account: AccountDocument, tokens: any) {
         account.googleAccessToken = tokens.access_token || account.googleAccessToken;
         account.googleRefreshToken = tokens.refresh_token || account.googleRefreshToken;
@@ -47,49 +15,34 @@ export default async function getGoogleCallback(req: Request, res: Response, nex
         await account.save();
     }
 
-    async function saveInteraction(interaction: any, sub: string) {
-        interaction.result = { login: { account: sub } };
-        // TODO Look into why this is suggested:
-        await interaction.save(interaction.exp - Math.floor(new Date().getTime() / 1000));
-        return interaction.returnTo;
-    }
+    const code = req.query.code as string;
+    const uid = req.query.state as string;
 
-    async function getInteraction(uid: string) {
-        return await oidc.Interaction.find(uid);
-    }
+    // Get the interaction based on the state
+    const interaction = await await oidc.Interaction.find(uid);
 
-    try {
-        const code = req.query.code as string;
-        const uid = req.query.state as string;
+    if (!interaction)
+        return res.render('error', {
+            params: {},
+            alert: { variant: 'danger', message: 'Could not find your session.' },
+        });
+    if (!code) return res.redirect(interaction.params.return_url);
 
-        // Get the interaction based on the state
-        const interaction = await getInteraction(uid);
+    // Get all token information
+    const tokens = await YouTubeService.getTokens(code);
+    const claims = await parseJwt(tokens.id_token);
 
-        if (!interaction)
-            return res.render('error', {
-                params: {},
-                alert: { variant: 'danger', message: 'Could not find your session.' },
-            });
-        if (!code) return res.redirect(interaction.params.return_url);
+    // Check if there is an active session for this interaction
+    const account =
+        interaction.session && interaction.session.accountId
+            ? // If so, get account for sub
+              await AccountService.get(interaction.session.accountId)
+            : // If not, get account for email claim
+              await getAccountByEmail(claims.email);
 
-        // Get all token information
-        const tokens = await getGoogleTokens(code);
-        const claims = await parseJwt(tokens.id_token);
+    const returnTo = await saveInteraction(interaction, account._id.toString());
 
-        // Check if there is an active session for this interaction
-        const account =
-            interaction.session && interaction.session.accountId
-                ? // If so, get account for sub
-                  await getAccountBySub(interaction.session.accountId)
-                : // If not, get account for email claim
-                  await getAccountByEmail(claims.email);
+    await updateTokens(account, tokens);
 
-        const returnTo = await saveInteraction(interaction, account._id.toString());
-
-        await updateTokens(account, tokens);
-
-        return res.redirect(returnTo);
-    } catch (error) {
-        return next(new HttpError(502, error.message, error));
-    }
+    return res.redirect(returnTo);
 }

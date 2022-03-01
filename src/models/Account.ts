@@ -101,12 +101,7 @@ accountSchema.pre('save', function save(next) {
 });
 
 const comparePassword = function (candidatePassword: string) {
-    try {
-        const isMatch = bcrypt.compareSync(candidatePassword, this.password);
-        return { isMatch };
-    } catch (error) {
-        return { error };
-    }
+    return bcrypt.compareSync(candidatePassword, this.password);
 };
 
 accountSchema.methods.comparePassword = comparePassword;

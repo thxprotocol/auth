@@ -1,5 +1,4 @@
 import dotenv from 'dotenv';
-import { NextFunction, Request, Response } from 'express';
 
 dotenv.config();
 
@@ -12,15 +11,14 @@ const required = [
     'MONGODB_URI',
     'PORT',
     'SECURE_KEY',
-    'SENDGRID_API_KEY',
     'TWITTER_CLIENT_ID',
 ];
 
 // For production (docker containers) we should require JWKS_JSON to be set since otherwise each container
-// would generate their own jwks.json. For now this is commented to not break the current production env.
-// if (process.env.NODE_ENV === 'production') {
-//     required.push('JWKS_JSON');
-// }
+// would generate their own jwks.json.
+if (process.env.NODE_ENV === 'production') {
+    required.push('SENDGRID_API_KEY', 'JWKS_JSON');
+}
 
 required.forEach((value: string) => {
     if (!process.env[value]) {
@@ -61,13 +59,3 @@ export const SPOTIFY_CLIENT_ID = process.env.SPOTIFY_CLIENT_ID;
 export const SPOTIFY_REDIRECT_URI = process.env.SPOTIFY_REDIRECT_URI;
 export const SPOTIFY_CLIENT_SECRET = process.env.SPOTIFY_CLIENT_SECRET;
 export const JWKS_JSON = process.env.JWKS_JSON;
-
-export function locals(req: Request, res: Response, next: NextFunction) {
-    res.locals = {
-        gtm: GTM,
-        dashboardUrl: DASHBOARD_URL,
-        walletUrl: WALLET_URL,
-        publicUrl: PUBLIC_URL,
-    };
-    next();
-}

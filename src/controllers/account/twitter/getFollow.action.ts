@@ -1,30 +1,13 @@
-import { Request, Response, NextFunction } from 'express';
-import { AccountDocument } from '../../../models/Account';
-import { HttpError } from '../../../models/Error';
-import AccountService from '../../../services/AccountService';
-import TwitterService from '../../../services/TwitterService';
+import { Request, Response } from 'express';
 
-export const getTwitterFollow = async (req: Request, res: Response, next: NextFunction) => {
-    async function getAccount(sub: string) {
-        const { account, error } = await AccountService.get(sub);
-        if (error) throw new Error(error.message);
-        return account;
-    }
+import { AccountService } from '../../../services/AccountService';
+import { TwitterService } from '../../../services/TwitterService';
 
-    async function validateFollow(account: AccountDocument, id: string) {
-        const { result, error } = await TwitterService.validateFollow(account.twitterAccessToken, id);
-        if (error) throw new Error(error.message);
-        return result;
-    }
+export const getTwitterFollow = async (req: Request, res: Response) => {
+    const account = await AccountService.get(req.params.sub);
+    const result = await TwitterService.validateFollow(account.twitterAccessToken, req.params.item);
 
-    try {
-        const account = await getAccount(req.params.sub);
-        const result = await validateFollow(account, req.params.item);
-
-        res.json({
-            result,
-        });
-    } catch (error) {
-        next(new HttpError(502, error.message, error));
-    }
+    res.json({
+        result,
+    });
 };

@@ -6,7 +6,7 @@ export const createLoginValidation = [
     body('email').exists(),
     body('email', 'Email is not valid').isEmail(),
     body('password').exists(),
-    body('password', 'Password must be at least 4 characters long').isLength({ min: 16 }),
+    body('password', 'Password must be at least 16 characters long').isLength({ min: 16 }),
 ];
 
 export const postLogin = async (req: Request, res: Response) => {

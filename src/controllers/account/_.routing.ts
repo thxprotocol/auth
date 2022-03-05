@@ -17,6 +17,7 @@ import { getYoutubeSubscribe } from './youtube/getSubscribe.action';
 import { getSpotifyUserFollow, getSpotifyPlaylistFollow } from './spotify/get.follow.action';
 import { getSpotifyTrackPlaying, getSpotifyTrackRecent, getSpotifyTrackSaved } from './spotify/get.track.action';
 import { getSpotify } from './spotify/get.action';
+import { createLoginValidation, postLogin } from './login/post.controller';
 
 const router = express.Router();
 
@@ -44,5 +45,7 @@ router.get('/address/:address', checkScopes(['account:read']), validate([]), get
 router.get('/email/:email', checkScopes(['account:read']), validate([]), getAccountByEmail);
 router.patch('/:id', checkScopes(['account:read', 'account:write'], { checkAllScopes: true }), patchAccount);
 router.delete('/:id', checkScopes(['account:write']), deleteAccount);
+
+router.post('/login', validate(createLoginValidation), checkScopes(['account:write']), postLogin);
 
 export default router;

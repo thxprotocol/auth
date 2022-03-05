@@ -29,11 +29,10 @@ export const getAccount = async (req: Request, res: Response) => {
 };
 
 export const getAccountByAddress = async (req: Request, res: Response) => {
-    const account = AccountService.getByAddress(req.params.address);
+    const account = await AccountService.getByAddress(req.params.address);
     if (!account) {
         throw new NotFoundError();
     }
-
     res.send(formatAccountRes(account));
 };
 

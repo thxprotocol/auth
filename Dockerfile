@@ -4,7 +4,7 @@ WORKDIR /usr/src/app
 RUN apk add g++ make py3-pip
 COPY package*.json ./
 RUN npm config set update-notifier false
-RUN npm install --ci
+RUN npm ci
 
 COPY . .
 
@@ -27,7 +27,7 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 RUN npm config set update-notifier false
 RUN apk add --virtual .build g++ make py3-pip && \
-    npm install --production --ci && \
+    npm ci --production && \
     apk del .build
 COPY --from=build ./usr/src/app/dist ./
 

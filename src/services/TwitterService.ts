@@ -11,7 +11,7 @@ export class TwitterService {
         if (!user) throw new Error('Could not find Twitter user.');
 
         const r = await twitterClient({
-            url: `/2/users/${user.id}/liked_tweets?max_results=100&tweet.fields=id`,
+            url: `/users/${user.id}/liked_tweets?max_results=100&tweet.fields=id`,
             method: 'GET',
             headers: {
                 Authorization: `Bearer ${accessToken}`,
@@ -29,7 +29,7 @@ export class TwitterService {
         if (!user) throw new Error('Could not find Twitter user.');
 
         const r = await twitterClient({
-            url: `/2/tweets/${channelItem}/retweeted_by`,
+            url: `/tweets/${channelItem}/retweeted_by`,
             method: 'GET',
             headers: {
                 Authorization: `Bearer ${accessToken}`,
@@ -47,7 +47,7 @@ export class TwitterService {
         if (!user) throw new Error('Could not find Twitter user.');
 
         const r = await twitterClient({
-            url: `/2/users/${channelItem}/followers`,
+            url: `/users/${channelItem}/followers`,
             method: 'GET',
             headers: {
                 Authorization: `Bearer ${accessToken}`,
@@ -62,7 +62,7 @@ export class TwitterService {
 
     static async getUser(accessToken: string) {
         const r = await twitterClient({
-            url: '/me',
+            url: '/users/me',
             method: 'GET',
             headers: {
                 Authorization: `Bearer ${accessToken}`,
@@ -79,7 +79,7 @@ export class TwitterService {
         const user = await this.getUser(accessToken);
         if (!user) throw new Error('Could not find Twitter user.');
         const r = await twitterClient({
-            url: `/2/users/${user.id}/tweets?tweet.fields=id,referenced_tweets,created_at`,
+            url: `/users/${user.id}/tweets?tweet.fields=id,referenced_tweets,created_at`,
             method: 'GET',
             headers: {
                 Authorization: `Bearer ${accessToken}`,
@@ -99,7 +99,7 @@ export class TwitterService {
         data.append('client_id', TWITTER_CLIENT_ID);
 
         const r = await twitterClient({
-            url: '/2/oauth2/token',
+            url: '/oauth2/token',
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
@@ -123,7 +123,7 @@ export class TwitterService {
         body.append('code_verifier', 'challenge');
 
         const r = await twitterClient({
-            url: '/2/oauth2/token',
+            url: '/oauth2/token',
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',

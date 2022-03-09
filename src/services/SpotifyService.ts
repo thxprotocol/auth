@@ -1,9 +1,8 @@
-import axios from 'axios';
+import { spotifyClient } from '../util/axios';
 import { Playlist } from '../types';
 import { PlaylistItem } from '../types/PlaylistItem';
 import { SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, SPOTIFY_REDIRECT_URI } from '../util/secrets';
 
-export const SPOTIFY_API_ENDPOINT = 'https://api.spotify.com/v1/';
 export const SPOTIFY_API_SCOPE = [
     'user-follow-read',
     'user-library-read',
@@ -19,15 +18,13 @@ const ERROR_NO_DATA = 'Could not find an Spotify data for this accesstoken';
 const ERROR_NOT_AUTHORIZED = 'Not authorized for Spotify API';
 const ERROR_TOKEN_REQUEST_FAILED = 'Failed to request access token';
 
-axios.defaults.baseURL = SPOTIFY_API_ENDPOINT;
-
 export class SpotifyService {
     static async _fetchPlaylist(accessToken: string, offset = 0) {
         const params = new URLSearchParams();
         params.set('offset', `${offset}`);
 
-        const r = await axios({
-            url: `https://api.spotify.com/v1/me/playlists?${params.toString()}`,
+        const r = await spotifyClient({
+            url: `/me/playlists?${params.toString()}`,
             method: 'GET',
             headers: {
                 'Accept': 'application/json',
@@ -47,8 +44,8 @@ export class SpotifyService {
         params.set('fields', 'items(track(id, name, album(images)))');
         params.set('offset', `${offset}`);
 
-        const r = await axios({
-            url: `https://api.spotify.com/v1/playlists/${playlistId}/tracks?${params.toString()}`,
+        const r = await spotifyClient({
+            url: `/playlists/${playlistId}/tracks?${params.toString()}`,
             method: 'GET',
             headers: {
                 'Accept': 'application/json',
@@ -81,7 +78,7 @@ export class SpotifyService {
         body.append('grant_type', 'authorization_code');
         body.append('redirect_uri', SPOTIFY_REDIRECT_URI);
 
-        const r = await axios({
+        const r = await spotifyClient({
             url: 'https://accounts.spotify.com/api/token',
             method: 'POST',
             headers: {
@@ -99,8 +96,8 @@ export class SpotifyService {
     }
 
     static async getUser(accessToken: string) {
-        const r = await axios({
-            url: 'https://api.spotify.com/v1/me',
+        const r = await spotifyClient({
+            url: '/me',
             method: 'GET',
             headers: {
                 'Accept': 'application/json',
@@ -160,7 +157,7 @@ export class SpotifyService {
         body.append('grant_type', 'refresh_token');
         body.append('refresh_token', refreshToken);
 
-        const r = await axios({
+        const r = await spotifyClient({
             url: 'https://accounts.spotify.com/api/token',
             method: 'POST',
             headers: {
@@ -185,8 +182,8 @@ export class SpotifyService {
         params.set('ids', `${toIds.join(',')}`);
         params.set('type', 'user');
 
-        const r = await axios({
-            url: `https://api.spotify.com/v1/me/following/contains?${params.toString()}`,
+        const r = await spotifyClient({
+            url: `/me/following/contains?${params.toString()}`,
             method: 'GET',
             headers: {
                 'Accept': 'application/json',
@@ -205,8 +202,8 @@ export class SpotifyService {
         const params = new URLSearchParams();
         params.set('ids', `${toIds.join(',')}`);
 
-        const r = await axios({
-            url: `https://api.spotify.com/v1/playlists/${playlistId}/followers/contains?${params.toString()}`,
+        const r = await spotifyClient({
+            url: `/playlists/${playlistId}/followers/contains?${params.toString()}`,
             method: 'GET',
             headers: {
                 'Accept': 'application/json',
@@ -222,8 +219,8 @@ export class SpotifyService {
     }
 
     static async validateTrackPlaying(accessToken: string, trackId: string) {
-        const r = await axios({
-            url: 'https://api.spotify.com/v1/me/player/currently-playing',
+        const r = await spotifyClient({
+            url: '/me/player/currently-playing',
             method: 'GET',
             headers: {
                 'Accept': 'application/json',
@@ -239,8 +236,8 @@ export class SpotifyService {
     }
 
     static async validateRecentTrack(accessToken: string, trackId: string) {
-        const r = await axios({
-            url: 'https://api.spotify.com/v1/me/player/recently-played',
+        const r = await spotifyClient({
+            url: '/me/player/recently-played',
             method: 'GET',
             headers: {
                 'Accept': 'application/json',
@@ -259,8 +256,8 @@ export class SpotifyService {
         const params = new URLSearchParams();
         params.set('ids', `${toIds.join(',')}`);
 
-        const r = await axios({
-            url: `https://api.spotify.com/v1/me/tracks/contains?${params.toString()}`,
+        const r = await spotifyClient({
+            url: `/me/tracks/contains?${params.toString()}`,
             method: 'GET',
             headers: {
                 'Accept': 'application/json',

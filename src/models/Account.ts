@@ -9,6 +9,7 @@ export interface IAccount {
     address: string;
     privateKey: string;
     signupToken: string;
+    otpSecret: string;
     signupTokenExpires: number;
     authenticationToken: string;
     authenticationTokenExpires: number;
@@ -51,6 +52,7 @@ const accountSchema = new mongoose.Schema(
         address: String,
         privateKey: String,
         signupToken: String,
+        otpSecret: String,
         signupTokenExpires: Date,
         authenticationToken: String,
         authenticationTokenExpires: Date,

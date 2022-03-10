@@ -10,6 +10,8 @@ const required = [
     'DASHBOARD_URL',
     'MONGODB_URI',
     'PORT',
+    'SERVICE_NAME',
+    'OTP_SECURITY_KEY',
     'SECURE_KEY',
     'TWITTER_CLIENT_ID',
 ];
@@ -45,7 +47,9 @@ export const DASHBOARD_URL = process.env.DASHBOARD_URL;
 export const WIDGETS_URL = process.env.WIDGETS_URL;
 export const MONGODB_URI = process.env.MONGODB_URI;
 export const PORT = process.env.PORT;
+export const SERVICE_NAME = process.env.SERVICE_NAME;
 export const SECURE_KEY = process.env.SECURE_KEY;
+export const OTP_SECURITY_KEY = process.env.OTP_SECURITY_KEY;
 export const GTM = process.env.GTM;
 export const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
 export const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;

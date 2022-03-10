@@ -1,11 +1,14 @@
-import { AccountService } from '../../services/AccountService';
 import { Request, Response } from 'express';
-import { oidc } from '.';
-import { ChannelType, ChannelAction } from '../../models/Reward';
+import { authenticator } from '@otplib/preset-default';
+import qrcode from 'qrcode';
+
+import { ChannelAction, ChannelType } from '../../models/Reward';
+import { AccountService } from '../../services/AccountService';
+import { SPOTIFY_API_SCOPE, SpotifyService } from '../../services/SpotifyService';
 import { TwitterService } from '../../services/TwitterService';
 import { YouTubeService } from '../../services/YouTubeService';
-import { SpotifyService, SPOTIFY_API_SCOPE } from '../../services/SpotifyService';
-import { WALLET_URL } from '../../util/secrets';
+import { OTP_SECURITY_KEY, SERVICE_NAME, WALLET_URL } from '../../util/secrets';
+import { oidc } from './';
 
 function getChannelScopes(channelAction: ChannelAction) {
     switch (channelAction) {
@@ -71,6 +74,24 @@ export default async function getController(req: Request, res: Response) {
             }
             case 'reset': {
                 return res.render('reset', { uid, params });
+            }
+
+            case 'totp-setup': {
+                if (!interaction.session) {
+                    throw new Error('You have to login before do this action.');
+                }
+
+                const account = await AccountService.get(interaction.session.accountId);
+
+                if (account.otpSecret) {
+                    return res.render('totp', { uid, params: { ...params, already: true } });
+                }
+
+                const secret = authenticator.generateSecret();
+                const otpauth = authenticator.keyuri(account.email, SERVICE_NAME, secret);
+                const code = await qrcode.toDataURL(otpauth);
+
+                return res.render('totp', { uid, params: { ...params, qr_code: code, secret } });
             }
         }
         // Regular prompts are used for authenticated routes

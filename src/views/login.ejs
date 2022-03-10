@@ -105,12 +105,18 @@
 
                 <div class="form-group">
                     <label>E-mail:</label>
-                    <input class="form-control" required type="email" name="email">
+                    <input class="form-control" required type="email" value="<%= params.email %>" name="email">
                 </div>
                 <div class="form-group">
                     <label>Password:</label>
-                    <input class="form-control" required type="password" name="password">
+                    <input class="form-control" required type="password" value="<%= params.password %>" name="password">
                 </div>
+                <% if (params.otp) { %>
+                    <label>MFA code:</label>
+                    <input class="form-control mb-4" required name="code">
+
+                <% } %>
+
                 <input type="hidden" name="returnUrl" value="<%= params.return_url %>" />
                 <button type="submit" class="btn rounded-pill btn-primary btn-block">
                     Sign in

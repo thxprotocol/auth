@@ -8,8 +8,6 @@ export const SPOTIFY_API_SCOPE = [
     'user-library-read',
     'user-read-recently-played',
     'user-read-currently-playing',
-    'playlist-modify-private',
-    'playlist-modify-public',
     'user-read-private',
     'user-read-email',
 ];

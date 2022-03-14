@@ -10,12 +10,14 @@ const promptReset = new interactionPolicy.Prompt({ name: 'reset', requestable: t
 const promptCreate = new interactionPolicy.Prompt({ name: 'create', requestable: true });
 const promptConfirm = new interactionPolicy.Prompt({ name: 'confirm', requestable: true });
 const promptConnect = new interactionPolicy.Prompt({ name: 'connect', requestable: true });
+const promptAccount = new interactionPolicy.Prompt({ name: 'account-settings', requestable: true });
 const promtotp = new interactionPolicy.Prompt({ name: 'totp-setup', requestable: true });
 
 basePolicy.add(promptCreate);
 basePolicy.add(promptConfirm);
 basePolicy.add(promptConnect);
 basePolicy.add(promptReset);
+basePolicy.add(promptAccount);
 basePolicy.add(promtotp);
 
 // Configuration defaults:

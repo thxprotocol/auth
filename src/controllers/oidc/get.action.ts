@@ -1,13 +1,12 @@
 import { Request, Response } from 'express';
 import { authenticator } from '@otplib/preset-default';
-import qrcode from 'qrcode';
 
 import { ChannelAction, ChannelType } from '../../models/Reward';
 import { AccountService } from '../../services/AccountService';
 import { SPOTIFY_API_SCOPE, SpotifyService } from '../../services/SpotifyService';
 import { TwitterService } from '../../services/TwitterService';
 import { YouTubeService } from '../../services/YouTubeService';
-import { OTP_SECURITY_KEY, SERVICE_NAME, WALLET_URL } from '../../util/secrets';
+import { WALLET_URL } from '../../util/secrets';
 import { oidc } from './';
 
 function getChannelScopes(channelAction: ChannelAction) {
@@ -76,22 +75,21 @@ export default async function getController(req: Request, res: Response) {
                 return res.render('reset', { uid, params });
             }
 
-            case 'totp-setup': {
+            case 'account-settings': {
                 if (!interaction.session) {
                     throw new Error('You have to login before do this action.');
                 }
-
                 const account = await AccountService.get(interaction.session.accountId);
 
-                if (account.otpSecret) {
-                    return res.render('totp', { uid, params: { ...params, already: true } });
+                let otpSecret = account.otpSecret;
+                if (!otpSecret) {
+                    otpSecret = authenticator.generateSecret();
                 }
 
-                const secret = authenticator.generateSecret();
-                const otpauth = authenticator.keyuri(account.email, SERVICE_NAME, secret);
-                const code = await qrcode.toDataURL(otpauth);
-
-                return res.render('totp', { uid, params: { ...params, qr_code: code, secret } });
+                return res.render('account', {
+                    uid,
+                    params: { ...params, otpSecret, email: account.email, mfaEnable: account.otpSecret },
+                });
             }
         }
         // Regular prompts are used for authenticated routes

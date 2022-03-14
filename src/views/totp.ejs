@@ -26,10 +26,9 @@
 
                             <form autocomplete="off" action="/oidc/<%= uid %>/totp-setup" method="post">
                                 <div class="p-2">
-                                    <input placeholder="Enter code from your phone here" class="form-control autocomplete="
-                                        off" required name="code" />
+                                    <input placeholder="Enter code from your phone here" class="form-control" autocomplete="off" required name="code" />
                                     <input type="hidden" name="uid" value="<%= uid %>" />
-                                    <input type="hidden" name="secret" value="<%= params.secret %>" />
+                                    <input type="hidden" name="otpSecret" value="<%= params.otpSecret %>" />
                                     <input type="hidden" name="qr_code" value="<%= params.qr_code %>" />
                                 </div>
 

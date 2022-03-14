@@ -1,8 +1,11 @@
 import { Request, Response } from 'express';
+import qrcode from 'qrcode';
+
 import { authenticator } from '@otplib/preset-default';
 
 import { AccountService } from '../../services/AccountService';
 import { ERROR_NO_ACCOUNT } from '../../util/messages';
+import { SERVICE_NAME } from '../../util/secrets';
 import { getInteraction } from './utils';
 
 export default async function getTOTPSetupCallback(req: Request, res: Response) {
@@ -31,19 +34,35 @@ export default async function getTOTPSetupCallback(req: Request, res: Response) 
         if (req.body.disable) {
             account.otpSecret = null;
             await account.save();
-            return res.render('totp', { uid, params: { ...req.body } });
+            return res.render('account', {
+                uid,
+                params: { ...req.body, mfaEnable: false },
+            });
         }
         throw new Error('You already have MFA setup.');
     }
 
-    const isValid = authenticator.check(req.body.code, req.body.secret);
+    const otpauth = authenticator.keyuri(account.email, SERVICE_NAME, req.body.otpSecret);
+    const code = await qrcode.toDataURL(otpauth);
 
-    if (!isValid) {
-        return res.render('totp', { uid, params: { ...req.body, error: 'The code you input is incorrect' } });
+    if (!req.body.code) {
+        return res.render('totp', { uid, params: { ...req.body, qr_code: code } });
     }
 
-    account.otpSecret = req.body.secret;
+    const isValid = authenticator.check(req.body.code, req.body.otpSecret);
+
+    if (!isValid) {
+        return res.render('totp', {
+            uid,
+            params: { ...req.body, qr_code: code, error: 'The code you input is incorrect' },
+        });
+    }
+
+    account.otpSecret = req.body.otpSecret;
     account.save();
 
-    return res.redirect(interaction.params.return_url);
+    return res.render('account', {
+        uid,
+        params: { ...req.body, mfaEnable: account.otpSecret },
+    });
 }

@@ -71,6 +71,8 @@ export default {
         'members:write', // admin
         'withdrawals:read', // user
         'withdrawals:write', // admin
+        'deposits:read', // user
+        'deposits:write', // user
         'metrics:read', // cms
         'offline_access',
     ],

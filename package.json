@@ -30,6 +30,7 @@
     "dependencies": {
         "@godaddy/terminus": "^4.10.2",
         "@sendgrid/mail": "^7.4.2",
+        "airtable": "^0.11.2",
         "axios": "^0.21.3",
         "axios-better-stacktrace": "^2.1.2",
         "bcrypt-nodejs": "^0.0.3",

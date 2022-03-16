@@ -1,8 +1,9 @@
 import newrelic from 'newrelic';
+import Airtable from 'airtable';
 import { Account, AccountDocument, IAccountUpdates } from '../models/Account';
 import { createRandomToken } from '../util/tokens';
 import { decryptString } from '../util/decrypt';
-import { SECURE_KEY } from '../util/secrets';
+import { AIRTABLE_REGISTER_TABLE_ID, SECURE_KEY } from '../util/secrets';
 import { checkPasswordStrength } from '../util/passwordcheck';
 import Web3 from 'web3';
 import {
@@ -110,6 +111,8 @@ export class AccountService {
             account = new Account();
         }
 
+        const base = new Airtable().base(AIRTABLE_REGISTER_TABLE_ID);
+
         account.active = active;
         account.email = email;
         account.password = password;
@@ -120,6 +123,11 @@ export class AccountService {
             account.signupToken = createRandomToken();
             account.signupTokenExpires = DURATION_TWENTYFOUR_HOURS;
         }
+
+        await base('Pipeline: Signups').create({
+            Email: account.email,
+            Date: account.createdAt,
+        });
 
         return account;
     }

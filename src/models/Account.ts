@@ -28,6 +28,7 @@ export interface IAccount {
     acceptUpdates: boolean;
     recoveryPhrase: string;
     comparePassword: any;
+    createdAt: string;
 }
 
 export interface IAccountUpdates {

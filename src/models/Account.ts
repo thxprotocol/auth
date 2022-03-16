@@ -69,6 +69,7 @@ const accountSchema = new mongoose.Schema(
         acceptTermsPrivacy: Boolean,
         acceptUpdates: Boolean,
         recoveryPhrase: String,
+        createdAt: String,
     },
     { timestamps: true },
 );

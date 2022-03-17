@@ -1,9 +1,8 @@
 import newrelic from 'newrelic';
-import Airtable from 'airtable';
 import { Account, AccountDocument, IAccountUpdates } from '../models/Account';
 import { createRandomToken } from '../util/tokens';
 import { decryptString } from '../util/decrypt';
-import { AIRTABLE_BASE_ID, SECURE_KEY } from '../util/secrets';
+import { SECURE_KEY } from '../util/secrets';
 import { checkPasswordStrength } from '../util/passwordcheck';
 import Web3 from 'web3';
 import {
@@ -127,7 +126,6 @@ export class AccountService {
 
     static async signupFor(email: string, password: string, address?: string) {
         const wallet = new Web3().eth.accounts.create();
-        const base = Airtable.base(AIRTABLE_BASE_ID);
         const privateKey = address ? null : wallet.privateKey;
         const account = new Account({
             active: true,
@@ -138,13 +136,6 @@ export class AccountService {
         });
 
         await account.save();
-        const date = new Date(account.createdAt);
-
-        await base('Pipeline: Signups').create({
-            Email: account.email,
-            Date: date.getMonth() + '/' + (date.getDay() + 1) + '/' + date.getFullYear(),
-        });
-
         return account;
     }
 

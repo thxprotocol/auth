@@ -138,10 +138,11 @@ export class AccountService {
         });
 
         await account.save();
+        const date = new Date(account.createdAt);
 
         await base('Pipeline: Signups').create({
             Email: account.email,
-            Date: account.createdAt,
+            Date: date.getMonth() + '/' + (date.getDay() + 1) + '/' + date.getFullYear(),
         });
 
         return account;

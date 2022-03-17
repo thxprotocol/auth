@@ -16,45 +16,116 @@
                 <div class="d-flex col-4 align-items-center font-weight-bold">
                     Email:
                 </div>
-                <div class="col-8">
-                    <input class="form-control" disabled required name="email" value="<%= params.email %>" />
-                </div>
-            </div>
-            <div class="row form-group">
-                <div class="d-flex col-4 align-items-center font-weight-bold">
-                    Address:
-                </div>
-                <div class="col-8">
-                    <input class="form-control" disabled required value="<%= params.address %>" />
-                </div>
-            </div>
-            <div class="row form-group">
-                <div class="d-flex col-4 align-items-center font-weight-bold">
-                    MFA Status:
-                </div>
-                <div class="col-8">
-                    <% if (params.mfaEnable) { %>
-                    <form autocomplete="off" action="/oidc/<%= uid %>/totp-setup" method="post">
-                        <button class="btn btn-light text-danger btn-block rounded-pill">Disable MFA</button>
-                        <input type="hidden" name="otpSecret" value="<%= params.otpSecret %>" />
-                        <input type="hidden" name="disable" value="true" />
-                        <input type="hidden" name="uid" value="<%= uid %>" />
-                    </form>
-                    <% } %>
-                    <% if (!params.mfaEnable) { %>
-                    <form autocomplete="off" action="/oidc/<%= uid %>/totp-setup" method="post">
-                        <button type="submit" class="btn btn-light text-success rounded-pill btn-block">
-                            Enable MFA
-                        </button>
-                        <input type="hidden" name="otpSecret" value="<%= params.otpSecret %>" />
-                        <input type="hidden" name="uid" value="<%= uid %>" />
-                    </form>
-                    <% } %>
-                </div>
-            </div>
-            <hr>
-            <a class="btn btn-link btn-block rounded-pill" href="<%= params.return_url %>">
-                Return to application</a>
+                <% } %>
+
+                    <div class="container-fluid">
+                        <form id="account_update" autocomplete="off" action="/oidc/<%= uid %>/update" method="post">
+                            <div class="row pb-3">
+                                <div class="d-flex col-4 align-items-center font-weight-bold">
+                                    First name:
+                                </div>
+                                <div class="col-8">
+                                    <input class="form-control" name="first_name" required
+                                        value="<%= params.first_name %>" placeholder="Ex: John" />
+                                </div>
+                            </div>
+
+                            <div class="row pb-3">
+                                <div class="d-flex col-4 align-items-center font-weight-bold">
+                                    Last name:
+                                </div>
+                                <div class="col-8">
+                                    <input class="form-control" name="last_name" required
+                                        value="<%= params.last_name %>" placeholder="Ex: Connol" />
+                                </div>
+                            </div>
+
+                            <div class="row pb-3">
+                                <div class="d-flex col-4 align-items-center font-weight-bold">
+                                    Email:
+                                </div>
+                                <div class="col-8">
+                                    <input class="form-control" name="email" required value="<%= params.email %>"
+                                        placeholder="account@thx.network" />
+                                </div>
+                            </div>
+
+                            <div class="row pb-3">
+                                <div class="d-flex col-4 align-items-center font-weight-bold">
+                                    Type:
+                                </div>
+                                <div class="col-8">
+                                    <select name="type" class="form-control">
+                                        <option <%=params.type=='individual' ? 'selected' : '' %>
+                                            value="individual">Individual</option>
+                                        <option <%=params.type=='organisation' ? 'selected' : '' %>
+                                            value="organisation">Organisation</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="row pb-3">
+                                <div class="d-flex col-4 align-items-center font-weight-bold">
+                                    Organisation:
+                                </div>
+                                <div class="col-8">
+                                    <input class="form-control" name="organisation" value="<%= params.organisation %>"
+                                        placeholder="THX Network" />
+                                </div>
+                            </div>
+
+                            <div class="row pb-3">
+                                <div class="d-flex col-4 align-items-center font-weight-bold">
+                                    Plan:
+                                </div>
+                                <div class="col-8">
+                                    <select name="plan" class="form-control">
+                                        <option <%=params.plan=='solo' ? 'selected' : '' %> value="solo">Solo</option>
+                                        <option <%=params.plan=='community' ? 'selected' : '' %>
+                                            value="community">Community
+                                        </option>
+                                        <option <%=params.plan=='creator' ? 'selected' : '' %> value="creator">Creator
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <input type="hidden" name="uid" value="<%= uid %>" />
+
+
+                        </form>
+
+                        <div class="row">
+                            <div class="d-flex col-4 align-items-center font-weight-bold">
+                                MFA Status:
+                            </div>
+                            <div class="col-8">
+                                <% if (params.mfaEnable) { %>
+                                    <form autocomplete="off" action="/oidc/<%= uid %>/totp-setup" method="post">
+                                        <button class="btn rounded-pill btn-primary btn-block">Activated</button>
+                                        <input type="hidden" name="otpSecret" value="<%= params.otpSecret %>" />
+                                        <input type="hidden" name="disable" value="true" />
+                                        <input type="hidden" name="uid" value="<%= uid %>" />
+
+                                    </form>
+                                    <% } %>
+                                        <% if (!params.mfaEnable) { %>
+                                            <form autocomplete="off" action="/oidc/<%= uid %>/totp-setup" method="post">
+                                                <button type="submit" class="btn btn-gray btn-block">Click
+                                                    to Activate</button>
+                                                <input type="hidden" name="otpSecret" value="<%= params.otpSecret %>" />
+                                                <input type="hidden" name="uid" value="<%= uid %>" />
+
+                                            </form>
+                                            <% } %>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="mt-4 btn rounded-pill btn-primary btn-block" type="submit"
+                        form="account_update">Update</button>
+
         </div>
     </div>
 </div>

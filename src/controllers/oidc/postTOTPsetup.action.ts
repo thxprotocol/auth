@@ -40,7 +40,15 @@ export default async function getTOTPSetupCallback(req: Request, res: Response) 
             await account.save();
             return res.render('account', {
                 uid,
-                params: { ...req.body, mfaEnable: false },
+                params: {
+                    ...req.body,
+                    first_name: account.firstName,
+                    last_name: account.lastName,
+                    organisation: account.organisation,
+                    plan: account.plan,
+                    type: account.type,
+                    mfaEnable: false,
+                },
             });
         }
         alert.message = 'You already have MFA setup.';
@@ -70,6 +78,14 @@ export default async function getTOTPSetupCallback(req: Request, res: Response) 
 
     return res.render('account', {
         uid,
-        params: { ...req.body, mfaEnable: account.otpSecret },
+        params: {
+            ...req.body,
+            first_name: account.firstName,
+            last_name: account.lastName,
+            organisation: account.organisation,
+            plan: account.plan,
+            type: account.type,
+            mfaEnable: account.otpSecret,
+        },
     });
 }

@@ -92,8 +92,12 @@ export default async function getController(req: Request, res: Response) {
                         ...params,
                         otpSecret,
                         email: account.email,
-                        address: account.address,
-                        mfaEnable: !!account.otpSecret,
+                        first_name: account.firstName,
+                        last_name: account.lastName,
+                        organisation: account.organisation,
+                        plan: account.plan,
+                        type: account.type,
+                        mfaEnable: account.otpSecret,
                     },
                 });
             }

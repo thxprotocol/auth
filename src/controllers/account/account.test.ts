@@ -5,8 +5,7 @@ import db from '../../util/database';
 import { AccountService } from '../../services/AccountService';
 import { INITIAL_ACCESS_TOKEN } from '../../util/secrets';
 import { accountAddress, accountEmail, accountSecret } from '../../util/jest';
-import { TWITTER_API_ENDPOINT } from '../../services/TwitterService';
-import { SPOTIFY_API_ENDPOINT } from '../../services/SpotifyService';
+import { SPOTIFY_API_ENDPOINT, TWITTER_API_ENDPOINT } from '../../util/secrets';
 
 const http = request.agent(app);
 

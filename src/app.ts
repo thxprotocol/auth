@@ -4,12 +4,16 @@ import compression from 'compression';
 import path from 'path';
 import db from './util/database';
 import expressEJSLayouts from 'express-ejs-layouts';
+import axios from 'axios';
+import axiosBetterStacktrace from 'axios-better-stacktrace';
 import { helmetInstance } from './util/helmet';
 import { xframe, xssProtection } from 'lusca';
 import { requestLogger } from './util/logger';
 import { PORT, MONGODB_URI, GTM, DASHBOARD_URL, WALLET_URL, PUBLIC_URL } from './util/secrets';
 import { errorLogger, errorNormalizer, errorOutput, notFoundHandler, corsHandler } from './middlewares';
 import { mainRouter } from './controllers/_.routing';
+
+axiosBetterStacktrace(axios);
 
 const app = express();
 

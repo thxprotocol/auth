@@ -1,20 +1,17 @@
-import axios from 'axios';
+import { twitterClient } from '../util/axios';
 import { TWITTER_CLIENT_ID, TWITTER_CLIENT_SECRET, TWITTER_REDIRECT_URI } from '../util/secrets';
 
 const ERROR_NO_DATA = 'Could not find an youtube data for this accesstoken';
 const ERROR_NOT_AUTHORIZED = 'Not authorized for Twitter API';
 const ERROR_TOKEN_REQUEST_FAILED = 'Failed to request access token';
 
-export const TWITTER_API_ENDPOINT = 'https://api.twitter.com';
-axios.defaults.baseURL = TWITTER_API_ENDPOINT;
-
 export class TwitterService {
     static async validateLike(accessToken: string, channelItem: string) {
         const user = await this.getUser(accessToken);
         if (!user) throw new Error('Could not find Twitter user.');
 
-        const r = await axios({
-            url: `/2/users/${user.id}/liked_tweets?max_results=100&tweet.fields=id`,
+        const r = await twitterClient({
+            url: `/users/${user.id}/liked_tweets?max_results=100&tweet.fields=id`,
             method: 'GET',
             headers: {
                 Authorization: `Bearer ${accessToken}`,
@@ -31,8 +28,8 @@ export class TwitterService {
         const user = await this.getUser(accessToken);
         if (!user) throw new Error('Could not find Twitter user.');
 
-        const r = await axios({
-            url: `/2/tweets/${channelItem}/retweeted_by`,
+        const r = await twitterClient({
+            url: `/tweets/${channelItem}/retweeted_by`,
             method: 'GET',
             headers: {
                 Authorization: `Bearer ${accessToken}`,
@@ -49,8 +46,8 @@ export class TwitterService {
         const user = await this.getUser(accessToken);
         if (!user) throw new Error('Could not find Twitter user.');
 
-        const r = await axios({
-            url: `/2/users/${channelItem}/followers`,
+        const r = await twitterClient({
+            url: `/users/${channelItem}/followers`,
             method: 'GET',
             headers: {
                 Authorization: `Bearer ${accessToken}`,
@@ -64,8 +61,8 @@ export class TwitterService {
     }
 
     static async getUser(accessToken: string) {
-        const r = await axios({
-            url: '/me',
+        const r = await twitterClient({
+            url: '/users/me',
             method: 'GET',
             headers: {
                 Authorization: `Bearer ${accessToken}`,
@@ -81,8 +78,8 @@ export class TwitterService {
     static async getTweets(accessToken: string) {
         const user = await this.getUser(accessToken);
         if (!user) throw new Error('Could not find Twitter user.');
-        const r = await axios({
-            url: `/2/users/${user.id}/tweets?tweet.fields=id,referenced_tweets,created_at`,
+        const r = await twitterClient({
+            url: `/users/${user.id}/tweets?tweet.fields=id,referenced_tweets,created_at`,
             method: 'GET',
             headers: {
                 Authorization: `Bearer ${accessToken}`,
@@ -101,8 +98,8 @@ export class TwitterService {
         data.append('grant_type', 'refresh_token');
         data.append('client_id', TWITTER_CLIENT_ID);
 
-        const r = await axios({
-            url: '/2/oauth2/token',
+        const r = await twitterClient({
+            url: '/oauth2/token',
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
@@ -125,8 +122,8 @@ export class TwitterService {
         body.append('redirect_uri', TWITTER_REDIRECT_URI);
         body.append('code_verifier', 'challenge');
 
-        const r = await axios({
-            url: '/2/oauth2/token',
+        const r = await twitterClient({
+            url: '/oauth2/token',
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',

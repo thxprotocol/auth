@@ -88,7 +88,13 @@ export default async function getController(req: Request, res: Response) {
 
                 return res.render('account', {
                     uid,
-                    params: { ...params, otpSecret, email: account.email, mfaEnable: account.otpSecret },
+                    params: {
+                        ...params,
+                        otpSecret,
+                        email: account.email,
+                        address: account.address,
+                        mfaEnable: !!account.otpSecret,
+                    },
                 });
             }
         }

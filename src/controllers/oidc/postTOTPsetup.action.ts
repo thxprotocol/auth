@@ -17,6 +17,7 @@ export default async function getTOTPSetupCallback(req: Request, res: Response) 
 
     const uid = req.body.uid as string;
     const error = req.query.error as string;
+    const alert = { variant: 'danger', message: '' };
 
     if (error) return res.redirect(`/oidc/${uid}`);
 
@@ -25,7 +26,11 @@ export default async function getTOTPSetupCallback(req: Request, res: Response) 
 
     // Check if there is an active session for this interaction
     if (!interaction.session) {
-        throw new Error('You have to login before do this action.');
+        alert.message = 'You have to login before do this action.';
+        return res.render('totp', {
+            uid,
+            params: { ...req.body, alert },
+        });
     }
 
     const account = await getAccountBySub(interaction.session.accountId);
@@ -39,22 +44,28 @@ export default async function getTOTPSetupCallback(req: Request, res: Response) 
                 params: { ...req.body, mfaEnable: false },
             });
         }
-        throw new Error('You already have MFA setup.');
+        alert.message = 'You already have MFA setup.';
+        return res.render('totp', {
+            uid,
+            params: { ...req.body, alert },
+        });
     }
 
     const otpauth = authenticator.keyuri(account.email, SERVICE_NAME, req.body.otpSecret);
     const code = await qrcode.toDataURL(otpauth);
 
+    console.log(req.body);
     if (!req.body.code) {
-        return res.render('totp', { uid, params: { ...req.body, qr_code: code } });
+        return res.render('totp', { uid, params: { ...req.body, qr_code: code, alert } });
     }
 
     const isValid = authenticator.check(req.body.code, req.body.otpSecret);
-
+    console.log(isValid);
     if (!isValid) {
+        alert.message = 'The code you input is incorrect';
         return res.render('totp', {
             uid,
-            params: { ...req.body, qr_code: code, error: 'The code you input is incorrect' },
+            params: { ...req.body, qr_code: code, alert },
         });
     }
 

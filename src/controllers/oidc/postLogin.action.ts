@@ -1,8 +1,9 @@
 import { AccountService } from '../../services/AccountService';
 import { MailService } from '../../services/MailService';
 import { Request, Response } from 'express';
-import { ERROR_ACCOUNT_NOT_ACTIVE, ERROR_AUTH_LINK } from '../../util/messages';
+import { ERROR_ACCOUNT_NOT_ACTIVE, ERROR_AUTH_LINK, OTP_CODE_INVALID } from '../../util/messages';
 import { oidc } from '.';
+import { authenticator } from '@otplib/preset-default';
 
 export default async function postLoginController(req: Request, res: Response) {
     function renderLogin(errorMessage: string) {
@@ -29,6 +30,27 @@ export default async function postLoginController(req: Request, res: Response) {
     if (!account.active) {
         await MailService.sendConfirmationEmail(account, req.body.returnUrl);
         return renderLogin(ERROR_ACCOUNT_NOT_ACTIVE);
+    }
+
+    if (account.otpSecret) {
+        if (!req.body.code) {
+            return res.render('login', {
+                uid: req.params.uid,
+                params: { return_url: req.body.returnUrl, ...req.body, otp: true },
+            });
+        }
+
+        const isValid = authenticator.check(req.body.code, account.otpSecret);
+        if (!isValid) {
+            return res.render('login', {
+                uid: req.params.uid,
+                params: { return_url: req.body.returnUrl, ...req.body, otp: true },
+                alert: {
+                    variant: 'danger',
+                    message: OTP_CODE_INVALID,
+                },
+            });
+        }
     }
 
     // Make sure to ask for a login link from the authority if custodial key is found

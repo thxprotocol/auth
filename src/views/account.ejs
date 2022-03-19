@@ -1,0 +1,60 @@
+<div class="col-md-6 offset-md-3 order-0 order-sm-1">
+    <div class="text-center pb-4 pt-4">
+        <img src="/img/logo.png" width="60" alt="THX Logo" />
+    </div>
+    <div class="card shadow-sm mb-5 w-100">
+        <div class="card-body p-sm-5">
+            <strong class="h3 d-block text-dark text-center mb-5">
+                Account Management
+            </strong>
+            <% if (locals.alert && alert.message) { %>
+            <div class="alert alert-<%= alert.variant %>">
+                <%= alert.message %>
+            </div>
+            <% } %>
+            <div class="row form-group">
+                <div class="d-flex col-4 align-items-center font-weight-bold">
+                    Email:
+                </div>
+                <div class="col-8">
+                    <input class="form-control" disabled required name="email" value="<%= params.email %>" />
+                </div>
+            </div>
+            <div class="row form-group">
+                <div class="d-flex col-4 align-items-center font-weight-bold">
+                    Address:
+                </div>
+                <div class="col-8">
+                    <input class="form-control" disabled required value="<%= params.address %>" />
+                </div>
+            </div>
+            <div class="row form-group">
+                <div class="d-flex col-4 align-items-center font-weight-bold">
+                    MFA Status:
+                </div>
+                <div class="col-8">
+                    <% if (params.mfaEnable) { %>
+                    <form autocomplete="off" action="/oidc/<%= uid %>/totp-setup" method="post">
+                        <button class="btn btn-light text-danger btn-block rounded-pill">Disable MFA</button>
+                        <input type="hidden" name="otpSecret" value="<%= params.otpSecret %>" />
+                        <input type="hidden" name="disable" value="true" />
+                        <input type="hidden" name="uid" value="<%= uid %>" />
+                    </form>
+                    <% } %>
+                    <% if (!params.mfaEnable) { %>
+                    <form autocomplete="off" action="/oidc/<%= uid %>/totp-setup" method="post">
+                        <button type="submit" class="btn btn-light text-success rounded-pill btn-block">
+                            Enable MFA
+                        </button>
+                        <input type="hidden" name="otpSecret" value="<%= params.otpSecret %>" />
+                        <input type="hidden" name="uid" value="<%= uid %>" />
+                    </form>
+                    <% } %>
+                </div>
+            </div>
+            <hr>
+            <a class="btn btn-link btn-block rounded-pill" href="<%= params.return_url %>">
+                Return to application</a>
+        </div>
+    </div>
+</div>

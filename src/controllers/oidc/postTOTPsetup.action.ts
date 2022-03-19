@@ -5,7 +5,6 @@ import { authenticator } from '@otplib/preset-default';
 
 import { AccountService } from '../../services/AccountService';
 import { ERROR_NO_ACCOUNT } from '../../util/messages';
-import { SERVICE_NAME } from '../../util/secrets';
 import { getInteraction } from './utils';
 
 export default async function getTOTPSetupCallback(req: Request, res: Response) {
@@ -51,7 +50,7 @@ export default async function getTOTPSetupCallback(req: Request, res: Response) 
         });
     }
 
-    const otpauth = authenticator.keyuri(account.email, SERVICE_NAME, req.body.otpSecret);
+    const otpauth = authenticator.keyuri(account.email, 'thx', req.body.otpSecret);
     const code = await qrcode.toDataURL(otpauth);
 
     console.log(req.body);

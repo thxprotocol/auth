@@ -10,6 +10,7 @@ import postResetController from './postReset.action';
 import getGoogleCallback from './getCallbackGoogle.action';
 import getTwitterCallback from './getCallbackTwitter.action';
 import getSpotifyCallback from './getCallbackSpotify.action';
+import postTOTPsetup from './postTOTPsetup.action';
 
 const router = express.Router();
 
@@ -20,6 +21,8 @@ router.get('/:uid', getController);
 router.post('/:uid/create', urlencoded({ extended: false }), postCreateController);
 router.post('/:uid/password', urlencoded({ extended: false }), postPasswordController);
 router.post('/:uid/login', urlencoded({ extended: false }), postLoginController);
+router.post('/:uid/totp-setup', urlencoded({ extended: false }), postTOTPsetup);
+
 router.get('/:uid/abort', getAbortController);
 router.get('/:uid/forgot', getForgotController);
 router.post('/:uid/forgot', urlencoded({ extended: false }), postForgotController);

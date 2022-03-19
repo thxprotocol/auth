@@ -1,11 +1,13 @@
-import { AccountService } from '../../services/AccountService';
 import { Request, Response } from 'express';
-import { oidc } from '.';
-import { ChannelType, ChannelAction } from '../../models/Reward';
+import { authenticator } from '@otplib/preset-default';
+
+import { ChannelAction, ChannelType } from '../../models/Reward';
+import { AccountService } from '../../services/AccountService';
+import { SPOTIFY_API_SCOPE, SpotifyService } from '../../services/SpotifyService';
 import { TwitterService } from '../../services/TwitterService';
 import { YouTubeService } from '../../services/YouTubeService';
-import { SpotifyService, SPOTIFY_API_SCOPE } from '../../services/SpotifyService';
 import { WALLET_URL } from '../../util/secrets';
+import { oidc } from './';
 
 function getChannelScopes(channelAction: ChannelAction) {
     switch (channelAction) {
@@ -71,6 +73,29 @@ export default async function getController(req: Request, res: Response) {
             }
             case 'reset': {
                 return res.render('reset', { uid, params });
+            }
+
+            case 'account-settings': {
+                if (!interaction.session) {
+                    throw new Error('You have to login before do this action.');
+                }
+                const account = await AccountService.get(interaction.session.accountId);
+
+                let otpSecret = account.otpSecret;
+                if (!otpSecret) {
+                    otpSecret = authenticator.generateSecret();
+                }
+
+                return res.render('account', {
+                    uid,
+                    params: {
+                        ...params,
+                        otpSecret,
+                        email: account.email,
+                        address: account.address,
+                        mfaEnable: !!account.otpSecret,
+                    },
+                });
             }
         }
         // Regular prompts are used for authenticated routes

@@ -52,14 +52,11 @@ export default async function getTOTPSetupCallback(req: Request, res: Response) 
 
     const otpauth = authenticator.keyuri(account.email, 'thx', req.body.otpSecret);
     const code = await qrcode.toDataURL(otpauth);
-
-    console.log(req.body);
     if (!req.body.code) {
         return res.render('totp', { uid, params: { ...req.body, qr_code: code, alert } });
     }
 
     const isValid = authenticator.check(req.body.code, req.body.otpSecret);
-    console.log(isValid);
     if (!isValid) {
         alert.message = 'The code you input is incorrect';
         return res.render('totp', {

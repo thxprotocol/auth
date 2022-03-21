@@ -87,7 +87,7 @@ export default async function getTOTPSetupCallback(req: Request, res: Response) 
         otpSecret = authenticator.generateSecret();
     }
 
-    return , {
+    return res.render('account', {
         uid,
         params: {
             ...req.body,

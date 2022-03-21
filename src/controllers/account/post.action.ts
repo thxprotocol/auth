@@ -1,6 +1,6 @@
 import Airtable from 'airtable';
 import { Request, Response } from 'express';
-import { AIRTABLE_BASE_ID } from '../../util/secrets';
+import { AIRTABLE_API_KEY, AIRTABLE_BASE_ID } from '../../util/secrets';
 import { AccountService } from '../../services/AccountService';
 
 export const postAccount = async (req: Request, res: Response) => {
@@ -11,13 +11,14 @@ export const postAccount = async (req: Request, res: Response) => {
     if (!userExists) {
         account = await AccountService.signupFor(req.body.email, req.body.password, req.body.address);
 
-        const base = Airtable.base(AIRTABLE_BASE_ID);
-        const date = new Date(account.createdAt);
-
-        await base('Pipeline: Signups').create({
-            Email: account.email,
-            Date: date.getMonth() + '/' + (date.getDay() + 1) + '/' + date.getFullYear(),
-        });
+        if (AIRTABLE_API_KEY && AIRTABLE_BASE_ID) {
+            const date = new Date(account.createdAt);
+            const base = new Airtable().base(AIRTABLE_BASE_ID);
+            await base('Pipeline: Signups').create({
+                Email: account.email,
+                Date: date.getMonth() + '/' + (date.getDay() + 1) + '/' + date.getFullYear(),
+            });
+        }
     } else {
         account = await AccountService.getByEmail(req.body.email);
     }

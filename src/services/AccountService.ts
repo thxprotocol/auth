@@ -123,10 +123,11 @@ export class AccountService {
         }
 
         if (AIRTABLE_API_KEY && AIRTABLE_BASE_ID) {
+            const date = new Date(account.createdAt);
             const base = new Airtable().base(AIRTABLE_BASE_ID);
             await base('Pipeline: Signups').create({
                 Email: account.email,
-                Date: account.createdAt,
+                Date: date.getMonth() + '/' + (date.getDay() + 1) + '/' + date.getFullYear(),
             });
         }
 

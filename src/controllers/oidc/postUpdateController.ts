@@ -44,6 +44,7 @@ const postUpdate = async (req: Request, res: Response) => {
             ...req.body,
             first_name: account.firstName,
             last_name: account.lastName,
+            address: account.address,
             organisation: account.organisation,
             plan: account.plan,
             type: account.type,

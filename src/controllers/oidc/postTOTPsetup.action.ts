@@ -34,33 +34,31 @@ export default async function getTOTPSetupCallback(req: Request, res: Response) 
 
     const account = await getAccountBySub(interaction.session.accountId);
 
-    if (account.otpSecret) {
-        if (req.body.disable) {
+    if (req.body.disable) {
+        if (account.otpSecret) {
             account.otpSecret = null;
             await account.save();
-
-            const otpSecret = authenticator.generateSecret();
-
-            return res.render('account', {
-                uid,
-                params: {
-                    ...req.body,
-                    otpSecret,
-                    email: account.email,
-                    first_name: account.firstName,
-                    last_name: account.lastName,
-                    organisation: account.organisation,
-                    address: account.address,
-                    plan: account.plan,
-                    type: account.type,
-                    mfaEnable: account.otpSecret,
-                },
-            });
         }
-        alert.message = 'You already have MFA setup.';
-        return res.render('totp', {
+
+        let otpSecret = req.body.otpSecret;
+        if (!otpSecret) {
+            otpSecret = authenticator.generateSecret();
+        }
+
+        return res.render('account', {
             uid,
-            params: { ...req.body, alert },
+            params: {
+                ...req.body,
+                otpSecret,
+                email: account.email,
+                first_name: account.firstName,
+                last_name: account.lastName,
+                organisation: account.organisation,
+                address: account.address,
+                plan: account.plan,
+                type: account.type,
+                mfaEnable: account.otpSecret,
+            },
         });
     }
 

@@ -112,6 +112,7 @@
                                         <input type="hidden" name="otpSecret" value="<%= params.otpSecret %>" />
                                         <input type="hidden" name="disable" value="true" />
                                         <input type="hidden" name="uid" value="<%= uid %>" />
+                                        <input type="hidden" name="return_url" value="<%= params.return_url %>" />
 
                                     </form>
                                     <% } %>
@@ -122,6 +123,7 @@
                                                     to Activate</button>
                                                 <input type="hidden" name="otpSecret" value="<%= params.otpSecret %>" />
                                                 <input type="hidden" name="uid" value="<%= uid %>" />
+                                                <input type="hidden" name="return_url" value="<%= params.return_url %>" />
 
                                             </form>
                                             <% } %>

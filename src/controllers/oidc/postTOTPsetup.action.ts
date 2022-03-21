@@ -62,8 +62,9 @@ export default async function getTOTPSetupCallback(req: Request, res: Response) 
         });
     }
 
-    const otpauth = authenticator.keyuri(account.email, 'thx', req.body.otpSecret);
+    const otpauth = authenticator.keyuri(account.email, 'THX', req.body.otpSecret);
     const code = await qrcode.toDataURL(otpauth);
+
     if (!req.body.code) {
         return res.render('totp', { uid, params: { ...req.body, qr_code: code, alert } });
     }

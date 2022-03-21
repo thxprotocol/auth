@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
-import { MailService } from '../../services/MailService';
+
 import { AccountService } from '../../services/AccountService';
+import { MailService } from '../../services/MailService';
 import { checkPasswordStrength } from '../../util/passwordcheck';
 
 export default async function postCreateController(req: Request, res: Response) {

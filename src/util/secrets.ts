@@ -12,14 +12,17 @@ const required = [
     'PORT',
     'SECURE_KEY',
     'TWITTER_CLIENT_ID',
-    'AIRTABLE_API_KEY',
-    'AIRTABLE_REGISTER_TABLE_ID',
 ];
 
 // For production (docker containers) we should require JWKS_JSON to be set since otherwise each container
 // would generate their own jwks.json.
 if (process.env.NODE_ENV === 'production') {
     required.push('SENDGRID_API_KEY', 'JWKS_JSON');
+}
+if (!process.env['AIRTABLE_API_KEY'] || !process.env['AIRTABLE_BASE_ID']) {
+    console.log(
+        'Could not add new users to Airtable since required environmnet `AIRTABLE_API_KEY` and `AIRTABLE_BASE_ID` variables are unset',
+    );
 }
 
 required.forEach((value: string) => {
@@ -47,7 +50,7 @@ export const WALLET_URL = process.env.WALLET_URL;
 export const PUBLIC_URL = process.env.PUBLIC_URL;
 export const DASHBOARD_URL = process.env.DASHBOARD_URL;
 export const AIRTABLE_API_KEY = process.env.AIRTABLE_API_KEY;
-export const AIRTABLE_REGISTER_TABLE_ID = process.env.AIRTABLE_REGISTER_TABLE_ID;
+export const AIRTABLE_BASE_ID = process.env.AIRTABLE_BASE_ID;
 export const WIDGETS_URL = process.env.WIDGETS_URL;
 export const MONGODB_URI = process.env.MONGODB_URI;
 export const PORT = process.env.PORT;

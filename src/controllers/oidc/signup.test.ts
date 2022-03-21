@@ -59,7 +59,8 @@ describe('Sign up', () => {
 
     describe('POST /oidc/<cid>/create', () => {
         beforeEach(() => {
-            nock('https://api.sendgrid.com').post('/v3/mail/send').reply(200, {}); // mock email response for account create method
+            nock('https://api.sendgrid.com').persist().post('/v3/mail/send').reply(200, {}); // mock email response for account create method
+            nock('https://api.airtable.com').persist().post('/.*?/').reply(200, {}); // mock email response for account create method
         });
 
         it('Failed to create account with weak password', async () => {

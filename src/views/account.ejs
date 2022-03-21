@@ -108,7 +108,7 @@
                             <div class="col-8">
                                 <% if (params.mfaEnable) { %>
                                     <form autocomplete="off" action="/oidc/<%= uid %>/totp-setup" method="post">
-                                        <button class="btn rounded-pill btn-primary btn-block">Activated</button>
+                                        <button class="btn btn-primary btn-block">Activated</button>
                                         <input type="hidden" name="otpSecret" value="<%= params.otpSecret %>" />
                                         <input type="hidden" name="disable" value="true" />
                                         <input type="hidden" name="uid" value="<%= uid %>" />

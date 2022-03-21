@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { authenticator } from 'otplib';
 import { AccountService } from '../../services/AccountService';
 import { ERROR_NO_ACCOUNT } from '../../util/messages';
 import { getInteraction } from './utils';
@@ -31,6 +32,11 @@ const postUpdate = async (req: Request, res: Response) => {
     const account = await getAccountBySub(interaction.session.accountId);
 
     await AccountService.update(account, { firstName, lastName, organisation, plan, type });
+
+    let otpSecret = account.otpSecret;
+    if (!otpSecret) {
+        otpSecret = authenticator.generateSecret();
+    }
 
     return res.render('account', {
         uid,

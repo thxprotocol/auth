@@ -8,18 +8,24 @@
                 Account Management
             </strong>
             <% if (locals.alert && alert.message) { %>
-            <div class="alert alert-<%= alert.variant %>">
-                <%= alert.message %>
-            </div>
-            <% } %>
-            <div class="row form-group">
-                <div class="d-flex col-4 align-items-center font-weight-bold">
-                    Email:
+                <div class="alert alert-<%= alert.variant %>">
+                    <%= alert.message %>
                 </div>
                 <% } %>
 
+
                     <div class="container-fluid">
                         <form id="account_update" autocomplete="off" action="/oidc/<%= uid %>/update" method="post">
+                            <div class="row pb-3">
+                                <div class="d-flex col-4 align-items-center font-weight-bold">
+                                    Address:
+                                </div>
+
+                                <div class="col-8">
+                                    <input class="form-control" disabled required value="<%= params.address %>" />
+                                </div>
+                            </div>
+
                             <div class="row pb-3">
                                 <div class="d-flex col-4 align-items-center font-weight-bold">
                                     First name:
@@ -109,6 +115,7 @@
 
                                     </form>
                                     <% } %>
+
                                         <% if (!params.mfaEnable) { %>
                                             <form autocomplete="off" action="/oidc/<%= uid %>/totp-setup" method="post">
                                                 <button type="submit" class="btn btn-gray btn-block">Click
@@ -118,14 +125,17 @@
 
                                             </form>
                                             <% } %>
-
                             </div>
+
+                            <button class="mt-5 btn btn-primary btn-block" type="submit" form="account_update">Update Infomation</button>
+
                         </div>
                     </div>
 
-                    <button class="mt-4 btn rounded-pill btn-primary btn-block" type="submit"
-                        form="account_update">Update</button>
 
+                    <hr>
+                    <a class="btn btn-link btn-block rounded-pill" href="<%= params.return_url %>">
+                        Return to application</a>
         </div>
     </div>
 </div>

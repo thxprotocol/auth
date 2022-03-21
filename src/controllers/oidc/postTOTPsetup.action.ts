@@ -38,16 +38,22 @@ export default async function getTOTPSetupCallback(req: Request, res: Response) 
         if (req.body.disable) {
             account.otpSecret = null;
             await account.save();
+
+            const otpSecret = authenticator.generateSecret();
+
             return res.render('account', {
                 uid,
                 params: {
                     ...req.body,
+                    otpSecret,
+                    email: account.email,
                     first_name: account.firstName,
                     last_name: account.lastName,
                     organisation: account.organisation,
+                    address: account.address,
                     plan: account.plan,
                     type: account.type,
-                    mfaEnable: false,
+                    mfaEnable: account.otpSecret,
                 },
             });
         }
@@ -76,10 +82,16 @@ export default async function getTOTPSetupCallback(req: Request, res: Response) 
     account.otpSecret = req.body.otpSecret;
     account.save();
 
+    let otpSecret = account.otpSecret;
+    if (!otpSecret) {
+        otpSecret = authenticator.generateSecret();
+    }
+
     return res.render('account', {
         uid,
         params: {
             ...req.body,
+            otpSecret,
             first_name: account.firstName,
             last_name: account.lastName,
             organisation: account.organisation,

@@ -95,6 +95,7 @@ export default async function getController(req: Request, res: Response) {
                         first_name: account.firstName,
                         last_name: account.lastName,
                         organisation: account.organisation,
+                        address: account.address,
                         plan: account.plan,
                         type: account.type,
                         mfaEnable: account.otpSecret,

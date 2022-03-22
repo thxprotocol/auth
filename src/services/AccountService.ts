@@ -1,8 +1,9 @@
 import newrelic from 'newrelic';
+import Airtable from 'airtable';
 import { Account, AccountDocument, IAccountUpdates } from '../models/Account';
 import { createRandomToken } from '../util/tokens';
 import { decryptString } from '../util/decrypt';
-import { SECURE_KEY } from '../util/secrets';
+import { AIRTABLE_API_KEY, AIRTABLE_BASE_ID, SECURE_KEY } from '../util/secrets';
 import { checkPasswordStrength } from '../util/passwordcheck';
 import Web3 from 'web3';
 import {
@@ -121,6 +122,15 @@ export class AccountService {
             account.signupTokenExpires = DURATION_TWENTYFOUR_HOURS;
         }
 
+        if (AIRTABLE_API_KEY && AIRTABLE_BASE_ID) {
+            const date = new Date(account.createdAt);
+            const base = new Airtable().base(AIRTABLE_BASE_ID);
+            await base('Pipeline: Signups').create({
+                Email: account.email,
+                Date: date.getMonth() + '/' + (date.getDay() + 1) + '/' + date.getFullYear(),
+            });
+        }
+
         return account;
     }
 
@@ -135,7 +145,8 @@ export class AccountService {
             password,
         });
 
-        return await account.save();
+        await account.save();
+        return account;
     }
 
     static async verifySignupToken(signupToken: string) {

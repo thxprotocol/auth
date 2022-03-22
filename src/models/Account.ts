@@ -28,6 +28,7 @@ export interface IAccount {
     acceptUpdates: boolean;
     recoveryPhrase: string;
     comparePassword: any;
+    createdAt: string;
 }
 
 export interface IAccountUpdates {
@@ -70,6 +71,7 @@ const accountSchema = new mongoose.Schema(
         acceptTermsPrivacy: Boolean,
         acceptUpdates: Boolean,
         recoveryPhrase: String,
+        createdAt: String,
     },
     { timestamps: true },
 );

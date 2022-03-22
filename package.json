@@ -13,6 +13,7 @@
         "dev": "docker-compose up -d && npm run watch:debug",
         "build": "npm run build:sass && npm run build:assets && tsc",
         "build:assets": "mkdir -p dist/src/public && cp -R src/public/* dist/src/public/. && cp -R src/views dist/src/.",
+        "airtable:migrate": "ts-node-dev scripts/airtableMigrate.ts",
         "build:sass": "sass src/main.scss src/public/main.css",
         "build:keys": "node ./scripts/generateKeys.js",
         "watch": "concurrently -k -p \"[{name}]\" -n \"Sass,Node\" -c \"yellow.bold,cyan.bold\" \"npm run watch:sass\" \"npm run watch:node\"",
@@ -30,6 +31,7 @@
     "dependencies": {
         "@godaddy/terminus": "^4.10.2",
         "@sendgrid/mail": "^7.4.2",
+        "airtable": "^0.11.2",
         "axios": "^0.21.3",
         "axios-better-stacktrace": "^2.1.2",
         "bcrypt-nodejs": "^0.0.3",

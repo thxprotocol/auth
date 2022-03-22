@@ -1,12 +1,12 @@
-import { AccountService } from '../../services/AccountService';
+import { AccountService } from '../../../../services/AccountService';
 import { Request, Response } from 'express';
-import { oidc } from '.';
-import { parseJwt } from '../../util/jwt';
-import { AccountDocument } from '../../models/Account';
-import { getAccountByEmail, saveInteraction } from './utils';
-import { YouTubeService } from '../../services/YouTubeService';
+import { oidc } from '../../../../util/oidc';
+import { parseJwt } from '../../../../util/jwt';
+import { AccountDocument } from '../../../../models/Account';
+import { getAccountByEmail, saveInteraction } from '../../../../util/oidc';
+import { YouTubeService } from '../../../../services/YouTubeService';
 
-export default async function getGoogleCallback(req: Request, res: Response) {
+export async function ReadCallbackGoogle(req: Request, res: Response) {
     async function updateTokens(account: AccountDocument, tokens: any) {
         account.googleAccessToken = tokens.access_token || account.googleAccessToken;
         account.googleRefreshToken = tokens.refresh_token || account.googleRefreshToken;

@@ -21,7 +21,7 @@
                 &#x1f973; <strong>We are in beta!</strong> Try the full version for free -
                 no creditcard required or other hidden charges - testing is free forever.
             </p>
-            <form autocomplete="off" action="/oidc/<%= uid %>/create" method="post">
+            <form autocomplete="off" action="/oidc/<%= uid %>/signup" method="post">
                 <div class="form-group">
                     <label>E-mail:</label>
                     <% if (params.signup_email) { %>
@@ -66,9 +66,9 @@
                         <button type="submit" class="btn rounded-pill mt-3 btn-primary btn-block">
                             Sign-up
                         </button>
-                        <a class="btn btn-block btn-link" href="/oidc/<%= uid %>/abort">Already have an
-                            account?
-                            Sign in.</a>
+                        <a class="btn btn-block btn-link" href="/oidc/<%= uid %>/signin">
+                            Already have an account? Sign in.
+                        </a>
                     </div>
                 </div>
             </form>

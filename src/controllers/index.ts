@@ -1,10 +1,10 @@
 import express, { json, urlencoded } from 'express';
 
-import oidcRouter from './oidc/_.routing';
+import oidcRouter from './oidc/oidc.router';
 import accountRouter from './account/_.routing';
 import healthRouter from './health/_.routing';
 import { getAction } from './get.action';
-import { oidc } from './oidc';
+import { oidc } from '../util/oidc';
 
 // This determines for which prefixes a json error is presented.
 export const JSON_PATHS = ['/account', '/health'];

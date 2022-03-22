@@ -1,9 +1,9 @@
 import request from 'supertest';
-import app from '../../app';
-import db from '../../util/database';
-import { AccountService } from '../../services/AccountService';
-import { INITIAL_ACCESS_TOKEN } from '../../util/secrets';
-import { accountEmail, accountSecret } from '../../util/jest';
+import app from '../../../app';
+import db from '../../../util/database';
+import { AccountService } from '../../../services/AccountService';
+import { INITIAL_ACCESS_TOKEN } from '../../../util/secrets';
+import { accountEmail, accountSecret } from '../../../util/jest';
 
 const http = request.agent(app);
 

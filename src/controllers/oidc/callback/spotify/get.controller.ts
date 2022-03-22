@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
-import { AccountDocument } from '../../models/Account';
-import { SpotifyService } from '../../services/SpotifyService';
-import { AccountService } from '../../services/AccountService';
-import { ERROR_NO_ACCOUNT } from '../../util/messages';
-import { getAccountByEmail, getInteraction, saveInteraction } from './utils';
+import { AccountDocument } from '../../../../models/Account';
+import { SpotifyService } from '../../../../services/SpotifyService';
+import { AccountService } from '../../../../services/AccountService';
+import { ERROR_NO_ACCOUNT } from '../../../../util/messages';
+import { getAccountByEmail, getInteraction, saveInteraction } from '../../../../util/oidc';
 
 async function updateTokens(account: AccountDocument, tokens: any): Promise<AccountDocument> {
     account.spotifyAccessToken = tokens.access_token || account.spotifyAccessToken;
@@ -20,7 +20,7 @@ async function getAccountBySub(sub: string): Promise<AccountDocument> {
     return account;
 }
 
-export default async function getSpotifyCallback(req: Request, res: Response) {
+export async function ReadCallbackSpotify(req: Request, res: Response) {
     const code = req.query.code as string;
     const uid = req.query.state as string;
     const error = req.query.error as string;

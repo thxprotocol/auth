@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 
-import { AccountService } from '../../services/AccountService';
-import { MailService } from '../../services/MailService';
-import { checkPasswordStrength } from '../../util/passwordcheck';
+import { AccountService } from '../../../services/AccountService';
+import { MailService } from '../../../services/MailService';
+import { checkPasswordStrength } from '../../../util/passwordcheck';
 
 export default async function postCreateController(req: Request, res: Response) {
     function renderError(message: string) {
@@ -40,7 +40,7 @@ export default async function postCreateController(req: Request, res: Response) 
 
     await MailService.sendConfirmationEmail(account, req.body.returnUrl);
 
-    return res.render('signup', {
+    res.render('signup', {
         uid: req.params.uid,
         params: {
             return_url: req.body.returnUrl,

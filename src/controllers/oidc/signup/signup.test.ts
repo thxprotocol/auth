@@ -1,9 +1,9 @@
 import nock from 'nock';
 import request from 'supertest';
-import app from '../../app';
-import { AccountService } from '../../services/AccountService';
-import db from '../../util/database';
-import { INITIAL_ACCESS_TOKEN } from '../../util/secrets';
+import app from '../../../app';
+import { AccountService } from '../../../services/AccountService';
+import db from '../../../util/database';
+import { INITIAL_ACCESS_TOKEN } from '../../../util/secrets';
 
 const http = request.agent(app);
 
@@ -57,7 +57,7 @@ describe('Sign up', () => {
         });
     });
 
-    describe('POST /oidc/<cid>/create', () => {
+    describe('POST /oidc/<cid>/signup', () => {
         beforeEach(() => {
             nock('https://api.sendgrid.com').persist().post('/v3/mail/send').reply(200, {}); // mock email response for account create method
             nock('https://api.airtable.com').persist().post('/.*?/').reply(200, {}); // mock email response for account create method
@@ -74,7 +74,7 @@ describe('Sign up', () => {
                 returnUrl: 'https://localhost:8082',
             });
 
-            const res = await http.post(`/oidc/${CID}/create`).send(params.toString());
+            const res = await http.post(`/oidc/${CID}/signup`).send(params.toString());
 
             expect(res.text).toMatch(new RegExp('.*Please enter a strong password.*'));
         });
@@ -88,7 +88,7 @@ describe('Sign up', () => {
                 returnUrl: 'https://localhost:8082',
             });
 
-            const res = await http.post(`/oidc/${CID}/create`).send(params.toString());
+            const res = await http.post(`/oidc/${CID}/signup`).send(params.toString());
             expect(res.text).toMatch(new RegExp('.*Email cannot be blank*'));
         });
 
@@ -102,7 +102,7 @@ describe('Sign up', () => {
                 returnUrl: 'https://localhost:8082',
             });
 
-            const res = await http.post(`/oidc/${CID}/create`).send(params.toString());
+            const res = await http.post(`/oidc/${CID}/signup`).send(params.toString());
             expect(res.text).toMatch(new RegExp('.*Please accept the terms of use and privacy statement.*'));
         });
 
@@ -119,7 +119,7 @@ describe('Sign up', () => {
                     returnUrl: 'https://localhost:8082',
                 });
 
-                const res = await http.post(`/oidc/${CID}/create`).send(params.toString());
+                const res = await http.post(`/oidc/${CID}/signup`).send(params.toString());
 
                 expect(res.text).toMatch(new RegExp('.*THX for signing up*'));
             });
@@ -148,6 +148,13 @@ describe('Sign up', () => {
 
             it('Redirect to interaction and verify', async () => {
                 const res = await http.get(redirectUrl).set('Cookie', Cookies).send();
+                expect(res.status).toEqual(302);
+                expect(res.header.location).toMatch(new RegExp('/oidc/.*'));
+                redirectUrl = res.header.location;
+            });
+
+            it('Redirect to signup', async () => {
+                const res = await http.get(redirectUrl).set('Cookie', Cookies).send();
                 expect(res.status).toEqual(200);
                 expect(res.text).toMatch(new RegExp('.*Your e-mail address has been verified.*'));
             });
@@ -162,7 +169,7 @@ describe('Sign up', () => {
                 returnUrl: 'https://localhost:8082',
             });
 
-            const res = await http.post(`/oidc/${CID}/create`).send(params.toString());
+            const res = await http.post(`/oidc/${CID}/signup`).send(params.toString());
 
             expect(res.text).toMatch(new RegExp('.*An account with this e-mail address already exists*'));
         });

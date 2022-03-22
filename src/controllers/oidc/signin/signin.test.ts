@@ -1,9 +1,9 @@
 import request from 'supertest';
-import app from '../../app';
-import { AccountService } from '../../services/AccountService';
-import db from '../../util/database';
-import { INITIAL_ACCESS_TOKEN } from '../../util/secrets';
-import { getPath, accountEmail, accountSecret } from '../../util/jest';
+import app from '../../../app';
+import { AccountService } from '../../../services/AccountService';
+import db from '../../../util/database';
+import { INITIAL_ACCESS_TOKEN } from '../../../util/secrets';
+import { getPath, accountEmail, accountSecret } from '../../../util/jest';
 
 const REDIRECT_URL = 'https://localhost:8082/signin-oidc';
 
@@ -61,7 +61,7 @@ describe('Sign In', () => {
         });
     });
 
-    describe('POST /oidc/<cid>/login', () => {
+    describe('POST /oidc/<cid>/signin', () => {
         describe('Login flow check', () => {
             let redirectUrl = '';
             let Cookies = '';
@@ -69,7 +69,7 @@ describe('Sign In', () => {
 
             it('Successful login with correct information', async () => {
                 const res = await http
-                    .post(`/oidc/${CID}/login`)
+                    .post(`/oidc/${CID}/signin`)
                     .send(`email=${accountEmail}&password=${accountSecret}`);
 
                 expect(res.status).toEqual(302);
@@ -120,7 +120,7 @@ describe('Sign In', () => {
 
         it('Failed to login with wrong credential', async () => {
             const res = await http
-                .post(`/oidc/${CID}/login`)
+                .post(`/oidc/${CID}/signin`)
                 .send('email=fake.user@thx.network&password=thisgoingtofail');
 
             expect(res.status).toEqual(200);
@@ -128,7 +128,7 @@ describe('Sign In', () => {
         });
 
         it('Failed to login with wrong password', async () => {
-            const res = await http.post(`/oidc/${CID}/login`).send(`email=${accountEmail}&password=thisgoingtofail`);
+            const res = await http.post(`/oidc/${CID}/signin`).send(`email=${accountEmail}&password=thisgoingtofail`);
             expect(res.status).toEqual(200);
             expect(res.text).toMatch(new RegExp('.*Your provided passwords do not match*'));
         });

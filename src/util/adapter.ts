@@ -1,5 +1,5 @@
 import { snakeCase } from 'lodash';
-import db from '../../util/database';
+import db from './database';
 
 const grantable = new Set(['access_token', 'authorization_code', 'refresh_token', 'device_code']);
 

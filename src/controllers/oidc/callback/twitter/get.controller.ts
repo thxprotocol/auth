@@ -1,11 +1,11 @@
-import { AccountService } from '../../services/AccountService';
-import { TwitterService } from '../../services/TwitterService';
 import { Request, Response } from 'express';
-import { AccountDocument } from '../../models/Account';
-import { ERROR_NO_ACCOUNT } from '../../util/messages';
-import { getAccountByEmail, getInteraction, saveInteraction } from './utils';
+import { AccountService } from '../../../../services/AccountService';
+import { TwitterService } from '../../../../services/TwitterService';
+import { AccountDocument } from '../../../../models/Account';
+import { ERROR_NO_ACCOUNT } from '../../../../util/messages';
+import { getAccountByEmail, getInteraction, saveInteraction } from '../../../../util/oidc';
 
-export default async function getTwitterCallback(req: Request, res: Response) {
+export async function ReadCallbackTwitter(req: Request, res: Response) {
     async function getAccountBySub(sub: string) {
         const account = await AccountService.get(sub);
         if (!account) throw new Error(ERROR_NO_ACCOUNT);

@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { JSON_PATHS } from '../controllers/_.routing';
+import { JSON_PATHS } from '../controllers';
 import { THXHttpError } from '../util/errors';
 import { NODE_ENV } from '../util/secrets';
 

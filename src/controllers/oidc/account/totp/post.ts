@@ -1,13 +1,11 @@
 import { Request, Response } from 'express';
 import qrcode from 'qrcode';
-
 import { authenticator } from '@otplib/preset-default';
+import { AccountService } from '../../../../services/AccountService';
+import { ERROR_NO_ACCOUNT } from '../../../../util/messages';
+import { getInteraction } from '../../../../util/oidc';
 
-import { AccountService } from '../../services/AccountService';
-import { ERROR_NO_ACCOUNT } from '../../util/messages';
-import { getInteraction } from './utils';
-
-export default async function getTOTPSetupCallback(req: Request, res: Response) {
+async function controller(req: Request, res: Response) {
     async function getAccountBySub(sub: string) {
         const account = await AccountService.get(sub);
         if (!account) throw new Error(ERROR_NO_ACCOUNT);
@@ -56,7 +54,6 @@ export default async function getTOTPSetupCallback(req: Request, res: Response) 
                 organisation: account.organisation,
                 address: account.address,
                 plan: account.plan,
-                type: account.type,
                 mfaEnable: account.otpSecret,
             },
         });
@@ -95,8 +92,9 @@ export default async function getTOTPSetupCallback(req: Request, res: Response) 
             last_name: account.lastName,
             organisation: account.organisation,
             plan: account.plan,
-            type: account.type,
             mfaEnable: account.otpSecret,
         },
     });
 }
+
+export default { controller };

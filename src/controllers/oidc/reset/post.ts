@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
-import { AccountService } from '../../services/AccountService';
+import { AccountService } from '../../../services/AccountService';
 
-export default async function postResetController(req: Request, res: Response) {
+async function controller(req: Request, res: Response) {
     const result = {
         uid: req.params.uid,
         params: {
@@ -27,3 +27,5 @@ export default async function postResetController(req: Request, res: Response) {
 
     return res.render('reset', result);
 }
+
+export default { controller };

@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
-import { oidc } from '.';
+import { oidc } from '../../../util/oidc';
 
-export default async function getForgotController(req: Request, res: Response) {
+async function controller(req: Request, res: Response) {
     const { uid, params } = await oidc.interactionDetails(req, res);
 
     res.render('forgot', {
@@ -10,3 +10,5 @@ export default async function getForgotController(req: Request, res: Response) {
         alert: {},
     });
 }
+
+export default { controller };

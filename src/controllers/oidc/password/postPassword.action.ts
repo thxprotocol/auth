@@ -1,11 +1,11 @@
 import { Request, Response } from 'express';
-import { IAccountUpdates } from '../../models/Account';
-import { AccountService } from '../../services/AccountService';
-import { oidc } from '.';
+import { IAccountUpdates } from '../../../models/Account';
+import { AccountService } from '../../../services/AccountService';
+import { oidc } from '../../../util/oidc';
 
 export default async function postPasswordController(req: Request, res: Response) {
     if (!req.body.acceptTermsPrivacy) {
-        return res.render('login', {
+        return res.render('signin', {
             uid: req.params.uid,
             params: {
                 return_url: req.body.returnUrl,
@@ -25,7 +25,7 @@ export default async function postPasswordController(req: Request, res: Response
             req.body.secureKey,
         );
     } catch (error) {
-        return res.render('login', {
+        return res.render('signin', {
             uid: req.params.uid,
             params: {
                 return_url: req.body.returnUrl,

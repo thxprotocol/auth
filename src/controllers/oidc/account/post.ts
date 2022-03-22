@@ -1,10 +1,25 @@
 import { Request, Response } from 'express';
+import { body } from 'express-validator';
 import { authenticator } from 'otplib';
-import { AccountService } from '../../services/AccountService';
-import { ERROR_NO_ACCOUNT } from '../../util/messages';
-import { getInteraction } from './utils';
+import { AccountService } from '../../../services/AccountService';
+import { ERROR_NO_ACCOUNT } from '../../../util/messages';
+import { getInteraction } from '../../../util/oidc';
 
-const postUpdate = async (req: Request, res: Response) => {
+export const validation = [
+    body('address').optional().isEthereumAddress(),
+    body('email').exists().isEmail(),
+    body('plan').custom((val) => {
+        return ['solo', 'community', 'creator'].includes(val);
+    }),
+    body('firstName').optional().isString(),
+    body('lastName').optional().isString(),
+    body('organisation').optional().isString(),
+    body().customSanitizer((values) => {
+        return values;
+    }),
+];
+
+export async function controller(req: Request, res: Response) {
     async function getAccountBySub(sub: string) {
         const account = await AccountService.get(sub);
         if (!account) throw new Error(ERROR_NO_ACCOUNT);
@@ -18,7 +33,6 @@ const postUpdate = async (req: Request, res: Response) => {
     const lastName = req.body.last_name;
     const organisation = req.body.organisation;
     const plan = req.body.plan;
-    const type = req.body.type;
 
     if (error) return res.redirect(`/oidc/${uid}`);
 
@@ -31,7 +45,7 @@ const postUpdate = async (req: Request, res: Response) => {
 
     const account = await getAccountBySub(interaction.session.accountId);
 
-    await AccountService.update(account, { firstName, lastName, organisation, plan, type });
+    await AccountService.update(account, { firstName, lastName, organisation, plan });
 
     let otpSecret = account.otpSecret;
     if (!otpSecret) {
@@ -47,10 +61,9 @@ const postUpdate = async (req: Request, res: Response) => {
             address: account.address,
             organisation: account.organisation,
             plan: account.plan,
-            type: account.type,
             mfaEnable: account.otpSecret,
         },
     });
-};
+}
 
-export default postUpdate;
+export default { validation, controller };

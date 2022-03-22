@@ -101,7 +101,7 @@
             <!--
                     This part is used for regular login flow
                 -->
-            <form autocomplete="off" action="/oidc/<%= uid %>/login" method="post" class="mb-4">
+            <form autocomplete="off" action="/oidc/<%= uid %>/signin" method="post" class="mb-4">
 
                 <div class="form-group">
                     <label>E-mail:</label>
@@ -112,8 +112,8 @@
                     <input class="form-control" required type="password" value="<%= params.password %>" name="password">
                 </div>
                 <% if (params.otp) { %>
-                    <label>MFA code:</label>
-                    <input class="form-control mb-4" required name="code">
+                <label>MFA code:</label>
+                <input class="form-control mb-4" required name="code">
 
                 <% } %>
 
@@ -129,7 +129,7 @@
                     Can't sign in?
                 </a>
                 <span class="text-muted">|</span>
-                <a class="btn btn-link" href="<%= params.return_url %>/signup">
+                <a class="btn btn-link" href="/oidc/<%= uid %>/signup">
                     Sign up for an account
                 </a>
             </div>

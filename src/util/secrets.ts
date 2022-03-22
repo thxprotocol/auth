@@ -19,6 +19,11 @@ const required = [
 if (process.env.NODE_ENV === 'production') {
     required.push('SENDGRID_API_KEY', 'JWKS_JSON');
 }
+if (!process.env['AIRTABLE_API_KEY'] || !process.env['AIRTABLE_BASE_ID']) {
+    console.log(
+        'Could not add new users to Airtable since required environmnet `AIRTABLE_API_KEY` and `AIRTABLE_BASE_ID` variables are unset',
+    );
+}
 
 required.forEach((value: string) => {
     if (!process.env[value]) {
@@ -44,6 +49,8 @@ export const AUTH_URL = process.env.AUTH_URL;
 export const WALLET_URL = process.env.WALLET_URL;
 export const PUBLIC_URL = process.env.PUBLIC_URL;
 export const DASHBOARD_URL = process.env.DASHBOARD_URL;
+export const AIRTABLE_API_KEY = process.env.AIRTABLE_API_KEY;
+export const AIRTABLE_BASE_ID = process.env.AIRTABLE_BASE_ID;
 export const WIDGETS_URL = process.env.WIDGETS_URL;
 export const MONGODB_URI = process.env.MONGODB_URI;
 export const PORT = process.env.PORT;

@@ -3,6 +3,11 @@ import mongoose from 'mongoose';
 import { encryptString } from '../util/encrypt';
 
 export interface IAccount {
+    firstName: string;
+    lastName: string;
+    type: string;
+    plan: string;
+    organisation: string;
     active: boolean;
     email: string;
     password: string;
@@ -41,6 +46,12 @@ export interface IAccountUpdates {
     spotifyAccess?: boolean;
     authenticationToken?: string;
     authenticationTokenExpires?: number;
+    firstName?: string;
+    lastName?: string;
+    type?: string;
+    plan?: string;
+    organisation?: string;
+
 }
 
 export type AccountDocument = mongoose.Document & IAccount;
@@ -48,6 +59,11 @@ export type AccountDocument = mongoose.Document & IAccount;
 const accountSchema = new mongoose.Schema(
     {
         active: Boolean,
+        firstName: String,
+        lastName: String,
+        organisation: String,
+        type: String,
+        plan: String,
         email: { type: String, unique: true },
         password: String,
         address: String,

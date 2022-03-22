@@ -10,6 +10,7 @@ import postResetController from './postReset.action';
 import getGoogleCallback from './getCallbackGoogle.action';
 import getTwitterCallback from './getCallbackTwitter.action';
 import getSpotifyCallback from './getCallbackSpotify.action';
+import postUpdateController from './postUpdateController';
 import postTOTPsetup from './postTOTPsetup.action';
 
 const router = express.Router();
@@ -27,5 +28,6 @@ router.get('/:uid/abort', getAbortController);
 router.get('/:uid/forgot', getForgotController);
 router.post('/:uid/forgot', urlencoded({ extended: false }), postForgotController);
 router.post('/:uid/reset', urlencoded({ extended: false }), postResetController);
+router.post('/:uid/update', urlencoded({ extended: false }), postUpdateController);
 
 export default router;

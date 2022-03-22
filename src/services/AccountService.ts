@@ -50,6 +50,11 @@ export class AccountService {
             spotifyAccess,
             authenticationToken,
             authenticationTokenExpires,
+            organisation,
+            firstName,
+            lastName,
+            plan,
+            type,
         }: IAccountUpdates,
     ) {
         // No strict checking here since null == undefined
@@ -57,6 +62,26 @@ export class AccountService {
             account.acceptTermsPrivacy = acceptTermsPrivacy == null ? false : account.acceptTermsPrivacy;
         } else {
             account.acceptTermsPrivacy = acceptTermsPrivacy || account.acceptTermsPrivacy;
+        }
+
+        if (organisation) {
+            account.organisation = organisation;
+        }
+
+        if (firstName) {
+            account.firstName = firstName;
+        }
+
+        if (lastName) {
+            account.lastName = lastName;
+        }
+
+        if (plan) {
+            account.plan = plan;
+        }
+
+        if (type) {
+            account.type = type;
         }
 
         // No strict checking here since null == undefined

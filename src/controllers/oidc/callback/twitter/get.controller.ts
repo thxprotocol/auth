@@ -5,7 +5,7 @@ import { AccountDocument } from '../../../../models/Account';
 import { ERROR_NO_ACCOUNT } from '../../../../util/messages';
 import { getAccountByEmail, getInteraction, saveInteraction } from '../../../../util/oidc';
 
-export async function ReadCallbackTwitter(req: Request, res: Response) {
+export async function controller(req: Request, res: Response) {
     async function getAccountBySub(sub: string) {
         const account = await AccountService.get(sub);
         if (!account) throw new Error(ERROR_NO_ACCOUNT);
@@ -49,3 +49,5 @@ export async function ReadCallbackTwitter(req: Request, res: Response) {
 
     return res.redirect(returnTo);
 }
+
+export default { controller };

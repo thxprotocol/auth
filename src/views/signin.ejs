@@ -111,10 +111,9 @@
                     <label>Password:</label>
                     <input class="form-control" required type="password" value="<%= params.password %>" name="password">
                 </div>
-                <% if (params.otp) { %>
+                <% if (params.otpSecret) { %>
                 <label>MFA code:</label>
                 <input class="form-control mb-4" required name="code">
-
                 <% } %>
 
                 <input type="hidden" name="returnUrl" value="<%= params.return_url %>" />

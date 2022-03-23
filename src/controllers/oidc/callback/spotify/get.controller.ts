@@ -20,7 +20,7 @@ async function getAccountBySub(sub: string): Promise<AccountDocument> {
     return account;
 }
 
-export async function ReadCallbackSpotify(req: Request, res: Response) {
+async function controller(req: Request, res: Response) {
     const code = req.query.code as string;
     const uid = req.query.state as string;
     const error = req.query.error as string;
@@ -48,3 +48,5 @@ export async function ReadCallbackSpotify(req: Request, res: Response) {
 
     return res.redirect(returnTo);
 }
+
+export default { controller };

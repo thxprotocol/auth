@@ -1,10 +1,7 @@
-import { Request, Response } from 'express';
-import { oidc } from '../../../util/oidc';
+import { Request, Response } from '../../../types/request';
 
 async function controller(req: Request, res: Response) {
-    const interaction = await oidc.interactionDetails(req, res);
-    if (!interaction) throw new Error('Could not find the interaction.');
-    const { uid, params } = interaction;
+    const { uid, params } = req.interaction;
 
     res.render('signup', { uid, params });
 }

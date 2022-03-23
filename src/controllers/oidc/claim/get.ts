@@ -1,13 +1,9 @@
-import { Request, Response } from 'express';
-import { oidc } from '../../../util/oidc';
+import { Request, Response } from '../../../types/request';
 import { ChannelAction, ChannelType } from '../../../models/Reward';
 import { getChannelScopes, getLoginLinkForChannelAction } from '../../../util/social';
 
 async function controller(req: Request, res: Response) {
-    const interaction = await oidc.interactionDetails(req, res);
-    if (!interaction) throw new Error('Could not find the interaction.');
-
-    const { uid, params } = interaction;
+    const { uid, params } = req.interaction;
     const rewardData = JSON.parse(Buffer.from(params.reward_hash, 'base64').toString());
 
     params.rewardData = rewardData;

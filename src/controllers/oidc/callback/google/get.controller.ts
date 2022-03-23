@@ -6,7 +6,7 @@ import { AccountDocument } from '../../../../models/Account';
 import { getAccountByEmail, saveInteraction } from '../../../../util/oidc';
 import { YouTubeService } from '../../../../services/YouTubeService';
 
-export async function ReadCallbackGoogle(req: Request, res: Response) {
+export async function controller(req: Request, res: Response) {
     async function updateTokens(account: AccountDocument, tokens: any) {
         account.googleAccessToken = tokens.access_token || account.googleAccessToken;
         account.googleRefreshToken = tokens.refresh_token || account.googleRefreshToken;
@@ -46,3 +46,5 @@ export async function ReadCallbackGoogle(req: Request, res: Response) {
 
     return res.redirect(returnTo);
 }
+
+export default { controller };

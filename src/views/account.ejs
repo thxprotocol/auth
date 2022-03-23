@@ -5,15 +5,25 @@
     <div class="card shadow-sm mb-5 w-100">
         <div class="card-body p-sm-5">
             <strong class="h3 d-block text-dark text-center mb-5">
-                Account Management
+                Account
             </strong>
-            <% if (locals.alert && alert.message) { %>
+            <% if (alert && alert.message) { %>
             <div class="alert alert-<%= alert.variant %>">
                 <%= alert.message %>
             </div>
             <% } %>
 
-            <form id="account_update" autocomplete="off" action="/oidc/<%= uid %>/account/update" method="POST">
+            <form id="account_update" autocomplete="off" action="/oidc/<%= uid %>/account" method="POST">
+                <div class=" row pb-3">
+                    <div class="d-flex col-4 align-items-center font-weight-bold">
+                        Email:
+                    </div>
+                    <div class="col-8">
+                        <input class="form-control" name="email" required disabled value="<%= params.email %>"
+                               placeholder="" />
+                    </div>
+                </div>
+
                 <div class="row pb-3">
                     <div class="d-flex col-4 align-items-center font-weight-bold">
                         Address:
@@ -29,8 +39,7 @@
                         First name:
                     </div>
                     <div class="col-8">
-                        <input class="form-control" name="first_name" required value="<%= params.first_name %>"
-                               placeholder="" />
+                        <input class="form-control" name="firstName" value="<%= params.firstName %>" placeholder="" />
                     </div>
                 </div>
 
@@ -39,18 +48,7 @@
                         Last name:
                     </div>
                     <div class="col-8">
-                        <input class="form-control" name="last_name" required value="<%= params.last_name %>"
-                               placeholder="" />
-                    </div>
-                </div>
-
-                <div class=" row pb-3">
-                    <div class="d-flex col-4 align-items-center font-weight-bold">
-                        Email:
-                    </div>
-                    <div class="col-8">
-                        <input class="form-control" name="email" required value="<%= params.email %>"
-                               placeholder="account@thx.network" />
+                        <input class="form-control" name="lastName" value="<%= params.lastName %>" placeholder="" />
                     </div>
                 </div>
 
@@ -70,16 +68,13 @@
                     </div>
                     <div class="col-8">
                         <select name="plan" class="form-control" disabled>
-                            <option <%=params.plan=='solo' ? 'selected' : '' %> value="solo">Solo</option>
-                            <option <%=params.plan=='community' ? 'selected' : '' %> value="community">Community
-                            </option>
-                            <option <%=params.plan=='creator' ? 'selected' : '' %> value="creator">Creator
-                            </option>
+                            <option <%=params.plan == 0 ? 'selected' : '' %> value="0">Solo</option>
+                            <option <%=params.plan == 1 ? 'selected' : '' %> value="1">Community</option>
+                            <option <%=params.plan == 2 ? 'selected' : '' %> value="2">Creator</option>
                         </select>
                     </div>
                 </div>
 
-                <input type="hidden" name="uid" value="<%= uid %>" />
                 <input type="hidden" name="return_url" value="<%= params.return_url %>" />
             </form>
 
@@ -88,33 +83,21 @@
                     MFA Status:
                 </div>
                 <div class="col-8">
-                    <% if (params.mfaEnable) { %>
-                    <form autocomplete="off" action="/oidc/<%= uid %>/totp-setup" method="post">
-                        <button class="btn btn-primary btn-block">Activated</button>
-                        <input type="hidden" name="otpSecret" value="<%= params.otpSecret %>" />
+                    <% if (params.otpSecret) { %>
+                    <form autocomplete="off" action="/oidc/<%= uid %>/account/totp" method="POST">
+                        <button class="btn btn-light text-danger btn-block">Deactivate</button>
                         <input type="hidden" name="disable" value="true" />
-                        <input type="hidden" name="uid" value="<%= uid %>" />
-                        <input type="hidden" name="return_url" value="<%= params.return_url %>" />
-
                     </form>
                     <% } %>
-
-                    <% if (!params.mfaEnable) { %>
-                    <form autocomplete="off" action="/oidc/<%= uid %>/totp-setup" method="post">
-                        <button type="submit" class="btn btn-gray btn-block">Click
-                            to Activate</button>
-                        <input type="hidden" name="otpSecret" value="<%= params.otpSecret %>" />
-                        <input type="hidden" name="uid" value="<%= uid %>" />
-                        <input type="hidden" name="return_url" value="<%= params.return_url %>" />
-
+                    <% if (!params.otpSecret) { %>
+                    <form autocomplete="off" action="/oidc/<%= uid %>/account/totp" method="POST">
+                        <button type="submit" class="btn btn-light text-primary btn-block">Activate</button>
                     </form>
                     <% } %>
                 </div>
-
-
             </div>
             <hr>
-            <button class="mt-5 btn btn-primary btn-block" type="submit" form="account_update">Update
+            <button class="mt-5 btn btn-primary btn-block rounded-pill" type="submit" form="account_update">Update
                 Infomation</button>
             <a class="btn btn-link btn-block rounded-pill" href="<%= params.return_url %>">
                 Return to application</a>

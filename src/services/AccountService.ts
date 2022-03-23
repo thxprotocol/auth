@@ -53,7 +53,6 @@ export class AccountService {
             organisation,
             firstName,
             lastName,
-            plan,
         }: IAccountUpdates,
     ) {
         // No strict checking here since null == undefined
@@ -73,10 +72,6 @@ export class AccountService {
 
         if (lastName) {
             account.lastName = lastName;
-        }
-
-        if (plan) {
-            account.plan = plan;
         }
 
         // No strict checking here since null == undefined

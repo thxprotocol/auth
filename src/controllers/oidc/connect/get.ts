@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Request, Response } from '../../../types/request';
 import { oidc } from '../../../util/oidc';
 import { ChannelType } from '../../../models/Reward';
 import { AccountService } from '../../../services/AccountService';
@@ -7,11 +7,9 @@ import { TwitterService } from '../../../services/TwitterService';
 import { YouTubeService } from '../../../services/YouTubeService';
 
 async function controller(req: Request, res: Response) {
-    const interaction = await oidc.interactionDetails(req, res);
-    if (!interaction) throw new Error('Could not find the interaction.');
-    const { uid, params } = interaction;
+    const { uid, params, session } = req.interaction;
 
-    const account = await AccountService.get(interaction.session.accountId);
+    const account = await AccountService.get(session.accountId);
     let redirect = '';
 
     if (params.channel == ChannelType.Google && !account.googleAccessToken) {

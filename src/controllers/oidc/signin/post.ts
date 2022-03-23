@@ -1,6 +1,6 @@
 import { AccountService } from '../../../services/AccountService';
 import { MailService } from '../../../services/MailService';
-import { Request, Response } from 'express';
+import { Request, Response } from '../../../types/request';
 import { ERROR_ACCOUNT_NOT_ACTIVE, ERROR_AUTH_LINK, OTP_CODE_INVALID } from '../../../util/messages';
 import { oidc } from '../../../util/oidc';
 import { authenticator } from '@otplib/preset-default';

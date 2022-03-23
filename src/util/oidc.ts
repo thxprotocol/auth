@@ -31,8 +31,7 @@ async function getAccountByEmail(email: string) {
 
 async function saveInteraction(interaction: any, sub: string) {
     interaction.result = { login: { account: sub } };
-    // TODO Look into why this is suggested:
-    await interaction.save(interaction.exp - Math.floor(new Date().getTime() / 1000));
+    await interaction.save();
     return interaction.returnTo;
 }
 

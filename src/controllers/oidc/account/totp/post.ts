@@ -1,100 +1,30 @@
-import { Request, Response } from 'express';
-import qrcode from 'qrcode';
+import { Request, Response } from '../../../../types/request';
 import { authenticator } from '@otplib/preset-default';
 import { AccountService } from '../../../../services/AccountService';
 import { ERROR_NO_ACCOUNT } from '../../../../util/messages';
-import { getInteraction } from '../../../../util/oidc';
+import { body } from 'express-validator';
+
+const validation: any[] = [body('code').exists(), body('otpSecret').exists()];
 
 async function controller(req: Request, res: Response) {
-    async function getAccountBySub(sub: string) {
-        const account = await AccountService.get(sub);
-        if (!account) throw new Error(ERROR_NO_ACCOUNT);
-        return account;
+    const { uid, session } = req.interaction;
+    const account = await AccountService.get(session.accountId);
+    if (!account) throw new Error(ERROR_NO_ACCOUNT);
+
+    if (req.body.code && req.body.otpSecret) {
+        const isValid = authenticator.check(req.body.code, req.body.otpSecret);
+        if (isValid) {
+            await account.updateOne({ otpSecret: req.body.otpSecret });
+            return res.redirect(`/oidc/${uid}/account`);
+        }
     }
-
-    const uid = req.body.uid as string;
-    const error = req.query.error as string;
-    const alert = { variant: 'danger', message: '' };
-
-    if (error) return res.redirect(`/oidc/${uid}`);
-
-    // Get all token information
-    const interaction = await getInteraction(uid);
-
-    // Check if there is an active session for this interaction
-    if (!interaction.session) {
-        alert.message = 'You have to login before do this action.';
-        return res.render('totp', {
-            uid,
-            params: { ...req.body, alert },
-        });
-    }
-
-    const account = await getAccountBySub(interaction.session.accountId);
 
     if (req.body.disable) {
-        if (account.otpSecret) {
-            account.otpSecret = null;
-            await account.save();
-        }
-
-        let otpSecret = req.body.otpSecret;
-        if (!otpSecret) {
-            otpSecret = authenticator.generateSecret();
-        }
-
-        return res.render('account', {
-            uid,
-            params: {
-                ...req.body,
-                otpSecret,
-                email: account.email,
-                first_name: account.firstName,
-                last_name: account.lastName,
-                organisation: account.organisation,
-                address: account.address,
-                plan: account.plan,
-                mfaEnable: account.otpSecret,
-            },
-        });
+        await account.updateOne({ $unset: { otpSecret: '' } });
+        return res.redirect(`/oidc/${uid}/account`);
     }
 
-    const otpauth = authenticator.keyuri(account.email, 'THX', req.body.otpSecret);
-    const code = await qrcode.toDataURL(otpauth);
-
-    if (!req.body.code) {
-        return res.render('totp', { uid, params: { ...req.body, qr_code: code, alert } });
-    }
-
-    const isValid = authenticator.check(req.body.code, req.body.otpSecret);
-    if (!isValid) {
-        alert.message = 'The code you input is incorrect';
-        return res.render('totp', {
-            uid,
-            params: { ...req.body, qr_code: code, alert },
-        });
-    }
-
-    account.otpSecret = req.body.otpSecret;
-    account.save();
-
-    let otpSecret = account.otpSecret;
-    if (!otpSecret) {
-        otpSecret = authenticator.generateSecret();
-    }
-
-    return res.render('account', {
-        uid,
-        params: {
-            ...req.body,
-            otpSecret,
-            first_name: account.firstName,
-            last_name: account.lastName,
-            organisation: account.organisation,
-            plan: account.plan,
-            mfaEnable: account.otpSecret,
-        },
-    });
+    res.redirect(`/oidc/${uid}/account/totp`);
 }
 
-export default { controller };
+export default { validation, controller };

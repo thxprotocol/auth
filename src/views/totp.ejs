@@ -7,36 +7,19 @@
             <strong class="h3 d-block text-dark text-center mb-5">
                 MFA Configuration
             </strong>
-
-            <% if (params.alert && params.alert.message) { %>
-            <div class="alert alert-<%= params.alert.variant %>">
-                <%=  params.alert.message %>
-            </div>
-            <% } %>
-
-            <% if (params.disable) { %>
-            <p>Scan this QR code with your authenticator app</p>
-            <% } %>
-
-            <% if (!params.disable) { %>
-
-            <% if (!params.already) { %>
             <p>Scan this QR code with your authenticator app. E.g. <a
                    href="https://apps.apple.com/us/app/google-authenticator/id388497605" target="_blank">Google
                     Authenticator</a> or <a href="https://www.authy.com" target="_blank">Authy</a>.</p>
             <hr>
             <div class="img-responsive text-center bg-light p-3">
-                <img width="200" src="<%= params.qr_code %>" />
+                <img width="200" src="<%= params.qrCode %>" />
             </div>
             <hr>
-            <form autocomplete="off" action="/oidc/<%= uid %>/totp-setup" method="post" class="mb-3">
+            <form autocomplete="off" action="/oidc/<%= uid %>/account/totp" method="post" class="mb-3">
                 <div class="p-2">
                     <p>Enter the code shown in your authenticator app here:</p>
                     <input placeholder="123123" class="form-control" autocomplete="off" required name="code" />
-                    <input type="hidden" name="uid" value="<%= uid %>" />
                     <input type="hidden" name="otpSecret" value="<%= params.otpSecret %>" />
-                    <input type="hidden" name="qr_code" value="<%= params.qr_code %>" />
-                    <input type="hidden" name="return_url" value="<%= params.return_url %>" />
                 </div>
                 <hr>
                 <button type="submit" class="btn rounded-pill btn-primary btn-block">
@@ -44,25 +27,9 @@
                     <i class="fas fa-chevron-right" aria-hidden="true"></i>
                 </button>
             </form>
-            <% } %>
 
-            <% if (params.already) { %>
-            <p>Do you want to disable Multi Factor Authentication for your account?</p>
-            <hr>
-            <form autocomplete="off" action="/oidc/<%= uid %>/totp-setup" method="post">
-                <input type="hidden" name="disable" value="true" />
-                <input type="hidden" name="uid" value="<%= uid %>" />
-                <input type="hidden" name="return_url" value="<%= params.return_url %>" />
-                <button type="submit" class="btn rounded-pill btn-primary btn-block">
-                    Disable MFA
-                    <i class="fas fa-chevron-right" aria-hidden="true"></i>
-                </button>
-            </form>
-            <% } %>
-
-            <% } %>
-            <a class="btn btn-link btn-block rounded-pill" href="/oidc/<%= params.uid %>">
-                Return to Account Management
+            <a class="btn btn-link btn-block rounded-pill" href="/oidc/<%= uid %>/account">
+                Return to Account
             </a>
         </div>
     </div>

@@ -1,8 +1,7 @@
-import { Request, Response } from 'express';
-import { oidc } from '../../../util/oidc';
+import { Request, Response } from '../../../types/request';
 
 async function controller(req: Request, res: Response) {
-    const { uid, params } = await oidc.interactionDetails(req, res);
+    const { uid, params } = req.interaction;
 
     res.render('forgot', {
         uid,

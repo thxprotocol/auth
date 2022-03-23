@@ -3,7 +3,7 @@ import { IAccountUpdates } from '../../../models/Account';
 import { AccountService } from '../../../services/AccountService';
 import { oidc } from '../../../util/oidc';
 
-export default async function postPasswordController(req: Request, res: Response) {
+async function controller(req: Request, res: Response) {
     if (!req.body.acceptTermsPrivacy) {
         return res.render('signin', {
             uid: req.params.uid,
@@ -57,3 +57,5 @@ export default async function postPasswordController(req: Request, res: Response
         { mergeWithLastSubmission: true },
     );
 }
+
+export default { controller };

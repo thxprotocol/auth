@@ -1,10 +1,9 @@
 import { Request, Response } from 'express';
-
 import { AccountService } from '../../../services/AccountService';
 import { MailService } from '../../../services/MailService';
 import { checkPasswordStrength } from '../../../util/passwordcheck';
 
-export default async function postCreateController(req: Request, res: Response) {
+async function controller(req: Request, res: Response) {
     function renderError(message: string) {
         return res.render('signup', {
             uid: req.params.uid,
@@ -52,3 +51,5 @@ export default async function postCreateController(req: Request, res: Response) 
         },
     });
 }
+
+export default { controller };

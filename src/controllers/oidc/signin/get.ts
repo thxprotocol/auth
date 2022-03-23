@@ -1,14 +1,11 @@
-import { Request, Response } from 'express';
-import { oidc } from '../../../util/oidc';
+import { Request, Response } from '../../../types/request';
 import { WALLET_URL } from '../../../util/secrets';
 import { SpotifyService } from '../../../services/SpotifyService';
 import { TwitterService } from '../../../services/TwitterService';
 import { YouTubeService } from '../../../services/YouTubeService';
 
 async function controller(req: Request, res: Response) {
-    const interaction = await oidc.interactionDetails(req, res);
-    if (!interaction) throw new Error('Could not find the interaction.');
-    const { uid, params } = interaction;
+    const { uid, params } = req.interaction;
 
     if (params.return_url === WALLET_URL) {
         params.googleLoginUrl = YouTubeService.getLoginUrl(req.params.uid, YouTubeService.getReadOnlyScope());

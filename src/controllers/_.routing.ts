@@ -6,9 +6,6 @@ import healthRouter from './health/_.routing';
 import { getAction } from './get.action';
 import { oidc } from './oidc';
 
-// This determines for which prefixes a json error is presented.
-export const JSON_PATHS = ['/account', '/health'];
-
 export const mainRouter = express.Router();
 
 mainRouter.get('/', getAction);

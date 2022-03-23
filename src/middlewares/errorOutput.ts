@@ -1,5 +1,4 @@
 import { NextFunction, Request, Response } from 'express';
-import { JSON_PATHS } from '../controllers/_.routing';
 import { THXHttpError } from '../util/errors';
 import { NODE_ENV } from '../util/secrets';
 
@@ -13,7 +12,8 @@ interface ErrorResponse {
 }
 
 const isJsonPath = (path: string): boolean => {
-    for (const prefix of JSON_PATHS) {
+    // This determines for which prefixes a json error is presented.
+    for (const prefix of ['/account', '/health']) {
         if (path.startsWith(prefix)) return true;
     }
     return false;

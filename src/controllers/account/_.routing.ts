@@ -6,7 +6,7 @@ import { deleteAccount } from './delete.action';
 import { postAccount } from './post.action';
 import { validate } from '../../util/validate';
 import { validations } from './_.validation';
-import { validateJwt } from '../../middlewares/validateJwt';
+import { validateJwt } from '../../middlewares';
 import { getTwitter } from './twitter/get.action';
 import { getTwitterLike } from './twitter/getLike.action';
 import { getTwitterRetweet } from './twitter/getRetweet.action';

@@ -1,6 +1,4 @@
 import express, { urlencoded } from 'express';
-import { assertInteraction } from '../../middlewares/assertInteraction';
-import { assertAuthorization } from '../../middlewares/assertAuthorization';
 import ReadOIDC from './get';
 import ReadAbort from './abort/get';
 import ReadForgot from './forgot/get';
@@ -22,7 +20,7 @@ import ReadAccount from './account/get';
 import UpdateAccount from './account/post';
 import UpdateAccountTOTP from './account/totp/post';
 import ReadAccountTOTP from './account/totp/get';
-import { assertInput } from '../../middlewares/assertInput';
+import { assertInput, assertAuthorization, assertInteraction } from '../../middlewares';
 
 const router = express.Router();
 

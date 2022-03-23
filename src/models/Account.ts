@@ -1,12 +1,12 @@
 import bcrypt from 'bcrypt-nodejs';
 import mongoose from 'mongoose';
+import { AccountPlanType } from 'types/enums/AccountPlanType';
 import { encryptString } from '../util/encrypt';
 
 export interface IAccount {
     firstName: string;
     lastName: string;
-    type: string;
-    plan: string;
+    plan: AccountPlanType;
     organisation: string;
     active: boolean;
     email: string;
@@ -48,10 +48,8 @@ export interface IAccountUpdates {
     authenticationTokenExpires?: number;
     firstName?: string;
     lastName?: string;
-    type?: string;
-    plan?: string;
+    plan?: AccountPlanType;
     organisation?: string;
-
 }
 
 export type AccountDocument = mongoose.Document & IAccount;
@@ -62,8 +60,7 @@ const accountSchema = new mongoose.Schema(
         firstName: String,
         lastName: String,
         organisation: String,
-        type: String,
-        plan: String,
+        plan: Number,
         email: { type: String, unique: true },
         password: String,
         address: String,

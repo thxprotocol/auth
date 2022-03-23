@@ -11,7 +11,7 @@ import { xframe, xssProtection } from 'lusca';
 import { requestLogger } from './util/logger';
 import { PORT, MONGODB_URI, GTM, DASHBOARD_URL, WALLET_URL, PUBLIC_URL } from './util/secrets';
 import { errorLogger, errorNormalizer, errorOutput, notFoundHandler, corsHandler } from './middlewares';
-import { mainRouter } from './controllers/_.routing';
+import { mainRouter } from './controllers';
 
 axiosBetterStacktrace(axios);
 

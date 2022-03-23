@@ -32,19 +32,21 @@ async function controller(req: Request, res: Response) {
         return renderLogin(ERROR_ACCOUNT_NOT_ACTIVE);
     }
 
+    // Serve MFA views
     if (account.otpSecret) {
+        // Show signin with code field for this account
         if (!req.body.code) {
             return res.render('signin', {
                 uid: req.params.uid,
-                params: { return_url: req.body.returnUrl, ...req.body, otp: true },
+                params: { return_url: req.body.returnUrl, ...req.body, mfaEnabled: true },
             });
         }
-
+        // Show signin with code field for this account
         const isValid = authenticator.check(req.body.code, account.otpSecret);
         if (!isValid) {
             return res.render('signin', {
                 uid: req.params.uid,
-                params: { return_url: req.body.returnUrl, ...req.body, otp: true },
+                params: { return_url: req.body.returnUrl, ...req.body, mfaEnabled: true },
                 alert: {
                     variant: 'danger',
                     message: OTP_CODE_INVALID,

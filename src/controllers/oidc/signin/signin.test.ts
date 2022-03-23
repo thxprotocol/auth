@@ -6,10 +6,11 @@ import { INITIAL_ACCESS_TOKEN } from '../../../util/secrets';
 import { getPath, accountEmail, accountSecret } from '../../../util/jest';
 
 const REDIRECT_URL = 'https://localhost:8082/signin-oidc';
+const http = request.agent(app);
 
 describe('Sign In', () => {
-    let CID = '';
-    const http = request.agent(app);
+    let uid = '',
+        Cookies = '';
     let CLIENT_ID = '';
     let CLIENT_SECRET = '';
 
@@ -23,7 +24,7 @@ describe('Sign In', () => {
                 application_type: 'web',
                 client_name: 'THX Dashboard',
                 grant_types: ['authorization_code'],
-                redirect_uris: ['https://localhost:8082/signin-oidc'],
+                redirect_uris: [REDIRECT_URL],
                 response_types: ['code'],
                 scope: 'openid dashboard user',
             });
@@ -42,7 +43,7 @@ describe('Sign In', () => {
     });
 
     describe('GET /auth', () => {
-        it('Successfully get CID', async () => {
+        it('Successfully get uid', async () => {
             const params = new URLSearchParams({
                 client_id: CLIENT_ID,
                 redirect_uri: REDIRECT_URL,
@@ -57,19 +58,33 @@ describe('Sign In', () => {
             expect(res.status).toEqual(302);
             expect(res.header.location).toMatch(new RegExp('/oidc/.*'));
 
-            CID = (res.header.location as string).split('/')[2];
+            uid = (res.header.location as string).split('/')[2];
+        });
+
+        it('Failed to login with wrong credential', async () => {
+            const res = await http
+                .post(`/oidc/${uid}/signin`)
+                .send('email=fake.user@thx.network&password=thisgoingtofail');
+
+            expect(res.status).toEqual(200);
+            expect(res.text).toMatch(new RegExp('.*Could not find an account for this address*'));
+        });
+
+        it('Failed to login with wrong password', async () => {
+            const res = await http.post(`/oidc/${uid}/signin`).send(`email=${accountEmail}&password=thisgoingtofail`);
+            expect(res.status).toEqual(200);
+            expect(res.text).toMatch(new RegExp('.*Your provided passwords do not match*'));
         });
     });
 
-    describe('POST /oidc/<cid>/signin', () => {
+    describe('POST /oidc/<uid>/signin', () => {
         describe('Login flow check', () => {
             let redirectUrl = '';
-            let Cookies = '';
             let code = '';
 
             it('Successful login with correct information', async () => {
                 const res = await http
-                    .post(`/oidc/${CID}/signin`)
+                    .post(`/oidc/${uid}/signin`)
                     .send(`email=${accountEmail}&password=${accountSecret}`);
 
                 expect(res.status).toEqual(302);
@@ -116,21 +131,6 @@ describe('Sign In', () => {
 
                 expect(res.status).toEqual(200);
             });
-        });
-
-        it('Failed to login with wrong credential', async () => {
-            const res = await http
-                .post(`/oidc/${CID}/signin`)
-                .send('email=fake.user@thx.network&password=thisgoingtofail');
-
-            expect(res.status).toEqual(200);
-            expect(res.text).toMatch(new RegExp('.*Could not find an account for this address*'));
-        });
-
-        it('Failed to login with wrong password', async () => {
-            const res = await http.post(`/oidc/${CID}/signin`).send(`email=${accountEmail}&password=thisgoingtofail`);
-            expect(res.status).toEqual(200);
-            expect(res.text).toMatch(new RegExp('.*Your provided passwords do not match*'));
         });
     });
 });

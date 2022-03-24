@@ -137,15 +137,6 @@ export class AccountService {
             account.signupTokenExpires = DURATION_TWENTYFOUR_HOURS;
         }
 
-        if (AIRTABLE_API_KEY && AIRTABLE_BASE_ID) {
-            const date = new Date(account.createdAt);
-            const base = new Airtable().base(AIRTABLE_BASE_ID);
-            await base('Pipeline: Signups').create({
-                Email: account.email,
-                Date: date.getMonth() + '/' + (date.getDay() + 1) + '/' + date.getFullYear(),
-            });
-        }
-
         return account;
     }
 
@@ -180,6 +171,17 @@ export class AccountService {
         account.active = true;
 
         await account.save();
+
+        if (AIRTABLE_API_KEY && AIRTABLE_BASE_ID) {
+            const date = new Date(account.createdAt);
+            const base = new Airtable().base(AIRTABLE_BASE_ID);
+            await base('Pipeline: Signups').create({
+                Email: account.email,
+                // getMonth() starts at 0, so for a numeric display of the month we need to add 1
+                Date: `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`,
+                AcceptUpdates: account.acceptUpdates,
+            });
+        }
 
         return { result: SUCCESS_SIGNUP_COMPLETED };
     }

@@ -6,7 +6,8 @@ import { AIRTABLE_API_KEY, AIRTABLE_BASE_ID, MONGODB_URI } from '../src/util/sec
 async function main() {
     db.connect(MONGODB_URI);
     const base = new Airtable({ apiKey: AIRTABLE_API_KEY }).base(AIRTABLE_BASE_ID);
-    const query = Account.find();
+    // Only query for active accounts
+    const query = Account.find({ active: true, privateKey: { $exists: false } });
 
     for await (const account of query) {
         const date = new Date(account.createdAt);

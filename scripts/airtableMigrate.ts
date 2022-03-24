@@ -3,7 +3,7 @@ import db from '../src/util/database';
 import { Account } from '../src/models/Account';
 import { AIRTABLE_API_KEY, AIRTABLE_BASE_ID, MONGODB_URI } from '../src/util/secrets';
 
-const migrate = async () => {
+async function main() {
     db.connect(MONGODB_URI);
     const base = new Airtable({ apiKey: AIRTABLE_API_KEY }).base(AIRTABLE_BASE_ID);
     const query = Account.find();
@@ -13,12 +13,19 @@ const migrate = async () => {
         try {
             await base('Pipeline: Signups').create({
                 Email: account.email,
-                Date: date.getMonth() + '/' + (date.getDay() + 1) + '/' + date.getFullYear(),
+                // getMonth() starts at 0, so for a numeric display of the month we need to add 1
+                Date: `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`,
+                AcceptUpdates: account.acceptUpdates,
             });
         } catch (e) {
             console.log(e);
         }
     }
-};
+}
 
-migrate();
+main()
+    .then(() => process.exit(0))
+    .catch((error) => {
+        console.error(error);
+        process.exit(1);
+    });

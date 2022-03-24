@@ -1,40 +1,8 @@
 import bcrypt from 'bcrypt-nodejs';
 import mongoose from 'mongoose';
-import { AccountPlanType } from 'types/enums/AccountPlanType';
+import { AccountPlanType } from '../types/enums/AccountPlanType';
+import { TAccount } from '../types/TAccount';
 import { encryptString } from '../util/encrypt';
-
-export interface IAccount {
-    firstName: string;
-    lastName: string;
-    plan: AccountPlanType;
-    organisation: string;
-    active: boolean;
-    email: string;
-    password: string;
-    address: string;
-    privateKey: string;
-    signupToken: string;
-    otpSecret: string;
-    signupTokenExpires: number;
-    authenticationToken: string;
-    authenticationTokenExpires: number;
-    passwordResetToken: string;
-    passwordResetExpires: number;
-    googleAccessToken: string;
-    googleRefreshToken: string;
-    googleAccessTokenExpires: number;
-    twitterAccessToken: string;
-    twitterRefreshToken: string;
-    twitterAccessTokenExpires: number;
-    spotifyAccessToken: string;
-    spotifyRefreshToken: string;
-    spotifyAccessTokenExpires: number;
-    acceptTermsPrivacy: boolean;
-    acceptUpdates: boolean;
-    recoveryPhrase: string;
-    comparePassword: any;
-    createdAt: string;
-}
 
 export interface IAccountUpdates {
     acceptTermsPrivacy?: boolean;
@@ -52,7 +20,7 @@ export interface IAccountUpdates {
     organisation?: string;
 }
 
-export type AccountDocument = mongoose.Document & IAccount;
+export type AccountDocument = mongoose.Document & TAccount;
 
 const accountSchema = new mongoose.Schema(
     {
@@ -83,8 +51,6 @@ const accountSchema = new mongoose.Schema(
         spotifyAccessTokenExpires: Number,
         acceptTermsPrivacy: Boolean,
         acceptUpdates: Boolean,
-        recoveryPhrase: String,
-        createdAt: String,
     },
     { timestamps: true },
 );

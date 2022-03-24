@@ -5,6 +5,8 @@ import { parseJwt } from '../../../../util/jwt';
 import { AccountDocument } from '../../../../models/Account';
 import { getAccountByEmail, saveInteraction } from '../../../../util/oidc';
 import { YouTubeService } from '../../../../services/YouTubeService';
+import { WALLET_URL } from '../../../../util/secrets';
+import { getChannelScopes } from '../../../../util/social';
 
 export async function controller(req: Request, res: Response) {
     async function updateTokens(account: AccountDocument, tokens: any) {
@@ -19,7 +21,7 @@ export async function controller(req: Request, res: Response) {
     const uid = req.query.state as string;
 
     // Get the interaction based on the state
-    const interaction = await await oidc.Interaction.find(uid);
+    const interaction = await oidc.Interaction.find(uid);
 
     if (!interaction)
         return res.render('error', {
@@ -30,6 +32,27 @@ export async function controller(req: Request, res: Response) {
 
     // Get all token information
     const tokens = await YouTubeService.getTokens(code);
+
+    // Only do this for reward claims
+    if (interaction.params.reward_hash) {
+        // Decode the reward hash to see which scopes are requested
+        const rewardData = JSON.parse(Buffer.from(interaction.params.reward_hash, 'base64').toString());
+        const { channelScopes } = getChannelScopes(rewardData.rewardCondition.channelAction);
+        // Loop through the scopes for the channel action to verify if they are in tokens.scope
+        for (const scope of channelScopes) {
+            if (!tokens.scope.includes(scope)) {
+                // Redirect to error page and inform user about issue
+                return res.render('error', {
+                    rewardUrl: WALLET_URL + `/claim?hash=${interaction.params.reward_hash}`,
+                    alert: {
+                        variant: 'danger',
+                        message: `Missing consent for scope "${scope}". Make sure to give consent for all requested scopes.`,
+                    },
+                });
+            }
+        }
+    }
+
     const claims = await parseJwt(tokens.id_token);
 
     // Check if there is an active session for this interaction

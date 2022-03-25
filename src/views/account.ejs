@@ -68,6 +68,7 @@
                     </div>
                     <div class="col-8">
                         <select name="plan" class="form-control" disabled>
+                            <option <%=params.plan == -1 ? 'selected' : '' %> value="-1">None</option>
                             <option <%=params.plan == 0 ? 'selected' : '' %> value="0">Solo</option>
                             <option <%=params.plan == 1 ? 'selected' : '' %> value="1">Community</option>
                             <option <%=params.plan == 2 ? 'selected' : '' %> value="2">Creator</option>

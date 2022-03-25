@@ -11,6 +11,10 @@ function formatAccountRes(account: any) {
         ...{
             id: account._id,
             address: account.address,
+            firstName: account.firstName,
+            lastName: account.lastName,
+            company: account.company,
+            plan: account.plan,
             googleAccess: account.googleAccessToken && account.googleAccessTokenExpires > Date.now(),
             twitterAccess: account.twitterAccessToken && account.twitterAccessTokenExpires > Date.now(),
             spotifyAccess: account.spotifyAccessToken && account.spotifyAccessTokenExpires > Date.now() * 1000,

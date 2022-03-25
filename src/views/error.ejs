@@ -15,9 +15,14 @@
             <% } %>
 
             <p>
-                Your interaction might have expired or something else went wrong. Please use the buttons
-                below to find your way back.
+                Please use the buttons below to find your way back.
             </p>
+            <% if (rewardUrl) { %>
+            <a class="btn rounded-pill btn-primary btn-block" href="<%= rewardUrl %>">
+                Try to claim your reward again
+                <i class="fas fa-chevron-right" aria-hidden="true"></i>
+            </a>
+            <% } %>
             <a class="btn rounded-pill btn-light btn-block" href="<%= dashboardUrl %>">
                 Go to dashboard.thx.network
                 <i class="fas fa-chevron-right" aria-hidden="true"></i>

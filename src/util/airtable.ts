@@ -10,7 +10,7 @@ interface PipelineSignUpParams {
 
 const formatDate = (datestring: string | Date) => {
     const date = new Date(datestring);
-    return date.getMonth() + '/' + (date.getDay() + 1) + '/' + date.getFullYear();
+    return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
 };
 
 export default {

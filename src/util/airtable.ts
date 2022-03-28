@@ -15,7 +15,7 @@ const formatDate = (datestring: string | Date) => {
 
 export default {
     pipelineSignup: async (params: PipelineSignUpParams) => {
-        if (!AIRTABLE_API_KEY && !AIRTABLE_BASE_ID) return;
+        if (!AIRTABLE_API_KEY || !AIRTABLE_BASE_ID) return;
 
         const base = new Airtable().base(AIRTABLE_BASE_ID);
         await base('Pipeline: Signups').create({

@@ -1,9 +1,8 @@
 import newrelic from 'newrelic';
-import Airtable from 'airtable';
 import { Account, AccountDocument, IAccountUpdates } from '../models/Account';
 import { createRandomToken } from '../util/tokens';
 import { decryptString } from '../util/decrypt';
-import { AIRTABLE_API_KEY, AIRTABLE_BASE_ID, SECURE_KEY } from '../util/secrets';
+import { SECURE_KEY } from '../util/secrets';
 import { checkPasswordStrength } from '../util/passwordcheck';
 import Web3 from 'web3';
 import {
@@ -172,18 +171,7 @@ export class AccountService {
 
         await account.save();
 
-        if (AIRTABLE_API_KEY && AIRTABLE_BASE_ID) {
-            const date = new Date(account.createdAt);
-            const base = new Airtable().base(AIRTABLE_BASE_ID);
-            await base('Pipeline: Signups').create({
-                Email: account.email,
-                // getMonth() starts at 0, so for a numeric display of the month we need to add 1
-                Date: `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`,
-                AcceptUpdates: account.acceptUpdates,
-            });
-        }
-
-        return { result: SUCCESS_SIGNUP_COMPLETED };
+        return { result: SUCCESS_SIGNUP_COMPLETED, account };
     }
 
     static async getSubForAuthenticationToken(

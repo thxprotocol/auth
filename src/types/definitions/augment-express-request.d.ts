@@ -1,5 +1,3 @@
-import { InteractionResults } from 'oidc-provider';
-
 export {};
 
 declare global {
@@ -7,7 +5,6 @@ declare global {
         interface Request {
             origin?: string;
             user?: any;
-            interaction?: InteractionResults;
         }
     }
 }

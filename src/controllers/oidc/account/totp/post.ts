@@ -1,4 +1,4 @@
-import { Request, Response } from '../../../../types/request';
+import { Request, Response } from 'express';
 import { authenticator } from '@otplib/preset-default';
 import { AccountService } from '../../../../services/AccountService';
 import { ERROR_NO_ACCOUNT } from '../../../../util/messages';

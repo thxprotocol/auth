@@ -1,4 +1,4 @@
-import { Request, Response } from '../../../types/request';
+import { Request, Response } from 'express';
 import { AccountService } from '../../../services/AccountService';
 import airtable from '../../../util/airtable';
 import { DASHBOARD_URL } from '../../../util/secrets';

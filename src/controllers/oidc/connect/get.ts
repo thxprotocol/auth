@@ -1,4 +1,4 @@
-import { Request, Response } from '../../../types/request';
+import { Request, Response } from 'express';
 import { oidc } from '../../../util/oidc';
 import { ChannelType } from '../../../models/Reward';
 import { AccountService } from '../../../services/AccountService';

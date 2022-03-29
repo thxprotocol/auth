@@ -1,4 +1,4 @@
-import { Request, Response } from '../../../types/request';
+import { Request, Response } from 'express';
 import { ChannelAction, ChannelType } from '../../../models/Reward';
 import { getChannelScopes, getLoginLinkForChannelAction } from '../../../util/social';
 

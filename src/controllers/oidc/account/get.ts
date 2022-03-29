@@ -1,4 +1,4 @@
-import { Request, Response } from '../../../types/request';
+import { Request, Response } from 'express';
 import { AccountService } from '../../../services/AccountService';
 
 async function controller(req: Request, res: Response) {

@@ -1,4 +1,4 @@
-import { Request, Response } from '../../../../types/request';
+import { Request, Response } from 'express';
 import qrcode from 'qrcode';
 import { authenticator } from '@otplib/preset-default';
 import { AccountService } from '../../../../services/AccountService';

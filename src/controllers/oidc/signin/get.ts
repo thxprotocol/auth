@@ -1,4 +1,4 @@
-import { Request, Response } from '../../../types/request';
+import { Request, Response } from 'express';
 import { WALLET_URL } from '../../../util/secrets';
 import { SpotifyService } from '../../../services/SpotifyService';
 import { TwitterService } from '../../../services/TwitterService';

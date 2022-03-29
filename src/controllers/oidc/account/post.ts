@@ -1,4 +1,4 @@
-import { Request, Response } from '../../../types/request';
+import { Request, Response } from 'express';
 import { body } from 'express-validator';
 import { AccountService } from '../../../services/AccountService';
 import { ERROR_NO_ACCOUNT } from '../../../util/messages';

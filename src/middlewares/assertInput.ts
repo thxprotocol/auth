@@ -1,5 +1,5 @@
 import { validationResult } from 'express-validator';
-import { Request, Response, NextFunction } from '../types/request';
+import { Request, Response, NextFunction } from 'express';
 
 export function assertInput(validations: any) {
     return async function (req: Request, res: Response, next: NextFunction) {

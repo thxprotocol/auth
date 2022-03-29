@@ -14,9 +14,10 @@
         "skipLibCheck": true,
         "allowJs": true,
         "paths": {
-            "*": ["./src/*", "./node_modules/*", "./src/types/*"]
+            "@/*": ["./src/*"],
+            "*": ["./src/types/definitions/*"]
         }
     },
-    "include": ["./src/**/*.ts", "./src/migrations/*"],
+    "include": ["./src/**/*.ts", "./src/migrations/*", "./scripts/**/*.ts"],
     "ts-node": { "files": true }
 }

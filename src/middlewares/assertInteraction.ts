@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from '../types/request';
+import { Request, Response, NextFunction } from 'express';
 import { oidc } from '../util/oidc';
 
 export async function assertInteraction(req: Request, res: Response, next: NextFunction) {

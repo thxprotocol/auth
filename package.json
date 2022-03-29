@@ -121,21 +121,13 @@
     "eslintConfig": {
         "parser": "@typescript-eslint/parser",
         "root": true,
-        "env": {
-            "node": true,
-            "mocha": true,
-            "shelljs": true,
-            "jest": true,
-            "es6": true,
-            "amd": true
-        },
         "extends": [
             "eslint:recommended",
             "plugin:@typescript-eslint/recommended",
             "plugin:prettier/recommended"
         ],
         "parserOptions": {
-            "ecmaVersion": 2020,
+            "ecmaVersion": 2021,
             "sourceType": "module"
         },
         "rules": {
@@ -156,10 +148,7 @@
             "@typescript-eslint/interface-name-prefix": "off"
         },
         "ignorePatterns": [
-            "dist/*",
-            "src/types/",
-            "**/*.d.ts",
-            "node_modules"
+            "./**/*.d.ts"
         ]
     },
     "jest": {
@@ -182,6 +171,9 @@
         "testEnvironment": "node",
         "setupFilesAfterEnv": [
             "<rootDir>/src/util/jest/setup.ts"
-        ]
+        ],
+        "moduleNameMapper": {
+            "^@/(.*)$": "<rootDir>/src/$1"
+        }
     }
 }

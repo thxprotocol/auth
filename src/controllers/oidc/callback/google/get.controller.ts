@@ -26,6 +26,7 @@ export async function controller(req: Request, res: Response) {
     if (!interaction)
         return res.render('error', {
             params: {},
+            rewardUrl: '',
             alert: { variant: 'danger', message: 'Could not find your session.' },
         });
     if (!code) return res.redirect(interaction.params.return_url);

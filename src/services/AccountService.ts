@@ -18,6 +18,7 @@ import {
 } from '../util/messages';
 import { YouTubeService } from './YouTubeService';
 import { logger } from '../util/logger';
+import { AccountPlanType } from '../types/enums/AccountPlanType';
 
 export class AccountService {
     static get(sub: string) {
@@ -130,6 +131,7 @@ export class AccountService {
         account.password = password;
         account.acceptTermsPrivacy = acceptTermsPrivacy || false;
         account.acceptUpdates = acceptUpdates || false;
+        account.plan = AccountPlanType.Solo;
 
         if (!active) {
             account.signupToken = createRandomToken();
@@ -148,6 +150,7 @@ export class AccountService {
             privateKey: address ? privateKey : wallet.privateKey,
             email,
             password,
+            plan: AccountPlanType.Solo,
         });
 
         await account.save();

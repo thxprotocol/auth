@@ -19,6 +19,7 @@ import {
 import { YouTubeService } from './YouTubeService';
 import { logger } from '../util/logger';
 import { AccountPlanType } from '../types/enums/AccountPlanType';
+import { MailService } from '../services/MailService';
 
 export class AccountService {
     static get(sub: string) {
@@ -53,6 +54,7 @@ export class AccountService {
             organisation,
             firstName,
             lastName,
+            plan,
         }: IAccountUpdates,
     ) {
         // No strict checking here since null == undefined
@@ -73,7 +75,12 @@ export class AccountService {
         if (lastName) {
             account.lastName = lastName;
         }
-
+        if (plan) {
+            if (account.plan === AccountPlanType.Free) {
+                // await MailService.
+            }
+            account.plan = plan;
+        }
         // No strict checking here since null == undefined
         if (account.acceptUpdates == null) {
             account.acceptUpdates = acceptUpdates == null ? false : account.acceptUpdates;
@@ -131,7 +138,7 @@ export class AccountService {
         account.password = password;
         account.acceptTermsPrivacy = acceptTermsPrivacy || false;
         account.acceptUpdates = acceptUpdates || false;
-        account.plan = AccountPlanType.Solo;
+        account.plan = AccountPlanType.Free;
 
         if (!active) {
             account.signupToken = createRandomToken();
@@ -150,7 +157,7 @@ export class AccountService {
             privateKey: address ? privateKey : wallet.privateKey,
             email,
             password,
-            plan: AccountPlanType.Solo,
+            plan: AccountPlanType.Free,
         });
 
         await account.save();

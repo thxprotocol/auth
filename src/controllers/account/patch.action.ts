@@ -14,6 +14,7 @@ export const patchAccount = async (req: Request, res: Response) => {
         spotifyAccess: req.body.spotifyAccess,
         authenticationToken: req.body.authenticationToken,
         authenticationTokenExpires: req.body.authenticationTokenExpires,
+        plan: req.body.plan,
     });
     res.status(204).end();
 };

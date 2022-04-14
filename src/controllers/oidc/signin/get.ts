@@ -7,8 +7,9 @@ import { YouTubeService } from '../../../services/YouTubeService';
 async function controller(req: Request, res: Response) {
     const { uid, params } = req.interaction;
 
+    params.googleLoginUrl = YouTubeService.getLoginUrl(req.params.uid, YouTubeService.getReadOnlyScope());
+
     if (params.return_url === WALLET_URL) {
-        params.googleLoginUrl = YouTubeService.getLoginUrl(req.params.uid, YouTubeService.getReadOnlyScope());
         params.twitterLoginUrl = TwitterService.getLoginURL(uid);
         params.spotifyLoginUrl = SpotifyService.getSpotifyUrl(uid);
     }

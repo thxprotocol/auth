@@ -64,6 +64,11 @@ export async function controller(req: Request, res: Response) {
             : // If not, get account for email claim
               await getAccountByEmail(claims.email);
 
+    // Actions after successfully login
+    await AccountService.update(account, {
+        lastLoginAt: Date.now(),
+    });
+
     const returnTo = await saveInteraction(interaction, account._id.toString());
 
     await updateTokens(account, tokens);

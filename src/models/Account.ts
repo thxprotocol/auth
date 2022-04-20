@@ -14,7 +14,7 @@ export interface IAccountUpdates {
     spotifyAccess?: boolean;
     authenticationToken?: string;
     authenticationTokenExpires?: number;
-    lastLoginTime?: number;
+    lastLoginAt?: number;
     firstName?: string;
     lastName?: string;
     plan?: AccountPlanType;
@@ -52,7 +52,7 @@ const accountSchema = new mongoose.Schema(
         spotifyAccessTokenExpires: Number,
         acceptTermsPrivacy: Boolean,
         acceptUpdates: Boolean,
-        lastLoginTime: Date,
+        lastLoginAt: Date,
     },
     { timestamps: true },
 );

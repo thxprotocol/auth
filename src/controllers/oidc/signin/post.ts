@@ -62,9 +62,9 @@ async function controller(req: Request, res: Response) {
 
     // Actions after successfully login
     await AccountService.update(account, {
-        lastLoginTime: new Date().getTime(),
+        lastLoginAt: Date.now(),
     });
-    
+
     // Make to finish the interaction and login with sub
     await oidc.interactionFinished(req, res, { login: { account: sub } }, { mergeWithLastSubmission: true });
 }

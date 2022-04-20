@@ -51,7 +51,7 @@ export class AccountService {
             spotifyAccess,
             authenticationToken,
             authenticationTokenExpires,
-            lastLoginTime,
+            lastLoginAt,
             organisation,
             firstName,
             lastName,
@@ -77,8 +77,8 @@ export class AccountService {
             account.lastName = lastName;
         }
 
-        if (lastLoginTime) {
-            account.lastLoginTime = lastLoginTime;
+        if (lastLoginAt) {
+            account.lastLoginAt = lastLoginAt;
         }
 
         if (plan) {

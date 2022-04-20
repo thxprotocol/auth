@@ -26,7 +26,7 @@ export interface TAccount {
     spotifyAccessToken: string;
     spotifyRefreshToken: string;
     spotifyAccessTokenExpires: number;
-    lastLoginTime: number;
+    lastLoginAt: number;
     acceptTermsPrivacy: boolean;
     acceptUpdates: boolean;
     comparePassword: any;

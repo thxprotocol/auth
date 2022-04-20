@@ -8,6 +8,7 @@
         "acceptUpdates": true,
         "signupToken": "",
         "signupTokenExpires": null,
+        "plan": 1,
         "createdAt": { "$date": "2021-05-18T09:39:03.446Z" },
         "updatedAt": { "$date": "2021-05-18T09:39:23.128Z" },
         "__v": 0

@@ -129,7 +129,7 @@
                     Can't sign in?
                 </a>
                 <span class="text-muted">|</span>
-                <a class="btn btn-link" href="/oidc/<%= uid %>/signup">
+                <a class="btn btn-link" href="/oidc/<%= uid %>/signup?returnUrl=<%= params.return_url%>">
                     Sign up for an account
                 </a>
             </div>

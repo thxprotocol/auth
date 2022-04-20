@@ -51,6 +51,7 @@ export class AccountService {
             spotifyAccess,
             authenticationToken,
             authenticationTokenExpires,
+            lastLoginAt,
             organisation,
             firstName,
             lastName,
@@ -75,6 +76,11 @@ export class AccountService {
         if (lastName) {
             account.lastName = lastName;
         }
+
+        if (lastLoginAt) {
+            account.lastLoginAt = lastLoginAt;
+        }
+
         if (plan) {
             if (account.plan === AccountPlanType.Free) {
                 // await MailService.

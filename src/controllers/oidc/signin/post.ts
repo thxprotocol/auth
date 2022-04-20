@@ -60,6 +60,11 @@ async function controller(req: Request, res: Response) {
         return renderLogin(ERROR_AUTH_LINK);
     }
 
+    // Actions after successfully login
+    await AccountService.update(account, {
+        lastLoginAt: Date.now(),
+    });
+
     // Make to finish the interaction and login with sub
     await oidc.interactionFinished(req, res, { login: { account: sub } }, { mergeWithLastSubmission: true });
 }

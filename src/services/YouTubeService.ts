@@ -154,9 +154,10 @@ export class YouTubeService {
         return r.data;
     }
 
-    static getLoginUrl(uid: string, scope: string[]) {
+    static getLoginUrl(uid: string, scope: string[], redirectUri?: string) {
         return client.generateAuthUrl({
             state: uid,
+            redirect_uri: redirectUri,
             access_type: 'offline',
             scope,
         });

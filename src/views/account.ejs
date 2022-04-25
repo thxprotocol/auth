@@ -78,7 +78,7 @@
                 <input type="hidden" name="return_url" value="<%= params.return_url %>" />
             </form>
 
-            <div class="row">
+            <div class="row pb-3">
                 <div class="d-flex col-4 align-items-center font-weight-bold">
                     MFA Status:
                 </div>
@@ -96,6 +96,59 @@
                     <% } %>
                 </div>
             </div>
+
+            <div class="row">
+                <div class="d-flex col-4 align-items-center font-weight-bold">
+                    Connect with
+                </div>
+
+                <div class="d-flex col-8">
+                <!--
+                This part is used for regular login flow and only visibile if links are available
+                -->
+                    <div class="row w-100">
+                        <% if (params.googleLoginUrl) { %>
+                        <div class="col-4">
+                            <a class="btn btn-sign-in btn-google btn-block" href="<%= params.googleLoginUrl %>" download>
+                                <div class="logo">
+                                    <img src="/img/g-logo.png" alt="Google logo" />
+                                </div>
+                                <div class="label">Connect</div>
+                            </a>
+                        </div>
+                        <% } else { %>
+                        <div class="col-4">
+                            <a class="btn w-100 btn-sign-in btn-google btn-block" href="<%= params.googleLoginUrl %>" download>
+                                <div class="logo">
+                                    <img src="/img/g-logo.png" alt="Google logo" />
+                                </div>
+                                <div class="label">Connected</div>
+                            </a>
+                        </div>
+                        <% } %>
+                        <% if (params.twitterLoginUrl) { %>
+                        <a class="btn w-100 btn-sign-in btn-twitter btn-block" href="<%= params.twitterLoginUrl %>">
+                            <div class="logo">
+                                <img src="/img/t-logo.png" alt="Twitter logo" />
+                            </div>
+                            <div class="label">Connect</div>
+                        </a>
+                        <% } %>
+                        <% if (params.spotifyLoginUrl) { %>
+                        <a class="btn w-100 btn-sign-in btn-twitter btn-block" href="<%= params.spotifyLoginUrl %>">
+                            <div class="logo">
+                                <img src="/img/s-logo.png" alt="Spotify logo" />
+                            </div>
+                            <div class="label">Connect</div>
+                        </a>
+                        <% } %>
+                <!--
+                        This part is used for regular login flow
+                    -->
+                    </div>
+                </div>
+            </div>
+
             <hr>
             <button class="mt-5 btn btn-primary btn-block rounded-pill" type="submit" form="account_update">Update
                 Infomation</button>

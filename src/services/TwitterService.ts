@@ -144,7 +144,7 @@ export class TwitterService {
         return 'tweet.read%20users.read%20like.read%20follows.read%20offline.access';
     }
 
-    static getLoginURL(uid: string) {
-        return `https://twitter.com/i/oauth2/authorize?response_type=code&client_id=${TWITTER_CLIENT_ID}&redirect_uri=${TWITTER_REDIRECT_URI}&scope=${this.getScopes()}&code_challenge=challenge&code_challenge_method=plain&state=${uid}`;
+    static getLoginURL(uid: string, redirectUrl: string = TWITTER_REDIRECT_URI) {
+        return `https://twitter.com/i/oauth2/authorize?response_type=code&client_id=${TWITTER_CLIENT_ID}&redirect_uri=${redirectUrl}&scope=${this.getScopes()}&code_challenge=challenge&code_challenge_method=plain&state=${uid}`;
     }
 }

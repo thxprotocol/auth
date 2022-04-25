@@ -58,13 +58,13 @@ export class SpotifyService {
         return r.data;
     }
 
-    static getSpotifyUrl(state?: string) {
+    static getSpotifyUrl(state?: string, redirectUrl: string = SPOTIFY_REDIRECT_URI) {
         const body = new URLSearchParams();
 
         if (state) body.append('state', state);
         body.append('response_type', 'code');
         body.append('client_id', SPOTIFY_CLIENT_ID);
-        body.append('redirect_uri', SPOTIFY_REDIRECT_URI);
+        body.append('redirect_uri', redirectUrl);
         body.append('scope', SPOTIFY_API_SCOPE.join(' '));
 
         return `https://accounts.spotify.com/authorize?${body.toString()}`;

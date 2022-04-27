@@ -13,6 +13,14 @@ export const SPOTIFY_API_SCOPE = [
     'user-read-email',
 ];
 
+export const SPOTIFY_LIMITED_SCOPE = [
+    'user-follow-read',
+    'user-library-read',
+    'user-read-recently-played',
+    'user-read-currently-playing',
+    'user-read-private',
+];
+
 const ERROR_NO_DATA = 'Could not find an Spotify data for this accesstoken';
 const ERROR_NOT_AUTHORIZED = 'Not authorized for Spotify API';
 const ERROR_TOKEN_REQUEST_FAILED = 'Failed to request access token';

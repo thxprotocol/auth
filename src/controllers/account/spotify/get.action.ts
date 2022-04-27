@@ -17,7 +17,7 @@ export const getSpotify = async (req: Request, res: Response) => {
         return res.json({ isAuthorized: false });
     }
 
-    if (Date.now() * 1000 >= account.spotifyAccessTokenExpires) {
+    if (Date.now() >= account.spotifyAccessTokenExpires) {
         const tokens = await SpotifyService.refreshTokens(account.spotifyRefreshToken);
         account = await updateTokens(account, tokens);
     }

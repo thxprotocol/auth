@@ -62,6 +62,19 @@
                     </div>
                 </div>
 
+                <% if (params.googleAccess) { %>
+                    <input form="account_update" type="hidden" name="googleAccess" value="false" />
+                <% } %>
+
+                <% if (params.twitterAccess) { %>
+                    <input form="account_update" type="hidden" name="twitterAccess" value="false" />
+                <% } %>
+
+                <% if (params.spotifyAccess) { %>
+                    <input form="account_update" type="hidden" name="spotifyAccess" value="false" />
+                <% } %>
+
+
                 <div class="row pb-3">
                     <div class="d-flex col-4 align-items-center font-weight-bold">
                         Plan:
@@ -98,7 +111,7 @@
             </div>
 
             <div class="row">
-                <div class="d-flex col-4 align-items-center font-weight-bold">
+                <div class="d-flex col-4 align-items-start font-weight-bold">
                     Connect with
                 </div>
 
@@ -106,41 +119,54 @@
                 <!--
                 This part is used for regular login flow and only visibile if links are available
                 -->
-                    <div class="row w-100">
-                        <% if (params.googleLoginUrl) { %>
-                        <div class="col-4">
-                            <a class="btn btn-sign-in btn-google btn-block" href="<%= params.googleLoginUrl %>" download>
-                                <div class="logo">
-                                    <img src="/img/g-logo.png" alt="Google logo" />
-                                </div>
-                                <div class="label">Connect</div>
-                            </a>
-                        </div>
-                        <% } else { %>
-                        <div class="col-4">
-                            <a class="btn w-100 btn-sign-in btn-google btn-block" href="<%= params.googleLoginUrl %>" download>
-                                <div class="logo">
-                                    <img src="/img/g-logo.png" alt="Google logo" />
-                                </div>
-                                <div class="label">Connected</div>
-                            </a>
-                        </div>
+                    <div class="w-100 d-flex flex-column">
+                        <% if (params.googleLoginUrl && !params.googleAccess) { %>
+                        <a class="btn btn-sign-in btn-google btn-block" href="<%= params.googleLoginUrl %>" download>
+                            <div class="logo">
+                                <img src="/img/g-logo.png" alt="Google logo" />
+                            </div>
+                            <div class="label">Sign in with Google</div>
+                        </a>
                         <% } %>
-                        <% if (params.twitterLoginUrl) { %>
-                        <a class="btn w-100 btn-sign-in btn-twitter btn-block" href="<%= params.twitterLoginUrl %>">
+                        <% if (params.googleAccess) { %>
+                        <button form="account_update" class="btn btn-sign-in btn-google bg-gray btn-block" type="submit">
+                            <div class="logo">
+                                <img src="/img/g-logo.png" alt="Google logo" />
+                            </div>
+                            <div class="label">Disconnect with Google</div>
+                        </button>
+                        <% } %>
+                        <% if (params.twitterLoginUrl && !params.twitterAccess) { %>
+                        <a class="btn btn-sign-in btn-twitter btn-block" href="<%= params.twitterLoginUrl %>">
                             <div class="logo">
                                 <img src="/img/t-logo.png" alt="Twitter logo" />
                             </div>
-                            <div class="label">Connect</div>
+                            <div class="label">Sign in with Twitter</div>
                         </a>
                         <% } %>
-                        <% if (params.spotifyLoginUrl) { %>
-                        <a class="btn w-100 btn-sign-in btn-twitter btn-block" href="<%= params.spotifyLoginUrl %>">
+                        <% if (params.twitterAccess) { %>
+                        <button form="account_update" class="btn btn-sign-in bg-gray btn-twitter btn-block" type="submit">
+                            <div class="logo">
+                                <img src="/img/t-logo.png" alt="Twitter logo" />
+                            </div>
+                            <div class="label">Disconnect with Twitter</div>
+                        </button>       
+                        <% } %>
+                        <% if (params.spotifyLoginUrl && !params.spotifyAccess) { %>
+                        <a class="btn btn-sign-in btn-twitter btn-block" href="<%= params.spotifyLoginUrl %>">
                             <div class="logo">
                                 <img src="/img/s-logo.png" alt="Spotify logo" />
                             </div>
-                            <div class="label">Connect</div>
+                            <div class="label">Sign in with Spotify</div>
                         </a>
+                        <% } %>
+                        <% if (params.spotifyAccess) { %>
+                        <button form="account_update" class="btn btn-sign-in bg-gray btn-twitter btn-block" type="submit">
+                            <div class="logo">
+                                <img src="/img/s-logo.png" alt="Spotify logo" />
+                            </div>
+                            <div class="label">Disconnect with Spotify</div>
+                        </button>
                         <% } %>
                 <!--
                         This part is used for regular login flow

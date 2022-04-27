@@ -8,7 +8,7 @@ async function controller(req: Request, res: Response) {
     const rewardData = JSON.parse(Buffer.from(params.reward_hash, 'base64').toString());
 
     params.rewardData = rewardData;
-    params.googleLoginUrl = YouTubeService.getLoginUrl(req.params.uid, YouTubeService.getReadOnlyScope());
+    params.googleLoginUrl = YouTubeService.getLoginUrl(req.params.uid, { scope: YouTubeService.getReadOnlyScope() });
 
     if (!rewardData.rewardCondition || !rewardData.rewardCondition.channelType) {
         return res.render('signin', {

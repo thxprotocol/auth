@@ -13,11 +13,11 @@ async function controller(req: Request, res: Response) {
     let redirect = '';
 
     if (params.channel == ChannelType.Google && !account.googleAccessToken) {
-        redirect = YouTubeService.getLoginUrl(req.params.uid, YouTubeService.getReadOnlyScope());
+        redirect = YouTubeService.getLoginUrl(req.params.uid, { scope: YouTubeService.getReadOnlyScope() });
     } else if (params.channel == ChannelType.Twitter && !account.twitterAccessToken) {
-        redirect = TwitterService.getLoginURL(uid);
+        redirect = TwitterService.getLoginURL(uid, {});
     } else if (params.channel == ChannelType.Spotify && !account.spotifyAccessToken) {
-        redirect = SpotifyService.getSpotifyUrl(uid);
+        redirect = SpotifyService.getLoginURL(uid, {});
     }
 
     if (!redirect) {

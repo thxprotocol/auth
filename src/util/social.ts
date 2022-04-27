@@ -12,7 +12,7 @@ function getChannelScopes(channelAction: ChannelAction) {
         case ChannelAction.TwitterLike:
         case ChannelAction.TwitterRetweet:
         case ChannelAction.TwitterFollow:
-            return { channelScopes: TwitterService.getScopes().split('%20') };
+            return { channelScopes: TwitterService.getScopes() };
         case ChannelAction.SpotifyPlaylistFollow:
         case ChannelAction.SpotifyTrackPlaying:
         case ChannelAction.SpotifyTrackRecent:
@@ -25,19 +25,19 @@ function getChannelScopes(channelAction: ChannelAction) {
 function getLoginLinkForChannelAction(uid: string, channelAction: ChannelAction) {
     switch (channelAction) {
         case ChannelAction.YouTubeLike:
-            return { googleLoginUrl: YouTubeService.getLoginUrl(uid, YouTubeService.getScope()) };
+            return { googleLoginUrl: YouTubeService.getLoginUrl(uid, { scope: YouTubeService.getScope() }) };
         case ChannelAction.YouTubeSubscribe:
-            return { googleLoginUrl: YouTubeService.getLoginUrl(uid, YouTubeService.getReadOnlyScope()) };
+            return { googleLoginUrl: YouTubeService.getLoginUrl(uid, { scope: YouTubeService.getReadOnlyScope() }) };
         case ChannelAction.TwitterLike:
         case ChannelAction.TwitterRetweet:
         case ChannelAction.TwitterFollow:
-            return { twitterLoginUrl: TwitterService.getLoginURL(uid) };
+            return { twitterLoginUrl: TwitterService.getLoginURL(uid, {}) };
         case ChannelAction.SpotifyPlaylistFollow:
         case ChannelAction.SpotifyTrackPlaying:
         case ChannelAction.SpotifyTrackRecent:
         case ChannelAction.SpotifyTrackSaved:
         case ChannelAction.SpotifyUserFollow:
-            return { spotifyLoginUrl: SpotifyService.getSpotifyUrl(uid) };
+            return { spotifyLoginUrl: SpotifyService.getLoginURL(uid, {}) };
     }
 }
 

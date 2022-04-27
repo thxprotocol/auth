@@ -1,3 +1,4 @@
+import CommonOauthLoginOptions from 'types/CommonOauthLoginOptions';
 import { twitterClient } from '../util/axios';
 import { TWITTER_CLIENT_ID, TWITTER_CLIENT_SECRET, TWITTER_REDIRECT_URI } from '../util/secrets';
 
@@ -141,10 +142,15 @@ export class TwitterService {
     }
 
     static getScopes() {
-        return 'tweet.read%20users.read%20like.read%20follows.read%20offline.access';
+        return ['tweet.read', 'users.read', 'like.read', 'follows.read', 'offline.access'];
     }
 
-    static getLoginURL(uid: string, redirectUrl: string = TWITTER_REDIRECT_URI) {
-        return `https://twitter.com/i/oauth2/authorize?response_type=code&client_id=${TWITTER_CLIENT_ID}&redirect_uri=${redirectUrl}&scope=${this.getScopes()}&code_challenge=challenge&code_challenge_method=plain&state=${uid}`;
+    static getLoginURL(
+        uid: string,
+        { scope = this.getScopes(), redirectUrl = TWITTER_REDIRECT_URI }: CommonOauthLoginOptions,
+    ) {
+        return `https://twitter.com/i/oauth2/authorize?response_type=code&client_id=${TWITTER_CLIENT_ID}&redirect_uri=${redirectUrl}&scope=${scope.join(
+            '%20',
+        )}&code_challenge=challenge&code_challenge_method=plain&state=${uid}`;
     }
 }

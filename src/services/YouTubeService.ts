@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { google, youtube_v3 } from 'googleapis';
+import CommonOauthLoginOptions from 'types/CommonOauthLoginOptions';
 import { AccountDocument } from '../models/Account';
 import { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_REDIRECT_URI } from '../util/secrets';
 
@@ -154,12 +155,12 @@ export class YouTubeService {
         return r.data;
     }
 
-    static getLoginUrl(uid: string, scope: string[], redirectUri?: string) {
+    static getLoginUrl(uid: string, { scope = this.getScope(), redirectUrl }: CommonOauthLoginOptions) {
         return client.generateAuthUrl({
             state: uid,
-            redirect_uri: redirectUri,
+            redirect_uri: redirectUrl,
             access_type: 'offline',
-            scope,
+            scope: scope,
         });
     }
 

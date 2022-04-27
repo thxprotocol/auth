@@ -2,6 +2,7 @@ import { spotifyClient } from '../util/axios';
 import { Playlist } from '../types';
 import { PlaylistItem } from '../types/PlaylistItem';
 import { SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, SPOTIFY_REDIRECT_URI } from '../util/secrets';
+import CommonOauthLoginOptions from 'types/CommonOauthLoginOptions';
 
 export const SPOTIFY_API_SCOPE = [
     'user-follow-read',
@@ -58,14 +59,17 @@ export class SpotifyService {
         return r.data;
     }
 
-    static getSpotifyUrl(state?: string, redirectUrl: string = SPOTIFY_REDIRECT_URI) {
+    static getLoginURL(
+        state: string,
+        { scope = SPOTIFY_API_SCOPE, redirectUrl = SPOTIFY_REDIRECT_URI }: CommonOauthLoginOptions,
+    ) {
         const body = new URLSearchParams();
 
         if (state) body.append('state', state);
         body.append('response_type', 'code');
         body.append('client_id', SPOTIFY_CLIENT_ID);
         body.append('redirect_uri', redirectUrl);
-        body.append('scope', SPOTIFY_API_SCOPE.join(' '));
+        body.append('scope', scope.join(' '));
 
         return `https://accounts.spotify.com/authorize?${body.toString()}`;
     }

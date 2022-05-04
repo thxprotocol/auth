@@ -38,18 +38,21 @@ export async function controller(req: Request, res: Response) {
     if (interaction.params.reward_hash) {
         // Decode the reward hash to see which scopes are requested
         const rewardData = JSON.parse(Buffer.from(interaction.params.reward_hash, 'base64').toString());
-        const { channelScopes } = getChannelScopes(rewardData.rewardCondition.channelAction);
-        // Loop through the scopes for the channel action to verify if they are in tokens.scope
-        for (const scope of channelScopes) {
-            if (!tokens.scope.includes(scope)) {
-                // Redirect to error page and inform user about issue
-                return res.render('error', {
-                    rewardUrl: WALLET_URL + `/claim?hash=${interaction.params.reward_hash}`,
-                    alert: {
-                        variant: 'danger',
-                        message: `Missing consent for scope "${scope}". Make sure to give consent for all requested scopes.`,
-                    },
-                });
+
+        if (rewardData.rewardCondition && rewardData.rewardCondition.channelAction) {
+            const { channelScopes } = getChannelScopes(rewardData.rewardCondition.channelAction);
+            // Loop through the scopes for the channel action to verify if they are in tokens.scope
+            for (const scope of channelScopes) {
+                if (!tokens.scope.includes(scope)) {
+                    // Redirect to error page and inform user about issue
+                    return res.render('error', {
+                        rewardUrl: WALLET_URL + `/claim?hash=${interaction.params.reward_hash}`,
+                        alert: {
+                            variant: 'danger',
+                            message: `Missing consent for scope "${scope}". Make sure to give consent for all requested scopes.`,
+                        },
+                    });
+                }
             }
         }
     }

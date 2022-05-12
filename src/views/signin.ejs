@@ -1,6 +1,17 @@
+<% if (params.backgroundImgUrl) { %>
+<style type="text/css">
+    body {
+        background-image: url("<%- params.backgroundImgUrl %>") !important;
+    }
+</style>
+<% } %>
 <div class="col-md-6 offset-md-3 col-xl-4 offset-xl-4 order-0 order-sm-1">
     <div class="text-center pb-4 pt-4">
-        <img src="/img/logo.png" width="60" alt="THX Logo" />
+        <% if (params.logoImgUrl) { %>
+            <img src="<%- params.logoImgUrl %>" width="60" alt="THX Logo" />
+        <% } else { %>
+            <img src="/img/logo.png" width="60" alt="THX Logo" />
+        <% } %>
     </div>
     <div class="card shadow-sm mb-5">
         <div class="card-body p-sm-5">

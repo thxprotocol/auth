@@ -3,6 +3,7 @@ import { YouTubeService } from './../../../services/YouTubeService';
 import { ChannelAction, ChannelType } from '../../../models/Reward';
 import { getChannelScopes, getLoginLinkForChannelAction } from '../../../util/social';
 import SkinService from '../../../services/SkinService';
+import ImageService from '../../../services/ImageService';
 
 async function controller(req: Request, res: Response) {
     const { uid, params } = req.interaction;
@@ -12,8 +13,9 @@ async function controller(req: Request, res: Response) {
 
     params.rewardData = rewardData;
     params.googleLoginUrl = YouTubeService.getLoginUrl(req.params.uid, YouTubeService.getReadOnlyScope());
-    params.backgroundImgUrl = skinData?.backgroundImgUrl;
-    params.logoImgUrl = skinData?.logoImgUrl;
+    params.backgroundImgUrl =
+        skinData?.backgroundImgKey && (await ImageService.getSignedUrl(skinData.backgroundImgKey));
+    params.logoImgUrl = skinData?.logoImgKey && (await ImageService.getSignedUrl(skinData.logoImgKey));
 
     if (!rewardData.rewardCondition || !rewardData.rewardCondition.channelType) {
         return res.render('signin', {

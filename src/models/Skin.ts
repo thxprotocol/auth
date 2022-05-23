@@ -3,15 +3,15 @@ import mongoose from 'mongoose';
 export type ISkinUpdate = Partial<ISkin>;
 
 export interface ISkin {
-    logoImgUrl: string;
-    backgroundImgUrl: string;
+    logoImgKey: string;
+    backgroundImgKey: string;
     poolAddress: string;
     clientId: string;
 }
 
 const skinSchema = new mongoose.Schema({
-    logoImgUrl: String,
-    backgroundImgUrl: String,
+    logoImgKey: String,
+    backgroundImgKey: String,
     poolAddress: String,
     clientId: String,
 });

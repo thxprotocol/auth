@@ -12,6 +12,11 @@ const required = [
     'PORT',
     'SECURE_KEY',
     'TWITTER_CLIENT_ID',
+    'AWS_BUCKET_NAME',
+    'AWS_BUCKET_REGION',
+    'AWS_ACCESS_KEY',
+    'AWS_SECRET_KEY',
+    'AWS_ARN_KEY',
 ];
 
 // For production (docker containers) we should require JWKS_JSON to be set since otherwise each container
@@ -51,6 +56,11 @@ export const MONGODB_URI = process.env.MONGODB_URI;
 export const PORT = process.env.PORT;
 export const SECURE_KEY = process.env.SECURE_KEY;
 export const GTM = process.env.GTM;
+export const AWS_ARN_KEY = process.env.AWS_ARN_KEY;
+export const AWS_ACCESS_KEY = process.env.AWS_ACCESS_KEY;
+export const AWS_SECRET_KEY = process.env.AWS_SECRET_KEY;
+export const AWS_BUCKET_NAME = process.env.AWS_BUCKET_NAME;
+export const AWS_BUCKET_REGION = process.env.AWS_BUCKET_REGION;
 export const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
 export const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 export const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;

@@ -8,7 +8,7 @@ import { AWS_BUCKET_NAME } from '../util/secrets';
 export default {
     upload: async (file: Express.Multer.File) => {
         const [originalname, extension] = file.originalname.split('.');
-        const filename = originalname.toLowerCase().split(' ').join('-').split('.') + '-' + short() + extension;
+        const filename = originalname.toLowerCase().split(' ').join('-').split('.') + '-' + short() + `.${extension}`;
         const stream = file.buffer;
         const uploadParams = {
             Key: filename,

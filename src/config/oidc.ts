@@ -80,6 +80,8 @@ export default {
         'deposits:write', // user
         'metrics:read', // cms
         'offline_access',
+        'erc20:read',
+        'erc20:write'
     ],
     claims: {
         openid: ['sub', 'email', 'address'],

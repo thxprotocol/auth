@@ -85,12 +85,7 @@ export default {
     ],
     claims: {
         openid: ['sub', 'email', 'address'],
-        admin: ['admin'], // Deprecates soon and will move to permissions scheme
-        cms: ['cms'], // Deprecates soon and will move to permissions scheme
-        dashboard: ['dashboard'], // Deprecates soon and will move to permissions scheme
-        user: ['user'], // Deprecates soon and will move to permissions scheme
-        widget: ['widget', 'address'], // Deprecates soon and will move to permissions scheme
-        email: ['email'],
+        email: ['email']
     },
     ttl: {
         AccessToken: 1 * 60 * 60, // 1 hour in seconds

@@ -81,7 +81,9 @@ export default {
         'metrics:read', // cms
         'offline_access',
         'erc20:read',
-        'erc20:write'
+        'erc20:write',
+        'promotions:read', // dashboard
+        'promotions:write' // dashboard
     ],
     claims: {
         openid: ['sub', 'email', 'address'],

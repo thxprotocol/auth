@@ -8,7 +8,7 @@ module.exports = {
 
         // DASHBOARD SCOPE
         oldScope = 'openid user dashboard';
-        newScope = 'openid asset_pools:read asset_pools:write withdrawals:read rewards:write deposits:read deposits:write';
+        newScope = 'openid asset_pools:read asset_pools:write withdrawals:read rewards:write deposits:read deposits:write promotions:read promotions:write';
         db.collection('client').updateMany({ 'payload.scope': oldScope }, { $set: { 'payload.scope': newScope }});
 
         // CMS SCOPE

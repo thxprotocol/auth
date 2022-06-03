@@ -12,8 +12,15 @@ async function controller(req: Request, res: Response) {
     const account = await AccountService.get(session.accountId);
     let redirect = '';
 
-    if (params.channel == ChannelType.Google && !account.googleAccessToken) {
-        redirect = YouTubeService.getLoginUrl(req.params.uid, YouTubeService.getReadOnlyScope());
+    if (params.channel == ChannelType.Google) {
+        if (account.googleAccessToken) {
+            const haveExpandedScopes = await YouTubeService.haveExpandedScopes(account.googleAccessToken);
+            if (!haveExpandedScopes) {
+                redirect = YouTubeService.getLoginUrl(req.params.uid, YouTubeService.getExpandedScopes());
+            }
+        } else {
+            redirect = YouTubeService.getLoginUrl(req.params.uid, YouTubeService.getExpandedScopes());
+        }
     } else if (params.channel == ChannelType.Twitter && !account.twitterAccessToken) {
         redirect = TwitterService.getLoginURL(uid);
     } else if (params.channel == ChannelType.Spotify && !account.spotifyAccessToken) {

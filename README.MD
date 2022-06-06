@@ -61,7 +61,7 @@ POST http://localhost:3000/reg
     "grant_types": ["client_credentials"],
     "redirect_uris": [],
     "response_types": [],
-    "scope": "openid admin"
+    "scope": "openid account:read account:write asset_pools:read asset_pools:write rewards:read members:read members:write withdrawals:write"
 }
 ```
 
@@ -76,7 +76,7 @@ POST http://localhost:3000/reg
     "redirect_uris": ["https://dev.wallet.thx.network/signin-oidc"],
     "post_logout_redirect_uris": ["https://dev.wallet.thx.network"],
     "response_types": ["code"],
-    "scope": "openid user email offline_access"
+    "scope": "openid email offline_access deposits:read deposits:write asset_pools:read asset_pools:write rewards:read withdrawals:read"
 }
 ```
 

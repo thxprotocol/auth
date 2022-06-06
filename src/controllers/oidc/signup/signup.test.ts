@@ -26,7 +26,7 @@ describe('Sign up', () => {
                 grant_types: ['authorization_code'],
                 redirect_uris: ['https://localhost:8082/signin-oidc'],
                 response_types: ['code'],
-                scope: 'openid asset_pools:read asset_pools:write withdrawals:read rewards:write deposits:read deposits:write',
+                scope: 'openid pools:read pools:write withdrawals:read rewards:write deposits:read deposits:write',
             });
 
         CLIENT_ID = res.body.client_id;
@@ -45,7 +45,7 @@ describe('Sign up', () => {
                 response_type: 'code',
                 response_mode: 'query',
                 redirect_uri: REDIRECT_URL,
-                scope: 'openid asset_pools:read asset_pools:write rewards:write',
+                scope: 'openid pools:read pools:write rewards:write',
             });
 
             const res = await http.get(`/auth?${params.toString()}`).send();

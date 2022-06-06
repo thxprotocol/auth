@@ -177,15 +177,15 @@ describe('Account Controller', () => {
         });
     });
 
-    describe('GET /account/:sub/youtube', () => {
+    describe('GET /account/:sub/google/youtube', () => {
         it('Denice Access if there no authorization header', async () => {
-            const res = await http.get(`/account/${accountId}/youtube`).send();
+            const res = await http.get(`/account/${accountId}/google/youtube`).send();
             expect(res.status).toEqual(401);
         });
 
         it('Throw Error if there no linked youtube', async () => {
             const res = await http
-                .get(`/account/${accountId}/youtube`)
+                .get(`/account/${accountId}/google/youtube`)
                 .set({
                     Authorization: authHeader,
                 })

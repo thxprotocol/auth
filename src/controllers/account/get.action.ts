@@ -17,7 +17,7 @@ function formatAccountRes(account: any) {
             plan: account.plan,
             googleAccess: account.googleAccessToken && account.googleAccessTokenExpires > Date.now(),
             twitterAccess: account.twitterAccessToken && account.twitterAccessTokenExpires > Date.now(),
-            spotifyAccess: account.spotifyAccessToken && account.spotifyAccessTokenExpires > Date.now() * 1000,
+            spotifyAccess: account.spotifyAccessToken && account.spotifyAccessTokenExpires > Date.now(),
         },
         ...protectedPrivateKey,
     };

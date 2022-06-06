@@ -21,9 +21,9 @@ export async function controller(req: Request, res: Response) {
     const account = await AccountService.get(session.accountId);
     if (!account) throw new Error(ERROR_NO_ACCOUNT);
 
-    await account.updateOne(req.body);
+    await AccountService.update(account, req.body);
 
-    return res.redirect(`/oidc/${uid}/account`);
+    res.redirect(`/oidc/${uid}/account`);
 }
 
 export default { validation, controller };

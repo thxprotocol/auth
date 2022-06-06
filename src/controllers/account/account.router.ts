@@ -11,9 +11,9 @@ import { getTwitter } from './twitter/get.action';
 import { getTwitterLike } from './twitter/getLike.action';
 import { getTwitterRetweet } from './twitter/getRetweet.action';
 import { getTwitterFollow } from './twitter/getFollow.action';
-import { getYoutube } from './youtube/get.action';
-import { getYoutubeLike } from './youtube/getLike.action';
-import { getYoutubeSubscribe } from './youtube/getSubscribe.action';
+import { getYoutube } from './google/get.controller';
+import { getYoutubeLike } from './google/youtube/like/get.controller';
+import { getYoutubeSubscribe } from './google/youtube/subscribe/get.controller';
 import { getSpotifyUserFollow, getSpotifyPlaylistFollow } from './spotify/get.follow.action';
 import { getSpotifyTrackPlaying, getSpotifyTrackRecent, getSpotifyTrackSaved } from './spotify/get.track.action';
 import { getSpotify } from './spotify/get.action';
@@ -30,9 +30,9 @@ router.get('/:sub/twitter/like/:item', checkScopes(['account:read']), getTwitter
 router.get('/:sub/twitter/retweet/:item', checkScopes(['account:read']), getTwitterRetweet);
 router.get('/:sub/twitter/follow/:item', checkScopes(['account:read']), getTwitterFollow);
 
-router.get('/:sub/youtube', checkScopes(['account:read']), getYoutube);
-router.get('/:sub/youtube/like/:item', checkScopes(['account:read']), getYoutubeLike);
-router.get('/:sub/youtube/subscribe/:item', checkScopes(['account:read']), getYoutubeSubscribe);
+router.get('/:sub/google/youtube', checkScopes(['account:read']), getYoutube);
+router.get('/:sub/google/youtube/like/:item', checkScopes(['account:read']), getYoutubeLike);
+router.get('/:sub/google/youtube/subscribe/:item', checkScopes(['account:read']), getYoutubeSubscribe);
 
 router.get('/:sub/spotify', checkScopes(['account:read']), getSpotify);
 router.get('/:sub/spotify/user_follow/:item', checkScopes(['account:read']), getSpotifyUserFollow);

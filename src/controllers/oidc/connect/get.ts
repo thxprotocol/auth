@@ -22,9 +22,9 @@ async function controller(req: Request, res: Response) {
             redirect = YouTubeService.getLoginUrl(req.params.uid, YouTubeService.getExpandedScopes());
         }
     } else if (params.channel == ChannelType.Twitter && !account.twitterAccessToken) {
-        redirect = TwitterService.getLoginURL(uid);
+        redirect = TwitterService.getLoginURL(uid, {});
     } else if (params.channel == ChannelType.Spotify && !account.spotifyAccessToken) {
-        redirect = SpotifyService.getSpotifyUrl(uid);
+        redirect = SpotifyService.getLoginURL(uid, {});
     }
 
     if (!redirect) {

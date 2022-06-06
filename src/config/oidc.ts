@@ -35,7 +35,7 @@ export default {
             async claims() {
                 return {
                     sub: id,
-                    ...account,
+                    ...account.toJSON(),
                 };
             },
         };
@@ -66,28 +66,35 @@ export default {
         'channel',
     ],
     scopes: [
-        'account:read', // admin
-        'account:write', // admin (only active and signupped users)
-        'asset_pools:read', // user, dashboard, admin
-        'asset_pools:write', // user, dashboard, admin
-        'rewards:read', // user, dashboard, admin
-        'rewards:write', // dashboard
-        'members:read', // admin
-        'members:write', // admin
-        'withdrawals:read', // user
-        'withdrawals:write', // admin
-        'deposits:read', // user
-        'deposits:write', // user
-        'metrics:read', // cms
-        'offline_access',
+        'account:read',
+        'account:write',
+        'pools:read',
+        'pools:write',
+        'rewards:read',
+        'rewards:write',
+        'members:read',
+        'members:write',
+        'memberships:read',
+        'memberships:write',
+        'withdrawals:read',
+        'withdrawals:write',
+        'deposits:read',
+        'deposits:write',
         'erc20:read',
         'erc20:write',
-        'promotions:read', // dashboard
-        'promotions:write' // dashboard
+        'erc721:read',
+        'erc721:write',
+        'promotions:read',
+        'promotions:write',
+        'transactions:read',
+        'transactions:write',
+        'widgets:write',
+        'widgets:read',
+        'relay:write',
+        'metrics:read',
     ],
     claims: {
-        openid: ['sub', 'email', 'address'],
-        email: ['email']
+        openid: ['sub', 'email'],
     },
     ttl: {
         AccessToken: 1 * 60 * 60, // 1 hour in seconds

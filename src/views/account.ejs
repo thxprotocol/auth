@@ -63,21 +63,21 @@
                 </div>
 
                 <% if (params.googleAccess) { %>
-                    <input form="account_update" type="hidden" name="googleAccess" value="false" />
+                <input form="account_update" type="hidden" name="googleAccess" value="false" />
                 <% } %>
 
                 <% if (params.twitterAccess) { %>
-                    <input form="account_update" type="hidden" name="twitterAccess" value="false" />
+                <input form="account_update" type="hidden" name="twitterAccess" value="false" />
                 <% } %>
 
                 <% if (params.spotifyAccess) { %>
-                    <input form="account_update" type="hidden" name="spotifyAccess" value="false" />
+                <input form="account_update" type="hidden" name="spotifyAccess" value="false" />
                 <% } %>
 
 
                 <div class="row pb-3">
                     <div class="d-flex col-4 align-items-center font-weight-bold">
-                        Plan:
+                        Plan
                     </div>
                     <div class="col-8">
                         <select name="plan" class="form-control" disabled>
@@ -90,10 +90,12 @@
 
                 <input type="hidden" name="return_url" value="<%= params.return_url %>" />
             </form>
-
+            <hr>
             <div class="row pb-3">
-                <div class="d-flex col-4 align-items-center font-weight-bold">
-                    MFA Status:
+                <div class="d-flex col-4 align-items-start justify-content-start flex-column font-weight-bold">
+                    MFA
+                    <small class="text-muted">Multi-factor Authentication using time-based one-time passwords
+                        (TOTP).</small>
                 </div>
                 <div class="col-8">
                     <% if (params.otpSecret) { %>
@@ -109,19 +111,17 @@
                     <% } %>
                 </div>
             </div>
-
+            <hr>
             <div class="row">
-                <div class="d-flex col-4 align-items-start font-weight-bold">
-                    Connect with
+                <div class="d-flex col-4 align-items-start flex-column font-weight-bold">
+                    Connect
+                    <small class="text-muted">Link your other accounts using single sign-on.</small>
                 </div>
 
                 <div class="d-flex col-8">
-                <!--
-                This part is used for regular login flow and only visibile if links are available
-                -->
                     <div class="w-100 d-flex flex-column">
                         <% if (params.googleLoginUrl && !params.googleAccess) { %>
-                        <a class="btn btn-sign-in btn-google btn-block" href="<%= params.googleLoginUrl %>" download>
+                        <a class="btn btn-sign-in btn-google btn-block my-1" href="<%= params.googleLoginUrl %>">
                             <div class="logo">
                                 <img src="/img/g-logo.png" alt="Google logo" />
                             </div>
@@ -129,15 +129,17 @@
                         </a>
                         <% } %>
                         <% if (params.googleAccess) { %>
-                        <button form="account_update" class="btn btn-sign-in btn-google bg-gray btn-block" type="submit">
-                            <div class="logo">
-                                <img src="/img/g-logo.png" alt="Google logo" />
-                            </div>
-                            <div class="label">Disconnect with Google</div>
-                        </button>
+                        <form method="post" action="/oidc/<%= uid %>/account/google/disconnect">
+                            <button class="btn btn-sign-in btn-google bg-gray btn-block my-1" type="submit">
+                                <div class="logo">
+                                    <img src="/img/g-logo.png" alt="Google logo" />
+                                </div>
+                                <div class="label">Disconnect Google</div>
+                            </button>
+                        </form>
                         <% } %>
                         <% if (params.twitterLoginUrl && !params.twitterAccess) { %>
-                        <a class="btn btn-sign-in btn-twitter btn-block" href="<%= params.twitterLoginUrl %>">
+                        <a class="btn btn-sign-in btn-twitter btn-block my-1" href="<%= params.twitterLoginUrl %>">
                             <div class="logo">
                                 <img src="/img/t-logo.png" alt="Twitter logo" />
                             </div>
@@ -145,15 +147,17 @@
                         </a>
                         <% } %>
                         <% if (params.twitterAccess) { %>
-                        <button form="account_update" class="btn btn-sign-in bg-gray btn-twitter btn-block" type="submit">
-                            <div class="logo">
-                                <img src="/img/t-logo.png" alt="Twitter logo" />
-                            </div>
-                            <div class="label">Disconnect with Twitter</div>
-                        </button>       
+                        <form method="post" action="/oidc/<%= uid %>/account/twitter/disconnect">
+                            <button class="btn btn-sign-in bg-gray btn-twitter btn-block my-1" type="submit">
+                                <div class="logo">
+                                    <img src="/img/t-logo.png" alt="Twitter logo" />
+                                </div>
+                                <div class="label">Disconnect Twitter</div>
+                            </button>
+                        </form>
                         <% } %>
                         <% if (params.spotifyLoginUrl && !params.spotifyAccess) { %>
-                        <a class="btn btn-sign-in btn-twitter btn-block" href="<%= params.spotifyLoginUrl %>">
+                        <a class="btn btn-sign-in btn-twitter btn-block my-1" href="<%= params.spotifyLoginUrl %>">
                             <div class="logo">
                                 <img src="/img/s-logo.png" alt="Spotify logo" />
                             </div>
@@ -161,25 +165,26 @@
                         </a>
                         <% } %>
                         <% if (params.spotifyAccess) { %>
-                        <button form="account_update" class="btn btn-sign-in bg-gray btn-twitter btn-block" type="submit">
-                            <div class="logo">
-                                <img src="/img/s-logo.png" alt="Spotify logo" />
-                            </div>
-                            <div class="label">Disconnect with Spotify</div>
-                        </button>
+                        <form method="post" action="/oidc/<%= uid %>/account/spotify/disconnect">
+                            <button class="btn btn-sign-in bg-gray btn-twitter btn-block my-1" type="submit">
+                                <div class="logo">
+                                    <img src="/img/s-logo.png" alt="Spotify logo" />
+                                </div>
+                                <div class="label">Disconnect Spotify</div>
+                            </button>
+                        </form>
                         <% } %>
-                <!--
-                        This part is used for regular login flow
-                    -->
                     </div>
                 </div>
             </div>
 
             <hr>
-            <button class="mt-5 btn btn-primary btn-block rounded-pill" type="submit" form="account_update">Update
-                Infomation</button>
+            <button class="mt-5 btn btn-primary btn-block rounded-pill" type="submit" form="account_update">
+                Update Infomation
+            </button>
             <a class="btn btn-link btn-block rounded-pill" href="<%= params.return_url %>">
-                Return to application</a>
+                Return to application
+            </a>
         </div>
     </div>
 </div>

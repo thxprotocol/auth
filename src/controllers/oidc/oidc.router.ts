@@ -20,6 +20,9 @@ import ReadAccount from './account/get';
 import UpdateAccount from './account/post';
 import UpdateAccountTOTP from './account/totp/post';
 import ReadAccountTOTP from './account/totp/get';
+import PostGoogleDisconnect from './account/google/disconnect/post.controller';
+import PostTwitterDisconnect from './account/twitter/disconnect/post.controller';
+import PostSpotifyDisconnect from './account/spotify/disconnect/post.controller';
 import { assertInput, assertAuthorization, assertInteraction } from '../../middlewares';
 
 const router = express.Router();
@@ -46,6 +49,21 @@ router.post('/:uid/reset', urlencoded({ extended: false }), assertInteraction, C
 // // Routes require auth
 router.get('/:uid/connect', assertInteraction, assertAuthorization, ReadConnect.controller);
 router.get('/:uid/account', assertInteraction, assertAuthorization, ReadAccount.controller);
+
+router.post('/:uid/account/google/disconnect', assertInteraction, assertAuthorization, PostGoogleDisconnect.controller);
+router.post(
+    '/:uid/account/spotify/disconnect',
+    assertInteraction,
+    assertAuthorization,
+    PostSpotifyDisconnect.controller,
+);
+router.post(
+    '/:uid/account/twitter/disconnect',
+    assertInteraction,
+    assertAuthorization,
+    PostTwitterDisconnect.controller,
+);
+
 router.post(
     '/:uid/account',
     urlencoded({ extended: false }),

@@ -6,9 +6,8 @@ import { SPOTIFY_API_SCOPE, SpotifyService } from '../services/SpotifyService';
 function getChannelScopes(channelAction: ChannelAction) {
     switch (channelAction) {
         case ChannelAction.YouTubeLike:
-            return { channelScopes: YouTubeService.getScope() };
         case ChannelAction.YouTubeSubscribe:
-            return { channelScopes: YouTubeService.getReadOnlyScope() };
+            return { channelScopes: YouTubeService.getExpandedScopes() };
         case ChannelAction.TwitterLike:
         case ChannelAction.TwitterRetweet:
         case ChannelAction.TwitterFollow:
@@ -25,9 +24,8 @@ function getChannelScopes(channelAction: ChannelAction) {
 function getLoginLinkForChannelAction(uid: string, channelAction: ChannelAction) {
     switch (channelAction) {
         case ChannelAction.YouTubeLike:
-            return { googleLoginUrl: YouTubeService.getLoginUrl(uid, { scope: YouTubeService.getScope() }) };
         case ChannelAction.YouTubeSubscribe:
-            return { googleLoginUrl: YouTubeService.getLoginUrl(uid, { scope: YouTubeService.getReadOnlyScope() }) };
+            return { googleLoginUrl: YouTubeService.getLoginUrl(uid, YouTubeService.getExpandedScopes()) };
         case ChannelAction.TwitterLike:
         case ChannelAction.TwitterRetweet:
         case ChannelAction.TwitterFollow:

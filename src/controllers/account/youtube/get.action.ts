@@ -9,11 +9,13 @@ export const getYoutube = async (req: Request, res: Response) => {
         return res.json({ isAuthorized: false });
     }
 
-    const channels = await YouTubeService.getChannelList(account);
-    const videos = await YouTubeService.getVideoList(account);
+    const haveExpanedScopes = await YouTubeService.haveExpandedScopes(account.googleAccessToken);
+
+    const channels = haveExpanedScopes ? await YouTubeService.getChannelList(account) : [];
+    const videos = haveExpanedScopes ? await YouTubeService.getVideoList(account) : [];
 
     res.json({
-        isAuthorized: true,
+        isAuthorized: haveExpanedScopes,
         channels,
         videos,
     });

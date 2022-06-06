@@ -11,7 +11,7 @@ async function controller(req: Request, res: Response) {
     const skinData = await SkinService.get(poolAddress);
 
     params.rewardData = rewardData;
-    params.googleLoginUrl = YouTubeService.getLoginUrl(req.params.uid, YouTubeService.getReadOnlyScope());
+    params.googleLoginUrl = YouTubeService.getLoginUrl(req.params.uid, YouTubeService.getExpandedScopes());
     params.backgroundImgUrl = skinData?.backgroundImgUrl;
     params.logoImgUrl = skinData?.logoImgUrl;
 

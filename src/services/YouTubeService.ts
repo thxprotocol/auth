@@ -143,6 +143,22 @@ export class YouTubeService {
         });
     }
 
+    static async getScopesOfAccessToken(token: string): Promise<string[]> {
+        const response = await axios({
+            url: `https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=${token}`,
+        });
+        return response.data['scope'].split(' ');
+    }
+
+    static async haveExpandedScopes(token: string): Promise<boolean> {
+        const expanedScopes = this.getExpandedScopes();
+        const scopes = await YouTubeService.getScopesOfAccessToken(token);
+
+        const missingScope = scopes.length !== expanedScopes.length;
+
+        return !missingScope;
+    }
+
     static async revokeAccess(account: AccountDocument) {
         const r = await axios({
             url: `https://oauth2.googleapis.com/revoke?token=${account.googleAccessToken}`,
@@ -167,11 +183,11 @@ export class YouTubeService {
         return res.tokens;
     }
 
-    static getScope() {
-        return ['https://www.googleapis.com/auth/userinfo.email', 'https://www.googleapis.com/auth/youtube'];
+    static getBasicScopes() {
+        return ['https://www.googleapis.com/auth/userinfo.email', 'openid'];
     }
 
-    static getReadOnlyScope() {
-        return ['https://www.googleapis.com/auth/userinfo.email', 'https://www.googleapis.com/auth/youtube.readonly'];
+    static getExpandedScopes() {
+        return ['https://www.googleapis.com/auth/userinfo.email', 'https://www.googleapis.com/auth/youtube', 'openid'];
     }
 }

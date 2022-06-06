@@ -171,12 +171,11 @@ export class YouTubeService {
         return r.data;
     }
 
-    static getLoginUrl(uid: string, { scope = this.getScope(), redirectUrl }: CommonOauthLoginOptions) {
+    static getLoginUrl(uid: string, scope: string[]) {
         return client.generateAuthUrl({
             state: uid,
-            redirect_uri: redirectUrl,
             access_type: 'offline',
-            scope: scope,
+            scope,
         });
     }
 

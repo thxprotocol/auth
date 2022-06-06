@@ -99,12 +99,12 @@ describe('OAuth2 Grants', () => {
                 })
                 .send({
                     grant_type: 'client_credentials',
-                    scope: 'openid admin user',
+                    scope: 'openid account:read account:write members:read members:write withdrawals:write asset_pools:read asset_pools:write rewards:read withdrawals:read deposits:read deposits:write',
                 });
             expect(res.body).toMatchObject({
                 error: 'invalid_scope',
                 error_description: 'requested scope is not whitelisted',
-                scope: 'admin',
+                scope: 'members:read',
             });
             expect(res.status).toBe(400);
         });

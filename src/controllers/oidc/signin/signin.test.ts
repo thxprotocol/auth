@@ -26,7 +26,7 @@ describe('Sign In', () => {
                 grant_types: ['authorization_code'],
                 redirect_uris: [REDIRECT_URL],
                 response_types: ['code'],
-                scope: 'openid dashboard user',
+                scope: 'openid asset_pools:read asset_pools:write withdrawals:read rewards:write deposits:read deposits:write',
             });
 
         CLIENT_ID = res.body.client_id;
@@ -47,7 +47,7 @@ describe('Sign In', () => {
             const params = new URLSearchParams({
                 client_id: CLIENT_ID,
                 redirect_uri: REDIRECT_URL,
-                scope: 'openid user dashboard',
+                scope: 'openid asset_pools:read asset_pools:write withdrawals:read rewards:write deposits:read deposits:write',
                 response_type: 'code',
                 response_mode: 'query',
                 nonce: 'xun4kvy4mh',

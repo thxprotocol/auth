@@ -26,7 +26,7 @@ module.exports = {
         // WALLET SCOPE
         oldScope = 'openid user email offline_access deposits:read deposits:write';
         newScope =
-            'openid rewards:read erc20:read erc721:read withdrawals:read deposits:read deposits:write account:read account:write memberships:read promotions:read relay:write';
+            'openid rewards:read erc20:read erc721:read withdrawals:read withdrawals:write deposits:read deposits:write account:read account:write memberships:read memberships:write promotions:read relay:write';
         await db
             .collection('client')
             .updateMany({ 'payload.scope': oldScope }, { $set: { 'payload.scope': newScope } });

@@ -1,7 +1,7 @@
 import express, { json, urlencoded } from 'express';
 
 import oidcRouter from './oidc/oidc.router';
-import accountRouter from './account/_.routing';
+import accountRouter from './account/account.router';
 import healthRouter from './health/_.routing';
 import skinRouter from './skin/_.routing';
 import { getAction } from './get.action';

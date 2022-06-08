@@ -24,7 +24,7 @@ module.exports = {
             .updateMany({ 'payload.scope': 'openid cms' }, { $set: { 'payload.scope': newScope } });
 
         // WALLET SCOPE
-        oldScope = 'openid user email offline_access deposits:read deposits:write';
+        oldScope = 'openid user deposits:read deposits:write';
         newScope =
             'openid rewards:read erc20:read erc721:read withdrawals:read withdrawals:write deposits:read deposits:write account:read account:write memberships:read memberships:write promotions:read relay:write';
         await db

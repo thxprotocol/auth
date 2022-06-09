@@ -88,6 +88,8 @@ export default {
         'promotions:write',
         'transactions:read',
         'transactions:write',
+        'payments:read',
+        'payments:write',
         'widgets:write',
         'widgets:read',
         'relay:write',

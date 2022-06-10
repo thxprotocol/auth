@@ -11,6 +11,7 @@
         "lint": "npx eslint \"src/**/*.ts\"",
         "lint:fix": "npx eslint \"src/**/*.ts\" --fix",
         "dev": "docker-compose up -d && npm run watch:debug",
+        "start": "ts-node-dev src/server.ts",
         "build": "npm run build:sass && npm run build:assets && tsc",
         "build:assets": "mkdir -p dist/src/public && cp -R src/public/* dist/src/public/. && cp -R src/views dist/src/.",
         "airtable:migrate": "ts-node-dev scripts/airtableMigrate.ts",

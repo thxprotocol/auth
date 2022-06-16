@@ -19,7 +19,7 @@
             "client_secret_expires_at": 0,
             "client_secret": "VVrUT7n82KNcuh947RAI-dqY79K8r47k_Xk9WvdKXl_viltV5kzX5oNDjen97vr0pBRSlv3oGZvz3_ka1136LQ",
             "redirect_uris": ["https://localhost:8082/signin-oidc"],
-            "scope": "openid pools:read pools:write withdrawals:read rewards:write promotions:read promotions:write deposits:write deposits:read"
+            "scope": "openid rewards:read erc20:read erc721:read withdrawals:read withdrawals:write deposits:read deposits:write account:read account:write memberships:read memberships:write promotions:read relay:write"
         }
     },
     {
@@ -89,6 +89,29 @@
             "client_secret": "BnQrAHSb4UDnpR-9klfFAQbZvq_RjVZgLTKwRD3qfOjawX21jrnbBxvSOU84EwqAy1J-fNKvxD2qZen5Gm8jXg",
             "redirect_uris": [],
             "scope": "openid account:read account:write"
+        }
+    },
+    {
+        "_id": "P4bLsMzQIwWlr_DOhH_qE",
+        "payload": {
+            "application_type": "web",
+            "grant_types": ["client_credentials"],
+            "id_token_signed_response_alg": "RS256",
+            "post_logout_redirect_uris": [],
+            "require_auth_time": false,
+            "response_types": [],
+            "subject_type": "public",
+            "token_endpoint_auth_method": "client_secret_basic",
+            "introspection_endpoint_auth_method": "client_secret_basic",
+            "require_signed_request_object": false,
+            "request_uris": [],
+            "client_id_issued_at": 1655295083,
+            "client_id": "P4bLsMzQIwWlr_DOhH_qE",
+            "client_name": "THX Auth",
+            "client_secret_expires_at": 0,
+            "client_secret": "o7RMGeLieULzp0bAiuq6nfukFBCLKxo8N867SzeZNrinshSb15W9NggU93CdtrE_0jTWLUl3U2YkcXYtD3hdcQ",
+            "redirect_uris": [],
+            "scope": "openid brands:read"
         }
     }
 ]

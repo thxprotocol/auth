@@ -1,9 +1,10 @@
-import jwt from 'express-jwt';
 import jwksRsa from 'jwks-rsa';
+import expressJwtPermissions from 'express-jwt-permissions';
+import { expressjwt } from 'express-jwt';
 import { ISSUER } from '../util/secrets';
 import { getJwks } from '../util/jwks';
 
-export const validateJwt = jwt({
+export const validateJwt = expressjwt({
     secret: jwksRsa.expressJwtSecret({
         cache: true,
         rateLimit: true,
@@ -16,3 +17,5 @@ export const validateJwt = jwt({
     issuer: ISSUER,
     algorithms: ['RS256'],
 });
+
+export const guard = expressJwtPermissions({ requestProperty: 'auth', permissionsProperty: 'scope' });

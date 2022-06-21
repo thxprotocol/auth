@@ -94,6 +94,10 @@ export default {
         'widgets:read',
         'relay:write',
         'metrics:read',
+        'swaprule:read',
+        'swaprule:write',
+        'swap:read',
+        'swap:write',
     ],
     claims: {
         openid: ['sub', 'email'],

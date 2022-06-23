@@ -4,6 +4,7 @@ dotenv.config();
 
 const required = [
     'ISSUER',
+    'API_URL',
     'AUTH_URL',
     'WALLET_URL',
     'PUBLIC_URL',
@@ -12,6 +13,8 @@ const required = [
     'PORT',
     'SECURE_KEY',
     'TWITTER_CLIENT_ID',
+    'AUTH_CLIENT_ID',
+    'AUTH_CLIENT_SECRET',
 ];
 
 // For production (docker containers) we should require JWKS_JSON to be set since otherwise each container
@@ -41,6 +44,7 @@ export const SPOTIFY_API_ENDPOINT = 'https://api.spotify.com/v1';
 export const NODE_ENV = process.env.NODE_ENV;
 export const ISSUER = process.env.ISSUER;
 export const AUTH_URL = process.env.AUTH_URL;
+export const API_URL = process.env.API_URL;
 export const WALLET_URL = process.env.WALLET_URL;
 export const PUBLIC_URL = process.env.PUBLIC_URL;
 export const DASHBOARD_URL = process.env.DASHBOARD_URL;
@@ -62,4 +66,6 @@ export const TWITTER_CLIENT_SECRET = process.env.TWITTER_CLIENT_SECRET;
 export const SPOTIFY_CLIENT_ID = process.env.SPOTIFY_CLIENT_ID;
 export const SPOTIFY_REDIRECT_URI = process.env.SPOTIFY_REDIRECT_URI;
 export const SPOTIFY_CLIENT_SECRET = process.env.SPOTIFY_CLIENT_SECRET;
+export const AUTH_CLIENT_SECRET = process.env.AUTH_CLIENT_SECRET;
+export const AUTH_CLIENT_ID = process.env.AUTH_CLIENT_ID;
 export const JWKS_JSON = process.env.JWKS_JSON;

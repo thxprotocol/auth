@@ -102,8 +102,18 @@ export default {
     claims: {
         openid: ['sub', 'email'],
     },
+    issueRefreshToken: async (ctx: any, client: any, code: any) => {
+        if (!client.grantTypeAllowed('refresh_token')) {
+            return false;
+        }
+        return (
+            code.scopes.has('offline_access') ||
+            (client.applicationType === 'web' && client.tokenEndpointAuthMethod === 'none')
+        );
+    },
     ttl: {
-        AccessToken: 1 * 60 * 60, // 1 hour in seconds
+        AccessToken: 15,
+        // AccessToken: 1 * 60 * 60, // 1 hour in seconds
         AuthorizationCode: 10 * 60, // 10 minutes in seconds
         ClientCredentials: 10 * 60, // 10 minutes in seconds
     },

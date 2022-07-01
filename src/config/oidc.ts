@@ -98,6 +98,8 @@ export default {
         'swaprule:write',
         'swap:read',
         'swap:write',
+        'claims:write',
+        'claims:read',
     ],
     claims: {
         openid: ['sub', 'email'],

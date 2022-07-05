@@ -100,6 +100,8 @@ export default {
         'swap:write',
         'claims:write',
         'claims:read',
+        'brands:read',
+        'brands:write',
     ],
     claims: {
         openid: ['sub', 'email'],

@@ -1,13 +1,12 @@
-import Provider from 'oidc-provider';
+import { Provider } from 'oidc-provider';
 import configuration from '../config/oidc';
-import { NODE_ENV, ISSUER, SECURE_KEY } from './secrets';
+import { ISSUER, NODE_ENV } from './secrets';
 import { AccountService } from '../services/AccountService';
 import { validateEmail } from './validate';
 
-const oidc = new Provider(ISSUER, configuration as any); // Configuration
+const oidc = new Provider(ISSUER, configuration);
 
 oidc.proxy = true;
-oidc.keys = SECURE_KEY.split(',');
 
 if (NODE_ENV !== 'production') {
     const { invalidate: orig } = (oidc.Client as any).Schema.prototype;
@@ -30,8 +29,8 @@ async function getAccountByEmail(email: string) {
 }
 
 async function saveInteraction(interaction: any, sub: string) {
-    interaction.result = { login: { account: sub } };
-    await interaction.save();
+    interaction.result = { login: { accountId: sub } };
+    await interaction.save(Date.now() + 10000);
     return interaction.returnTo;
 }
 

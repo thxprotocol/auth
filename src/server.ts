@@ -1,12 +1,28 @@
 import 'newrelic';
 import http from 'http';
+import https from 'https';
 import app from './app';
 import db from './util/database';
 import { createTerminus } from '@godaddy/terminus';
 import { healthCheck } from './util/healthcheck';
 import { logger } from './util/logger';
+import fs from 'fs';
+import path from 'path';
 
-const server = http.createServer(app);
+let server;
+if (app.get('env') === 'development') {
+    const dir = path.dirname(__dirname);
+    server = https.createServer(
+        {
+            key: fs.readFileSync(dir + '/certs/auth.key'),
+            cert: fs.readFileSync(dir + '/certs/auth.crt'),
+            ca: fs.readFileSync(dir + '/certs/auth.crt'),
+        },
+        app,
+    );
+} else {
+    server = http.createServer(app);
+}
 
 const options = {
     healthChecks: {

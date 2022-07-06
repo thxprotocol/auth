@@ -66,7 +66,7 @@ async function controller(req: Request, res: Response) {
     });
 
     // Make to finish the interaction and login with sub
-    await oidc.interactionFinished(req, res, { login: { account: sub } }, { mergeWithLastSubmission: true });
+    return await oidc.interactionFinished(req, res, { login: { accountId: sub } }, { mergeWithLastSubmission: false });
 }
 
 export default { controller };

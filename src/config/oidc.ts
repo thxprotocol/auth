@@ -1,9 +1,19 @@
 import MongoAdapter from '../util/adapter';
 import { Account } from '../models/Account';
 import { AccountDocument } from '../models/Account';
-import { INITIAL_ACCESS_TOKEN, SECURE_KEY } from '../util/secrets';
-import { interactionPolicy } from 'oidc-provider';
+import {
+    API_URL,
+    DASHBOARD_URL,
+    INITIAL_ACCESS_TOKEN,
+    NODE_ENV,
+    PUBLIC_URL,
+    SECURE_KEY,
+    WALLET_URL,
+} from '../util/secrets';
+import { Configuration, interactionPolicy } from 'oidc-provider';
 import { getJwks } from '../util/jwks';
+import path from 'path';
+import ejs from 'ejs';
 
 const basePolicy = interactionPolicy.base();
 const promptReset = new interactionPolicy.Prompt({ name: 'reset', requestable: true });
@@ -19,40 +29,39 @@ basePolicy.add(promptConnect);
 basePolicy.add(promptReset);
 basePolicy.add(promptAccount);
 basePolicy.add(promtotp);
+basePolicy.remove('consent');
 
 // Configuration defaults:
 // https://github.com/panva/node-oidc-provider/blob/master/lib/helpers/defaults.js
 
-export default {
-    debug: false,
+const keys = [SECURE_KEY.split(',')[0], SECURE_KEY.split(',')[1]];
+const config: Configuration = {
     jwks: getJwks(),
     adapter: MongoAdapter,
-    async findAccount(ctx: any, id: string) {
-        const account: AccountDocument = await Account.findById(id);
+    loadExistingGrant: async (ctx) => {
+        const grant = new ctx.oidc.provider.Grant({
+            clientId: ctx.oidc.client.clientId,
+            accountId: ctx.oidc.session.accountId,
+        });
+
+        grant.addOIDCScope('openid offline_access');
+        grant.addOIDCClaims(['sub', 'email']);
+        grant.addResourceScope(API_URL, ctx.oidc.client.scope);
+        await grant.save();
+        return grant;
+    },
+    async findAccount(ctx: any, sub: string) {
+        const account: AccountDocument = await Account.findById(sub);
 
         return {
-            accountId: id,
-            async claims() {
+            accountId: sub,
+            claims: () => {
                 return {
-                    sub: id,
+                    sub,
                     ...account.toJSON(),
                 };
             },
         };
-    },
-    routes: {
-        authorization: '/auth',
-        backchannel_authentication: '/backchannel',
-        code_verification: '/device',
-        device_authorization: '/device/auth',
-        end_session: '/session/end',
-        introspection: '/token/introspection',
-        jwks: '/jwks',
-        pushed_authorization_request: '/request',
-        registration: '/reg',
-        revocation: '/token/revocation',
-        token: '/token',
-        userinfo: '/me',
     },
     extraParams: [
         'reward_hash',
@@ -66,6 +75,8 @@ export default {
         'channel',
     ],
     scopes: [
+        'openid',
+        'offline_access',
         'account:read',
         'account:write',
         'pools:read',
@@ -112,20 +123,18 @@ export default {
         );
     },
     ttl: {
-        AccessToken: 15,
-        // AccessToken: 1 * 60 * 60, // 1 hour in seconds
+        Interaction: 1 * 60 * 60, // 1 hour in seconds,
+        Session: 24 * 60 * 60, // 24 hours in seconds,
+        Grant: 1 * 60 * 60, // 1 hour in seconds
+        IdToken: 1 * 60 * 60, // 1 hour in seconds
+        AccessToken: 1 * 60 * 60, // 1 hour in seconds
         AuthorizationCode: 10 * 60, // 10 minutes in seconds
         ClientCredentials: 10 * 60, // 10 minutes in seconds
     },
-    formats: {
-        AccessToken: 'jwt',
-        AuthorizationCode: 'jwt',
-        ClientCredentials: 'jwt',
-    },
     interactions: {
         policy: basePolicy,
-        url(ctx: any) {
-            return `/oidc/${ctx.oidc.uid}`;
+        url(ctx: any, interaction: any) {
+            return `/oidc/${interaction.uid}`;
         },
     },
     features: {
@@ -135,6 +144,23 @@ export default {
         introspection: { enabled: true },
         registration: { enabled: true, initialAccessToken: INITIAL_ACCESS_TOKEN },
         registrationManagement: { enabled: true },
+        resourceIndicators: {
+            enabled: true,
+            defaultResource: async (ctx) => {
+                return API_URL;
+            },
+            getResourceServerInfo: async (ctx, resourceIndicator, client) => {
+                return {
+                    scope: client.scope,
+                    audience: client.clientId,
+                    accessTokenTTL: 1 * 60 * 60,
+                    accessTokenFormat: 'jwt',
+                };
+            },
+            useGrantedResource: async (ctx, model) => {
+                return true;
+            },
+        },
         rpInitiatedLogout: {
             enabled: true,
             logoutSource: async (ctx: any, form: any) => {
@@ -150,21 +176,16 @@ export default {
             },
         },
     },
-    cookies: {
-        long: { signed: true, maxAge: 1 * 24 * 60 * 60 * 1000 },
-        short: { signed: true },
-        keys: [SECURE_KEY.split(',')[0], SECURE_KEY.split(',')[1]],
+    pkce: {
+        methods: ['S256'],
+        required: () => {
+            return NODE_ENV !== 'test';
+        },
     },
-    async renderError(ctx: any, error: any) {
-        ctx.type = 'html';
-        ctx.body = `<!DOCTYPE html>
-        <head>
-        <title>Oops! Something went wrong...</title>
-        </head>
-        <body>
-        <h1>Oops! something went wrong</h1>
-        <pre>${JSON.stringify(error, null, 4)}</pre>
-        </body>
-        </html>`;
+    cookies: {
+        long: NODE_ENV !== 'test' ? { signed: true, secure: true, sameSite: 'none' } : undefined,
+        short: NODE_ENV !== 'test' ? { signed: true, secure: true, sameSite: 'none' } : undefined,
+        keys,
     },
 };
+export default config;

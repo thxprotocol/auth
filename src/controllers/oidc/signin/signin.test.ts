@@ -2,7 +2,7 @@ import request from 'supertest';
 import app from '../../../app';
 import { AccountService } from '../../../services/AccountService';
 import db from '../../../util/database';
-import { INITIAL_ACCESS_TOKEN } from '../../../util/secrets';
+import { API_URL, INITIAL_ACCESS_TOKEN } from '../../../util/secrets';
 import { getPath, accountEmail, accountSecret } from '../../../util/jest';
 
 const REDIRECT_URL = 'https://localhost:8082/signin-oidc';
@@ -47,6 +47,7 @@ describe('Sign In', () => {
             const params = new URLSearchParams({
                 client_id: CLIENT_ID,
                 redirect_uri: REDIRECT_URL,
+                resource: API_URL,
                 scope: 'openid pools:read pools:write withdrawals:read rewards:write deposits:read deposits:write',
                 response_type: 'code',
                 response_mode: 'query',
@@ -55,7 +56,7 @@ describe('Sign In', () => {
 
             const res = await http.get(`/auth?${params.toString()}`).send();
 
-            expect(res.status).toEqual(302);
+            expect(res.status).toEqual(303);
             expect(res.header.location).toMatch(new RegExp('/oidc/.*'));
 
             uid = (res.header.location as string).split('/')[2];
@@ -87,32 +88,17 @@ describe('Sign In', () => {
                     .post(`/oidc/${uid}/signin`)
                     .send(`email=${accountEmail}&password=${accountSecret}`);
 
-                expect(res.status).toEqual(302);
+                expect(res.status).toEqual(303);
 
                 redirectUrl = getPath(res.header.location);
             });
 
             it('Redirect to interaction', async () => {
                 const res = await http.get(redirectUrl).set('Cookie', Cookies).send();
-                expect(res.status).toEqual(302);
-                redirectUrl = res.header.location;
-                Cookies += res.headers['set-cookie']?.join('; ');
-            });
-
-            it('Redirect to consent page', async () => {
-                const res = await http.get(redirectUrl).set('Cookie', Cookies).send();
-                expect(res.status).toEqual(302);
-                redirectUrl = getPath(res.header.location);
-                Cookies += res.headers['set-cookie']?.join('; ');
-            });
-
-            it('Redirect back to callback URL with auth code', async () => {
-                const res = await http.get(redirectUrl).set('Cookie', Cookies).send();
-                expect(res.status).toEqual(302);
+                expect(res.status).toEqual(303);
                 redirectUrl = res.header.location;
                 Cookies += res.headers['set-cookie']?.join('; ');
                 code = redirectUrl.split('code=')[1].split('&')[0];
-                expect(redirectUrl.includes(REDIRECT_URL)).toEqual(true);
             });
 
             it('Request access token', async () => {
@@ -126,6 +112,7 @@ describe('Sign In', () => {
                     })
                     .send({
                         grant_type: 'authorization_code',
+                        redirect_uri: REDIRECT_URL,
                         code,
                     });
 

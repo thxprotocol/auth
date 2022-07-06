@@ -1,19 +1,9 @@
 import MongoAdapter from '../util/adapter';
 import { Account } from '../models/Account';
 import { AccountDocument } from '../models/Account';
-import {
-    API_URL,
-    DASHBOARD_URL,
-    INITIAL_ACCESS_TOKEN,
-    NODE_ENV,
-    PUBLIC_URL,
-    SECURE_KEY,
-    WALLET_URL,
-} from '../util/secrets';
+import { API_URL, INITIAL_ACCESS_TOKEN, NODE_ENV, SECURE_KEY } from '../util/secrets';
 import { Configuration, interactionPolicy } from 'oidc-provider';
 import { getJwks } from '../util/jwks';
-import path from 'path';
-import ejs from 'ejs';
 
 const basePolicy = interactionPolicy.base();
 const promptReset = new interactionPolicy.Prompt({ name: 'reset', requestable: true });

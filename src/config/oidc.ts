@@ -102,6 +102,7 @@ export default {
         'claims:read',
         'brands:read',
         'brands:write',
+        'offline_access',
     ],
     claims: {
         openid: ['sub', 'email'],
@@ -116,8 +117,8 @@ export default {
         );
     },
     ttl: {
-        AccessToken: 15,
-        // AccessToken: 1 * 60 * 60, // 1 hour in seconds
+        //AccessToken: 15,
+        AccessToken: 1 * 60 * 60, // 1 hour in seconds
         AuthorizationCode: 10 * 60, // 10 minutes in seconds
         ClientCredentials: 10 * 60, // 10 minutes in seconds
     },

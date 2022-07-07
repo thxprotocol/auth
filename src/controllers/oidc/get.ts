@@ -3,7 +3,7 @@ import { oidc } from '../../util/oidc';
 
 async function controller(req: Request, res: Response) {
     const { uid, prompt, params } = req.interaction;
-
+    console.log('SONO IN QUESTO CONTROLLER', { uid, prompt, params });
     // Prompt params are used for unauthenticated routes
     switch (params.prompt) {
         case 'create': {
@@ -27,6 +27,7 @@ async function controller(req: Request, res: Response) {
             return res.redirect(`/oidc/${uid}/connect`);
         }
         case 'login': {
+            console.log('AUTH LOGIN');
             if (params.reward_hash) {
                 return res.redirect(`/oidc/${uid}/claim`);
             } else {

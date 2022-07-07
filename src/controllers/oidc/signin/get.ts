@@ -12,7 +12,7 @@ async function controller(req: Request, res: Response) {
         params.twitterLoginUrl = TwitterService.getLoginURL(uid, {});
         params.spotifyLoginUrl = SpotifyService.getLoginURL(uid, {});
     }
-
+    console.log('AUTH OIDC', { uid, params, alert: {} });
     res.render('signin', { uid, params, alert: {} });
 }
 

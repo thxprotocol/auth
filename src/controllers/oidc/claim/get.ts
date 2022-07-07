@@ -7,6 +7,7 @@ import { BadRequestError } from '../../../util/errors';
 import ClaimProxy from '../../../proxies/ClaimProxy';
 
 async function controller(req: Request, res: Response) {
+    console.log('SONO QUAAAAAAAAA-----------------------');
     const { uid, params } = req.interaction;
     let rewardData;
     if (params.reward_hash) {

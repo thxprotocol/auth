@@ -7,7 +7,7 @@ declare global {
         interface Request {
             origin?: string;
             auth?: any;
-            interaction?: InteractionResults;
+            interaction?: any;
         }
     }
 }

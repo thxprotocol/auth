@@ -2,7 +2,8 @@ import { Request, Response } from 'express';
 import { oidc } from '../../util/oidc';
 
 async function controller(req: Request, res: Response) {
-    const { uid, prompt, params } = req.interaction;
+    const interaction = await oidc.interactionDetails(req, res);
+    const { uid, prompt, params } = interaction;
 
     // Prompt params are used for unauthenticated routes
     switch (params.prompt) {
@@ -32,14 +33,6 @@ async function controller(req: Request, res: Response) {
             } else {
                 return res.redirect(`/oidc/${uid}/signin`);
             }
-        }
-        case 'consent': {
-            const consent: any = {};
-            consent.rejectedScopes = [];
-            consent.rejectedClaims = [];
-            consent.replace = false;
-
-            return await oidc.interactionFinished(req, res, { consent }, { mergeWithLastSubmission: true });
         }
     }
 }

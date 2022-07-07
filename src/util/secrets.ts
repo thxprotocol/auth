@@ -3,7 +3,6 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const required = [
-    'ISSUER',
     'API_URL',
     'AUTH_URL',
     'WALLET_URL',
@@ -12,9 +11,6 @@ const required = [
     'MONGODB_URI',
     'PORT',
     'SECURE_KEY',
-    'TWITTER_CLIENT_ID',
-    'AUTH_CLIENT_ID',
-    'AUTH_CLIENT_SECRET',
 ];
 
 // For production (docker containers) we should require JWKS_JSON to be set since otherwise each container
@@ -33,6 +29,7 @@ required.forEach((value: string) => {
 // This allows you to use a single .env file with both regular and test configuration. This allows for an
 // easy to use setup locally without having hardcoded credentials during test runs.
 if (process.env.NODE_ENV === 'test') {
+    if (process.env.AUTH_URL_TEST_OVERRIDE !== undefined) process.env.AUTH_URL = process.env.AUTH_URL_TEST_OVERRIDE;
     if (process.env.PORT_TEST_OVERRIDE !== undefined) process.env.PORT = process.env.PORT_TEST_OVERRIDE;
     if (process.env.MONGODB_URI_TEST_OVERRIDE !== undefined)
         process.env.MONGODB_URI = process.env.MONGODB_URI_TEST_OVERRIDE;
@@ -42,7 +39,6 @@ export const VERSION = 'v1';
 export const TWITTER_API_ENDPOINT = 'https://api.twitter.com/2';
 export const SPOTIFY_API_ENDPOINT = 'https://api.spotify.com/v1';
 export const NODE_ENV = process.env.NODE_ENV;
-export const ISSUER = process.env.ISSUER;
 export const AUTH_URL = process.env.AUTH_URL;
 export const API_URL = process.env.API_URL;
 export const WALLET_URL = process.env.WALLET_URL;

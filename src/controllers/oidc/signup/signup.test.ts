@@ -3,7 +3,7 @@ import request from 'supertest';
 import app from '../../../app';
 import { AccountService } from '../../../services/AccountService';
 import db from '../../../util/database';
-import { INITIAL_ACCESS_TOKEN } from '../../../util/secrets';
+import { API_URL, INITIAL_ACCESS_TOKEN } from '../../../util/secrets';
 
 const http = request.agent(app);
 
@@ -44,13 +44,14 @@ describe('Sign up', () => {
                 return_url: 'https://localhost:8082',
                 response_type: 'code',
                 response_mode: 'query',
+                resource: API_URL,
                 redirect_uri: REDIRECT_URL,
                 scope: 'openid pools:read pools:write rewards:write',
             });
 
             const res = await http.get(`/auth?${params.toString()}`).send();
 
-            expect(res.status).toEqual(302);
+            expect(res.status).toEqual(303);
             expect(res.header.location).toMatch(new RegExp('/oidc/.*'));
 
             CID = (res.header.location as string).split('/')[2];
@@ -140,7 +141,7 @@ describe('Sign up', () => {
                 });
 
                 const res = await http.get(`/auth?${params.toString()}`).send();
-                expect(res.status).toEqual(302);
+                expect(res.status).toEqual(303);
                 expect(res.header.location).toMatch(new RegExp('/oidc/.*'));
                 redirectUrl = res.header.location;
                 Cookies += res.headers['set-cookie']?.join('; ');

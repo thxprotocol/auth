@@ -51,7 +51,7 @@ async function controller(req: Request, res: Response) {
         res,
         {
             login: {
-                account: sub,
+                accountId: sub,
             },
         },
         { mergeWithLastSubmission: true },

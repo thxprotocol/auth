@@ -101,7 +101,7 @@
         "nodemon": "^2.0.15",
         "prettier": "^2.2.1",
         "sass": "^1.32.8",
-        "supertest": "^6.1.1",
+        "supertest": "^6.2.4",
         "swagger-jsdoc": "^4.2.0",
         "swagger-ui-express": "^4.1.4",
         "ts-jest": "^27.1.3",

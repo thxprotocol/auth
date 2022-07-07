@@ -1,10 +1,10 @@
 import { Provider } from 'oidc-provider';
 import configuration from '../config/oidc';
-import { ISSUER, NODE_ENV } from './secrets';
+import { AUTH_URL, NODE_ENV } from './secrets';
 import { AccountService } from '../services/AccountService';
 import { validateEmail } from './validate';
 
-const oidc = new Provider(ISSUER, configuration);
+const oidc = new Provider(AUTH_URL, configuration);
 
 oidc.proxy = true;
 

@@ -16,9 +16,9 @@ export function getJwks() {
 
         const keystore = new jose.JWKS.KeyStore();
 
-        keystore.generate('RSA', 2048, { use: 'sig' });
-        keystore.generate('EC', 'P-256', { use: 'sig', alg: 'ES256' });
-        keystore.generate('OKP', 'Ed25519', { use: 'sig', alg: 'EdDSA' });
+        keystore.generateSync('RSA', 2048, { use: 'sig' });
+        keystore.generateSync('EC', 'P-256', { use: 'sig', alg: 'ES256' });
+        keystore.generateSync('OKP', 'Ed25519', { use: 'sig', alg: 'EdDSA' });
 
         fs.writeFileSync(jwksPath, JSON.stringify(keystore.toJWKS(true), null, 2));
     }

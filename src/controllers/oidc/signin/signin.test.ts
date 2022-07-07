@@ -102,13 +102,11 @@ describe('Sign In', () => {
             });
 
             it('Request access token', async () => {
-                const authHeader = 'Basic ' + Buffer.from(`${CLIENT_ID}:${CLIENT_SECRET}`).toString('base64');
-
                 const res = await http
                     .post('/token')
                     .set({
                         'Content-Type': 'application/x-www-form-urlencoded',
-                        'Authorization': authHeader,
+                        'Authorization': 'Basic ' + Buffer.from(`${CLIENT_ID}:${CLIENT_SECRET}`).toString('base64'),
                     })
                     .send({
                         grant_type: 'authorization_code',

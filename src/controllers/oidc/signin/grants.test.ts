@@ -63,6 +63,7 @@ describe('OAuth2 Grants', () => {
                     'Authorization': 'incorrect authorization code',
                 })
                 .send({
+                    // resource: API_URL,
                     grant_type: 'client_credentials',
                     scope: 'openid account:read account:write',
                 });
@@ -99,11 +100,12 @@ describe('OAuth2 Grants', () => {
                 })
                 .send({
                     grant_type: 'client_credentials',
-                    scope: 'openid account:read account:write members:read members:write withdrawals:write asset_pools:read asset_pools:write rewards:read withdrawals:read deposits:read deposits:write',
+                    scope:
+                        'openid account:read account:write members:read members:write withdrawals:write asset_pools:read asset_pools:write rewards:read withdrawals:read deposits:read deposits:write',
                 });
             expect(res.body).toMatchObject({
                 error: 'invalid_scope',
-                error_description: 'requested scope is not whitelisted',
+                error_description: 'requested scope is not allowed',
                 scope: 'members:read',
             });
             expect(res.status).toBe(400);

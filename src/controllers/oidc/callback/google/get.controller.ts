@@ -21,7 +21,7 @@ export async function controller(req: Request, res: Response) {
     const uid = req.query.state as string;
 
     // Get the interaction based on the state
-    const interaction = await oidc.Interaction.find(uid);
+    const interaction: any = await oidc.Interaction.find(uid);
 
     if (!interaction)
         return res.render('error', {

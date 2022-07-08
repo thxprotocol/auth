@@ -1,7 +1,7 @@
 import jwksRsa from 'jwks-rsa';
 import expressJwtPermissions from 'express-jwt-permissions';
 import { expressjwt } from 'express-jwt';
-import { ISSUER } from '../util/secrets';
+import { AUTH_URL } from '../util/secrets';
 import { getJwks } from '../util/jwks';
 
 export const validateJwt = expressjwt({
@@ -14,7 +14,7 @@ export const validateJwt = expressjwt({
             return getJwks().keys;
         },
     }),
-    issuer: ISSUER,
+    issuer: AUTH_URL,
     algorithms: ['RS256'],
 });
 

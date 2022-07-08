@@ -11,4 +11,4 @@ coverage
 .DS_Store
 .vscode
 
-./certs
+certs/*

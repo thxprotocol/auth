@@ -69,6 +69,8 @@ const config: Configuration = {
         'offline_access',
         'account:read',
         'account:write',
+        'brands:read',
+        'brands:write',
         'pools:read',
         'pools:write',
         'rewards:read',

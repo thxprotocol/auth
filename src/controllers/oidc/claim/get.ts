@@ -7,8 +7,8 @@ import BrandProxy from '../../../proxies/BrandProxy';
 async function controller(req: Request, res: Response) {
     const { uid, params } = req.interaction;
     const rewardData = JSON.parse(Buffer.from(params.reward_hash, 'base64').toString());
-    const poolAddress = rewardData.poolAddress;
-    const brandData = await BrandProxy.get(poolAddress);
+    const poolId = rewardData.poolId;
+    const brandData = await BrandProxy.get(poolId);
 
     params.rewardData = rewardData;
     params.googleLoginUrl = YouTubeService.getLoginUrl(req.params.uid, YouTubeService.getExpandedScopes());

@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosRequestConfig } from 'axios';
 
 import { THXError } from './errors';
 import { AUTH_CLIENT_ID, AUTH_CLIENT_SECRET, API_URL, AUTH_URL } from './secrets';
@@ -10,15 +10,15 @@ class ApiAccesTokenRequestError extends THXError {
 let apiAccessToken = '';
 let apiAccessTokenExpired = 0;
 
-axios.defaults.baseURL = AUTH_URL;
-
 async function requestAuthAccessToken() {
     const data = new URLSearchParams();
     data.append('grant_type', 'client_credentials');
+    data.append('resource', API_URL);
     data.append('scope', 'openid brands:read');
 
     const r = await axios({
-        url: AUTH_URL + '/token',
+        baseURL: AUTH_URL,
+        url: '/token',
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
@@ -42,6 +42,10 @@ export async function getAuthAccessToken() {
     return `Bearer ${apiAccessToken}`;
 }
 
-axios.defaults.baseURL = API_URL;
-
-export const apiClient = axios;
+export async function apiClient(config: AxiosRequestConfig) {
+    const authHeader = await getAuthAccessToken();
+    if (!config.headers) config.headers = {};
+    config.headers['Authorization'] = authHeader;
+    config.baseURL = API_URL;
+    return axios(config);
+}

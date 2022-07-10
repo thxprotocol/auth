@@ -105,15 +105,6 @@ const config: Configuration = {
     claims: {
         openid: ['sub', 'email'],
     },
-    issueRefreshToken: async (ctx: any, client: any, code: any) => {
-        if (!client.grantTypeAllowed('refresh_token')) {
-            return false;
-        }
-        return (
-            code.scopes.has('offline_access') ||
-            (client.applicationType === 'web' && client.tokenEndpointAuthMethod === 'none')
-        );
-    },
     ttl: {
         Interaction: 1 * 60 * 60, // 1 hour in seconds,
         Session: 24 * 60 * 60, // 24 hours in seconds,
@@ -138,9 +129,7 @@ const config: Configuration = {
         registrationManagement: { enabled: true },
         resourceIndicators: {
             enabled: true,
-            defaultResource: async (ctx) => {
-                return API_URL;
-            },
+            defaultResource: () => API_URL,
             getResourceServerInfo: async (ctx, resourceIndicator, client) => {
                 return {
                     scope: client.scope,
@@ -149,9 +138,7 @@ const config: Configuration = {
                     accessTokenFormat: 'jwt',
                 };
             },
-            useGrantedResource: async (ctx, model) => {
-                return true;
-            },
+            useGrantedResource: () => true,
         },
         rpInitiatedLogout: {
             enabled: true,
@@ -168,16 +155,19 @@ const config: Configuration = {
             },
         },
     },
-    pkce: {
-        methods: ['S256'],
-        required: () => {
-            return NODE_ENV !== 'test';
-        },
-    },
     cookies: {
-        long: NODE_ENV !== 'test' ? { signed: true, secure: true, sameSite: 'none' } : undefined,
-        short: NODE_ENV !== 'test' ? { signed: true, secure: true, sameSite: 'none' } : undefined,
+        long: { signed: true, secure: true, sameSite: 'none' },
+        short: { signed: true, secure: true, sameSite: 'none' },
         keys,
     },
 };
+
+if (NODE_ENV === 'test') {
+    config.pkce = {
+        methods: ['S256'],
+        required: () => false,
+    };
+    config.cookies.long = undefined;
+    config.cookies.short = undefined;
+}
 export default config;

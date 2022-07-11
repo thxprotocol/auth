@@ -35,7 +35,6 @@ export async function controller(req: Request, res: Response) {
     const tokens = await YouTubeService.getTokens(code);
 
     // Only do this for reward claims
-    console.log('SONO QUIIIIIIIII');
     if (interaction.params.reward_hash) {
         // Decode the reward hash to see which scopes are requested
         const rewardData = JSON.parse(Buffer.from(interaction.params.reward_hash, 'base64').toString());

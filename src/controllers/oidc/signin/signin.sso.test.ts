@@ -5,7 +5,7 @@ import app from '../../../app';
 import { AccountService } from '../../../services/AccountService';
 import db from '../../../util/database';
 import { accountEmail, accountSecret } from '../../../util/jest';
-import { API_URL, INITIAL_ACCESS_TOKEN } from '../../../util/secrets';
+import { API_URL, INITIAL_ACCESS_TOKEN, SPOTIFY_API_ENDPOINT, TWITTER_API_ENDPOINT } from '../../../util/secrets';
 
 const REDIRECT_URL = 'https://localhost:8082/signin-oidc';
 const http = request.agent(app);
@@ -89,6 +89,60 @@ describe('SSO Sign In', () => {
                 state: uid,
             });
             const res = await http.get('/oidc/callback/google?' + params.toString());
+
+            expect(res.status).toBe(302);
+            expect(res.headers['location']).toContain('/auth/');
+        });
+    });
+
+    describe('Twitter SSO', () => {
+        beforeAll(async () => {
+            nock(TWITTER_API_ENDPOINT + '/oauth2/token')
+                .post(/.*?/)
+                .reply(200, {
+                    accessToken: 'thisnotgonnawork',
+                });
+            nock(TWITTER_API_ENDPOINT + '/users/me')
+                .get(/.*?/)
+                .reply(200, {
+                    data: {
+                        id: 'thisnotgonnawork',
+                    },
+                });
+        });
+
+        it('GET /oidc/callback/twitter', async () => {
+            const params = new URLSearchParams({
+                code: 'thisnotgonnawork',
+                state: uid,
+            });
+            const res = await http.get('/oidc/callback/twitter?' + params.toString());
+
+            expect(res.status).toBe(302);
+            expect(res.headers['location']).toContain('/auth/');
+        });
+    });
+
+    describe('Spotify SSO', () => {
+        beforeAll(async () => {
+            nock('https://accounts.spotify.com/api/token').post(/.*?/).reply(200, {
+                accessToken: 'thisnotgonnawork',
+            });
+            nock(SPOTIFY_API_ENDPOINT + '/me')
+                .get(/.*?/)
+                .reply(200, {
+                    data: {
+                        id: 'thisnotgonnawork',
+                    },
+                });
+        });
+
+        it('GET /oidc/callback/spotify', async () => {
+            const params = new URLSearchParams({
+                code: 'thisnotgonnawork',
+                state: uid,
+            });
+            const res = await http.get('/oidc/callback/spotify?' + params.toString());
 
             expect(res.status).toBe(302);
             expect(res.headers['location']).toContain('/auth/');

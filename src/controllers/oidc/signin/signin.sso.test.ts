@@ -11,10 +11,8 @@ const REDIRECT_URL = 'https://localhost:8082/signin-oidc';
 const http = request.agent(app);
 
 describe('SSO Sign In', () => {
-    let uid = '',
-        Cookies = '';
+    let uid = '';
     let CLIENT_ID = '';
-    let CLIENT_SECRET = '';
 
     beforeAll(async () => {
         await db.truncate();
@@ -32,7 +30,6 @@ describe('SSO Sign In', () => {
             });
 
         CLIENT_ID = res.body.client_id;
-        CLIENT_SECRET = res.body.client_secret;
 
         const account = await AccountService.signup(accountEmail, accountSecret, true, true, true);
         account.privateKey = undefined;

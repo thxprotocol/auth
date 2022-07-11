@@ -1,33 +1,24 @@
-import { apiClient, getAuthAccessToken } from '../util/api';
-import { THXError } from '../util/errors';
+import { apiClient } from '../util/api';
 
 interface brandUpdateParams {
     logoImgUrl: string;
     backgroundImgUrl: string;
 }
 
-class NobrandError extends THXError {}
-
 export default {
-    get: async (poolAddress: string) => {
+    get: async (poolId: string) => {
         const r = await apiClient({
             method: 'GET',
-            url: `/v1/brand/${poolAddress}`,
-            headers: {
-                Authorization: await getAuthAccessToken(),
-            },
+            url: `/v1/brand/${poolId}`,
         });
 
         return r.data;
     },
 
-    update: async (poolAddress: string, params: Partial<brandUpdateParams>) => {
+    update: async (poolId: string, params: Partial<brandUpdateParams>) => {
         const r = await apiClient({
             method: 'PUT',
-            url: `/v1/brand/${poolAddress}`,
-            headers: {
-                Authorization: await getAuthAccessToken(),
-            },
+            url: `/v1/brand/${poolId}`,
             data: params,
         });
 

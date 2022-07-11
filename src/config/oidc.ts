@@ -69,6 +69,8 @@ const config: Configuration = {
         'offline_access',
         'account:read',
         'account:write',
+        'brands:read',
+        'brands:write',
         'pools:read',
         'pools:write',
         'rewards:read',
@@ -108,18 +110,6 @@ const config: Configuration = {
     claims: {
         openid: ['sub', 'email'],
     },
-    issueRefreshToken: async (ctx: any, client: any, code: any) => {
-        console.log('SONO QUI 1-------------------------------------------------');
-        if (!client.grantTypeAllowed('refresh_token')) {
-            console.log('SONO QUI 2-------------------------------------------------');
-            return false;
-        }
-        console.log('SONO QUI 3-------------------------------------------------');
-        return (
-            code.scopes.has('offline_access') ||
-            (client.applicationType === 'web' && client.tokenEndpointAuthMethod === 'none')
-        );
-    },
     ttl: {
         //AccessToken: 15,
         Interaction: 1 * 60 * 60, // 1 hour in seconds,
@@ -145,10 +135,8 @@ const config: Configuration = {
         registrationManagement: { enabled: true },
         resourceIndicators: {
             enabled: true,
-            defaultResource: async (ctx: any) => {
-                return API_URL;
-            },
-            getResourceServerInfo: async (ctx: any, resourceIndicator: any, client: any) => {
+            defaultResource: () => API_URL,
+            getResourceServerInfo: async (ctx, resourceIndicator, client) => {
                 return {
                     scope: client.scope,
                     audience: client.clientId,
@@ -156,9 +144,7 @@ const config: Configuration = {
                     accessTokenFormat: 'jwt',
                 };
             },
-            useGrantedResource: async (ctx: any, model: any) => {
-                return true;
-            },
+            useGrantedResource: () => true,
         },
         rpInitiatedLogout: {
             enabled: true,
@@ -175,16 +161,19 @@ const config: Configuration = {
             },
         },
     },
-    pkce: {
-        methods: ['S256'],
-        required: () => {
-            return NODE_ENV !== 'test';
-        },
-    },
     cookies: {
-        long: NODE_ENV !== 'test' ? { signed: true, secure: true, sameSite: 'none' } : undefined,
-        short: NODE_ENV !== 'test' ? { signed: true, secure: true, sameSite: 'none' } : undefined,
+        long: { signed: true, secure: true, sameSite: 'none' },
+        short: { signed: true, secure: true, sameSite: 'none' },
         keys,
     },
 };
+
+if (NODE_ENV === 'test') {
+    config.pkce = {
+        methods: ['S256'],
+        required: () => false,
+    };
+    config.cookies.long = undefined;
+    config.cookies.short = undefined;
+}
 export default config;

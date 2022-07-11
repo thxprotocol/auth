@@ -28,8 +28,8 @@ nvm use
 # 2. Provide environment variables
 cp .env.example .env
 
-# 3. Create certificates
-openssl req -x509 -nodes -new -sha256 -days 1024 -newkey rsa:2048 -keyout ./src/certificates/auth.key -out ./src/certificates/auth.pem -subj "/C=US/CN=Auth-Root-CA"
+# 3. Create certificates (Make sure to have openssl@1.1 or openssl@3 installed.)
+openssl req -x509 -newkey rsa:4096 -sha256 -days 3650 -nodes -keyout auth.key -out auth.crt -subj "/CN=localhost" -addext "subjectAltName=DNS:localhost"
 
 # 3. Checkout SCSS submodule
 git submodule init

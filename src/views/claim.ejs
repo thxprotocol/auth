@@ -12,7 +12,7 @@
 
             <form autocomplete="off" action="/oidc/<%= uid %>/login" method="post" class="mb-4">
                 <strong class="h2 d-block text-dark text-center mb-4">
-                    Claim <span class="text-primary"><%= params.rewardData.rewardAmount %>
+                    Claim <span class="text-primary"><%= params.rewardData.withdrawAmount %>
                         <%= params.rewardData.tokenSymbol %></span>
                 </strong>
                 <p>
@@ -46,19 +46,19 @@
                     <% } %>
                     <% if (params.channelAction == 'SpotifyUserFollow' ) { %>
                     <a target="_blank" href="https://open.spotify.com/user/<%= params.channelItem %>"
-                        class="font-weight-bold">follow this account</a>.
+                       class="font-weight-bold">follow this account</a>.
                     <% } %>
                     <% if (params.channelAction == 'SpotifyPlaylistFollow' ) { %>
                     <a target="_blank" href="https://open.spotify.com/playlist/<%= params.channelItem %>"
-                        class="font-weight-bold">follow this playlist</a>.
+                       class="font-weight-bold">follow this playlist</a>.
                     <% } %>
                     <% if (params.channelAction == 'SpotifyTrackPlaying' ) { %>
                     <a target="_blank" href="https://open.spotify.com/track/<%= params.channelItem %>"
-                        class="font-weight-bold">play this track</a>.
+                       class="font-weight-bold">play this track</a>.
                     <% } %>
                     <% if (params.channelAction == 'SpotifyTrackSaved' ) { %>
                     <a target="_blank" href="https://open.spotify.com/track/<%= params.channelItem %>"
-                        class="font-weight-bold">save this track</a>.
+                       class="font-weight-bold">save this track</a>.
                     <% } %>
                 </p>
                 <p>

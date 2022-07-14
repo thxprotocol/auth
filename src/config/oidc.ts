@@ -54,6 +54,7 @@ const config: Configuration = {
         };
     },
     extraParams: [
+        'claim_id',
         'reward_hash',
         'signup_email',
         'return_url',
@@ -105,13 +106,11 @@ const config: Configuration = {
         'claims:read',
         'brands:read',
         'brands:write',
-        'offline_access',
     ],
     claims: {
         openid: ['sub', 'email'],
     },
     ttl: {
-        //AccessToken: 15,
         Interaction: 1 * 60 * 60, // 1 hour in seconds,
         Session: 24 * 60 * 60, // 24 hours in seconds,
         Grant: 1 * 60 * 60, // 1 hour in seconds

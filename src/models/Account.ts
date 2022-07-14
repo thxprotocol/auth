@@ -19,6 +19,7 @@ export interface IAccountUpdates {
     lastName?: string;
     plan?: AccountPlanType;
     organisation?: string;
+    email: string;
 }
 
 export type AccountDocument = mongoose.Document & TAccount;

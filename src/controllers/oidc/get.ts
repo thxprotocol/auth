@@ -16,7 +16,6 @@ async function controller(req: Request, res: Response) {
         case 'reset': {
             return res.redirect(`/oidc/${uid}/reset`);
         }
-        // TODO Make this a regular prompt since it only applies to authenticated routes
         case 'account-settings': {
             return res.redirect(`/oidc/${uid}/account`);
         }
@@ -28,7 +27,7 @@ async function controller(req: Request, res: Response) {
             return res.redirect(`/oidc/${uid}/connect`);
         }
         case 'login': {
-            if (params.reward_hash) {
+            if (params.reward_hash || params.claim_id) {
                 return res.redirect(`/oidc/${uid}/claim`);
             } else {
                 return res.redirect(`/oidc/${uid}/signin`);

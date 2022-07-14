@@ -12,7 +12,6 @@ async function controller(req: Request, res: Response) {
         params.twitterLoginUrl = TwitterService.getLoginURL(uid, {});
         params.spotifyLoginUrl = SpotifyService.getLoginURL(uid, {});
     }
-
     res.render('signin', { uid, params, alert: {} });
 }
 

@@ -54,6 +54,7 @@ const config: Configuration = {
         };
     },
     extraParams: [
+        'claim_id',
         'reward_hash',
         'signup_email',
         'return_url',
@@ -101,6 +102,10 @@ const config: Configuration = {
         'swaprule:write',
         'swap:read',
         'swap:write',
+        'claims:write',
+        'claims:read',
+        'brands:read',
+        'brands:write',
     ],
     claims: {
         openid: ['sub', 'email'],

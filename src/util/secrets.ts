@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const required = [
-    'API_URL',
+    // 'API_URL',
     'AUTH_URL',
     'WALLET_URL',
     'PUBLIC_URL',

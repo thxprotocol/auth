@@ -7,12 +7,58 @@
     }
 </style>
 <% } %>
+
+<script type="module">
+    import { createApp } from 'https://unpkg.com/petite-vue?module'
+
+    const AUTH_REQUEST_MESSAGE = document.getElementsByName('authReqeustMessage')[0].value;
+
+    if (typeof window.ethereum !== 'undefined') {
+        createApp({
+            currentAccount: null,
+            authRequestSignature: '',
+            handleAccountsChanged(accounts) {
+                if (accounts.length === 0) {
+                    console.log('Please connect to MetaMask.');
+                } else if (accounts[0] !== this.currentAccount) {
+                    this.currentAccount = accounts[0];
+
+                    ethereum.request({
+                        method: 'eth_signTypedData_v3',
+                        params: [accounts[0], AUTH_REQUEST_MESSAGE],
+                    }).then((signature) => {
+                        console.log(signature);
+                        document.getElementsByName('authRequestSignature')[0].value = signature;
+                        document.getElementById('form-signin').submit();
+                    });
+                }
+            },
+            signin() {
+                window.ethereum
+                    .request({ method: 'eth_requestAccounts' })
+                    .then(this.handleAccountsChanged)
+                    .catch((err) => {
+                        if (err.code === 4001) {
+                            // EIP-1193 userRejectedRequest error
+                            // If this happens, the user rejected the connection request.
+                            console.log('Please connect to MetaMask.');
+                        } else {
+                            console.error(err);
+                        }
+                    });
+            }
+        }).mount();
+    } else {
+        console.log('Please install MetaMask!');
+    }
+</script>
+
 <div class="col-md-6 offset-md-3 col-xl-4 offset-xl-4 order-0 order-sm-1">
     <div class="text-center pb-4 pt-4">
         <% if (params.logoImgUrl) { %>
-            <img src="<%- params.logoImgUrl %>" width="60" alt="THX Logo" />
+        <img src="<%- params.logoImgUrl %>" width="60" alt="THX Logo" />
         <% } else { %>
-            <img src="/img/logo.png" width="60" alt="THX Logo" />
+        <img src="/img/logo.png" width="60" alt="THX Logo" />
         <% } %>
     </div>
     <div class="card shadow-sm mb-5">
@@ -109,12 +155,20 @@
                 <div class="label">Sign in with Spotify</div>
             </a>
             <% } %>
+            <a class="btn btn-sign-in btn-metamask btn-block" @click="signin()">
+                <div class="logo">
+                    <img src="/img/mm-logo.svg" width="30" height="30" alt="Metamask logo" />
+                </div>
+                <div class="label">
+                    Sign in with Metamask
+                </div>
+            </a>
             <hr>
             <% } %>
             <!--
                     This part is used for regular login flow
                 -->
-            <form autocomplete="off" action="/oidc/<%= uid %>/signin" method="post" class="mb-4">
+            <form autocomplete="off" id="form-signin" action="/oidc/<%= uid %>/signin" method="post" class="mb-4">
 
                 <div class="form-group">
                     <label>E-mail:</label>
@@ -129,7 +183,8 @@
                 <label>MFA code:</label>
                 <input class="form-control mb-4" required name="code">
                 <% } %>
-
+                <input type="hidden" name="authRequestSignature" value="" />
+                <input type="hidden" name="authReqeustMessage" value="<%= params.authReqeustMessage %>" />
                 <input type="hidden" name="returnUrl" value="<%= params.return_url %>" />
                 <button type="submit" class="btn rounded-pill btn-primary btn-block">
                     Sign in

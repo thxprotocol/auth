@@ -8896,6 +8896,16 @@ textarea.form-control-underlined {
   font-family: Roboto, sans-serif;
 }
 
+.btn-metamask {
+  background-color: #f58420;
+}
+.btn-metamask:active {
+  background-color: #d46f16;
+}
+.btn-metamask .label {
+  font-family: Roboto, sans-serif;
+}
+
 .card-logo {
   display: flex;
   border: 0;

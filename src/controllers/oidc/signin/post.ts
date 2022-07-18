@@ -4,6 +4,7 @@ import { Request, Response } from 'express';
 import { ERROR_ACCOUNT_NOT_ACTIVE, ERROR_AUTH_LINK, OTP_CODE_INVALID } from '../../../util/messages';
 import { oidc } from '../../../util/oidc';
 import { authenticator } from '@otplib/preset-default';
+import { recoverTypedSignature, SignTypedDataVersion } from '@metamask/eth-sig-util';
 
 async function controller(req: Request, res: Response) {
     function renderLogin(errorMessage: string) {
@@ -17,14 +18,23 @@ async function controller(req: Request, res: Response) {
         });
     }
 
-    let sub;
-    try {
-        sub = await AccountService.getSubForCredentials(req.body.email, req.body.password);
-    } catch (error) {
-        return renderLogin(error.toString());
+    let sub, account;
+    if (req.body.authReqeustMessage && req.body.authRequestSignature) {
+        const recoveredAddress = recoverTypedSignature({
+            data: JSON.parse(req.body.authReqeustMessage),
+            signature: req.body.authRequestSignature,
+            version: 'V3' as SignTypedDataVersion,
+        });
+        account = await AccountService.signupWithAddress(recoveredAddress);
+        sub = String(account._id);
+    } else {
+        try {
+            sub = await AccountService.getSubForCredentials(req.body.email, req.body.password);
+            account = await AccountService.get(sub);
+        } catch (error) {
+            return renderLogin(error.toString());
+        }
     }
-
-    const account = await AccountService.get(sub);
 
     // Make sure to send a new confirmation email for inactive accounts
     if (!account.active) {

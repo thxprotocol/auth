@@ -19,7 +19,6 @@ import {
 import { YouTubeService } from './YouTubeService';
 import { logger } from '../util/logger';
 import { AccountPlanType } from '../types/enums/AccountPlanType';
-import { MailService } from '../services/MailService';
 
 export class AccountService {
     static get(sub: string) {
@@ -124,6 +123,19 @@ export class AccountService {
         }
 
         return await account.save();
+    }
+
+    static async signupWithAddress(address: string) {
+        const account = await Account.findOne({ address });
+        if (account) return account;
+
+        return await Account.create({
+            address,
+            acceptTermsPrivacy: true,
+            acceptUpdates: false,
+            plan: AccountPlanType.Free,
+            active: true,
+        });
     }
 
     static async signup(

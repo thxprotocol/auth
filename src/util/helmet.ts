@@ -4,7 +4,7 @@ import { AUTH_URL, DASHBOARD_URL, WALLET_URL } from './secrets';
 export const helmetInstance = helmet({
     contentSecurityPolicy: {
         directives: {
-            defaultSrc: [AUTH_URL, "'unsafe-inline'", "'unsafe-eval'"], // FIXME see how we can make this more strict
+            defaultSrc: [AUTH_URL, "'unsafe-eval'", "'unsafe-inline'"],
             frameSrc: [AUTH_URL, WALLET_URL, DASHBOARD_URL],
             frameAncestors: [WALLET_URL, DASHBOARD_URL],
             fontSrc: ['https://fonts.gstatic.com', 'https://ka-f.fontawesome.com/'],
@@ -16,10 +16,10 @@ export const helmetInstance = helmet({
                 'https://cdn.jsdelivr.net',
                 'https://unpkg.com/',
                 'https://cdnjs.cloudflare.com',
-                // "'sha256-PEI/gdNohg23HbZboqauC7uLjfrpcON9Z4W9IurYRxk='",
-                // "'sha256-jOpZSqrqP85EQ9xzce9PQ0EFR3DhpJcbc+vVR1OQLHQ='",
-                // "'sha256-5+pexDB9ERu/BGJRRg/9bZuuZwHoAYgdA9L6UuOaIPY='",
-                "'unsafe-inline'",
+                "'sha256-PEI/gdNohg23HbZboqauC7uLjfrpcON9Z4W9IurYRxk='",
+                "'sha256-jOpZSqrqP85EQ9xzce9PQ0EFR3DhpJcbc+vVR1OQLHQ='",
+                "'sha256-5+pexDB9ERu/BGJRRg/9bZuuZwHoAYgdA9L6UuOaIPY='",
+                "'sha256-tHn9v4E9xZmG7Eh4CSF7CHyPU7kSwiu32J8PimHwftU='",
             ],
             styleSrcElem: [
                 AUTH_URL,

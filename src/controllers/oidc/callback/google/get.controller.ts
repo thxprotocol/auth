@@ -8,15 +8,15 @@ import { YouTubeService } from '../../../../services/YouTubeService';
 import { WALLET_URL } from '../../../../util/secrets';
 import { getChannelScopes } from '../../../../util/social';
 
+async function updateTokens(account: AccountDocument, tokens: any) {
+    account.googleAccessToken = tokens.access_token || account.googleAccessToken;
+    account.googleRefreshToken = tokens.refresh_token || account.googleRefreshToken;
+    account.googleAccessTokenExpires = Number(tokens.expiry_date) || account.googleAccessTokenExpires;
+
+    await account.save();
+}
+
 export async function controller(req: Request, res: Response) {
-    async function updateTokens(account: AccountDocument, tokens: any) {
-        account.googleAccessToken = tokens.access_token || account.googleAccessToken;
-        account.googleRefreshToken = tokens.refresh_token || account.googleRefreshToken;
-        account.googleAccessTokenExpires = Number(tokens.expiry_date) || account.googleAccessTokenExpires;
-
-        await account.save();
-    }
-
     const code = req.query.code as string;
     const uid = req.query.state as string;
 
@@ -75,7 +75,6 @@ export async function controller(req: Request, res: Response) {
     const returnTo = await saveInteraction(interaction, account._id.toString());
 
     await updateTokens(account, tokens);
-
     return res.redirect(returnTo);
 }
 

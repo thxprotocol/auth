@@ -19,23 +19,26 @@ async function controller(req: Request, res: Response) {
     }
 
     let account;
+    // If signed auth request is available recover the address from the signature and lookup user
     if (req.body.authRequestMessage && req.body.authRequestSignature) {
         const recoveredAddress = recoverTypedSignature({
             data: JSON.parse(req.body.authRequestMessage),
             signature: req.body.authRequestSignature,
             version: 'V3' as SignTypedDataVersion,
         });
-        console.log(recoveredAddress);
         account = await AccountService.signinWithAddress(recoveredAddress);
-        console.log(account);
     }
-
-    if (req.body.email && req.body.password) {
+    // if email and password are available lookup user by these credentials
+    else if (req.body.email && req.body.password) {
         try {
             account = await AccountService.signinWithEmailPassword(req.body.email, req.body.password);
         } catch (error) {
             return renderLogin(String(error));
         }
+    }
+    // For all other instances throw an error
+    else {
+        throw new Error('Could not find signature or credential information in the request body.');
     }
 
     // Make sure to send a new confirmation email for inactive accounts

@@ -8,53 +8,8 @@
 </style>
 <% } %>
 
-<script type="module">
-    import { createApp } from 'https://unpkg.com/petite-vue?module'
-
-    const AUTH_REQUEST_MESSAGE = document.getElementsByName('authReqeustMessage')[0].value;
-
-    if (typeof window.ethereum !== 'undefined') {
-        createApp({
-            currentAccount: null,
-            authRequestSignature: '',
-            handleAccountsChanged(accounts) {
-                if (accounts.length === 0) {
-                    console.log('Please connect to MetaMask.');
-                } else if (accounts[0] !== this.currentAccount) {
-                    this.currentAccount = accounts[0];
-
-                    ethereum.request({
-                        method: 'eth_signTypedData_v3',
-                        params: [accounts[0], AUTH_REQUEST_MESSAGE],
-                    }).then((signature) => {
-                        console.log(signature);
-                        document.getElementsByName('authRequestSignature')[0].value = signature;
-                        document.getElementById('form-signin').submit();
-                    });
-                }
-            },
-            signin() {
-                window.ethereum
-                    .request({ method: 'eth_requestAccounts' })
-                    .then(this.handleAccountsChanged)
-                    .catch((err) => {
-                        if (err.code === 4001) {
-                            // EIP-1193 userRejectedRequest error
-                            // If this happens, the user rejected the connection request.
-                            console.log('Please connect to MetaMask.');
-                        } else {
-                            console.error(err);
-                        }
-                    });
-            }
-        }).mount();
-    } else {
-        console.log('Please install MetaMask!');
-    }
-</script>
-
 <div class="col-md-6 offset-md-3 col-xl-4 offset-xl-4 order-0 order-sm-1">
-    <div class="text-center pb-4 pt-4">
+    <div class="text-center py-4">
         <% if (params.logoImgUrl) { %>
         <img src="<%- params.logoImgUrl %>" width="60" alt="THX Logo" />
         <% } else { %>
@@ -63,16 +18,19 @@
     </div>
     <div class="card shadow-sm mb-5">
         <div class="card-body p-sm-5">
-            <% if (params.authentication_token && params.secure_key) { %>
-            <strong class="h2 d-block text-dark text-center mb-4">
+            <% if (params.authRequestMessage) { %>
+            <div v-if="alert && alert.message" class="alert" :class="`alert-${alert.variant}`">
+                <i class="fas fa-exclamation-circle mr-2"></i>
+                {{alert.message}}
+            </div>
+            <% } %>
+            <% if (params.authentication_token && params.secure_key) { %> <strong
+                    class="h2 d-block text-dark text-center mb-4">
                 Set a password
             </strong>
             <p>You are invited to access your THX Web Wallet. Set a password and accept the invite!</p>
-            <% } else { %>
-            <strong class="h2 d-block text-dark text-center mb-4">
-                Hello!
-            </strong>
             <% } %>
+
             <% if (locals.alert && alert.message) { %>
             <div class="alert alert-<%= alert.variant %>">
                 <%- alert.message %>
@@ -83,21 +41,22 @@
                 This part is used for the invite flow
             -->
             <% if (params.authentication_token && params.secure_key) { %>
-            <form autocomplete="off" action="/oidc/<%= uid %>/password" method="post">
+            <form action="/oidc/<%= uid %>/password" method="post">
                 <div class="form-group">
                     <label>Password:</label>
-                    <input class="form-control" autocomplete="off" required type="password" name="password">
+                    <input class="form-control" required autocomplete type="password" name="password">
                 </div>
                 <div class="form-group">
                     <label>Repeat password:</label>
-                    <input class="form-control" autocomplete="off" required type="password" name="passwordConfirm">
+                    <input class="form-control" required autocomplete type="password" name="passwordConfirm">
                 </div>
                 <div class="form-group">
                     <div class="m-0 custom-control custom-checkbox b-custom-control-sm">
                         <input id="acceptTermsPrivacy" type="checkbox" name="acceptTermsPrivacy"
                                class="custom-control-input" value="true"><label for="acceptTermsPrivacy"
                                class="custom-control-label font-weight-normal"> I agree to
-                            THX' <a href="<%= publicUrl %>/general-terms-and-conditions.pdf" target="_blank">terms of
+                            THX' <a href="<%= publicUrl %>/general-terms-and-conditions.pdf" target="_blank">terms
+                                of
                                 use</a> and <a href="<%= publicUrl %>/privacy-policy.pdf" target="_blank">privacy
                                 statement</a></label>
                     </div>
@@ -122,15 +81,6 @@
             <!--
                     This part is used for regular login flow and only visibile if links are available
                 -->
-            <% if (params.googleLoginUrl || params.twitterLoginUrl) { %>
-            <p>
-                Sign in with your social account or an existing THX account.
-                <a href="#" data-toggle="tooltip"
-                   title="We will create a new account if the email address used for authentication has not been used for a sign up.">
-                    <i class="fas fa-question-circle" aria-hidden="true"></i>
-                </a>
-
-            </p>
             <% if (params.googleLoginUrl) { %>
             <a class="btn btn-sign-in btn-google btn-block" href="<%= params.googleLoginUrl %>" download>
                 <div class="logo">
@@ -148,13 +98,14 @@
             </a>
             <% } %>
             <% if (params.spotifyLoginUrl) { %>
-            <a class="btn btn-sign-in btn-twitter btn-block" href="<%= params.spotifyLoginUrl %>">
+            <a class="btn btn-sign-in btn-spotify btn-block" href="<%= params.spotifyLoginUrl %>">
                 <div class="logo">
                     <img src="/img/s-logo.png" alt="Spotify logo" />
                 </div>
                 <div class="label">Sign in with Spotify</div>
             </a>
             <% } %>
+            <% if (params.authRequestMessage) { %>
             <a class="btn btn-sign-in btn-metamask btn-block" @click="signin()">
                 <div class="logo">
                     <img src="/img/mm-logo.svg" width="30" height="30" alt="Metamask logo" />
@@ -163,12 +114,13 @@
                     Sign in with Metamask
                 </div>
             </a>
-            <hr>
             <% } %>
+            <hr>
+
             <!--
                     This part is used for regular login flow
                 -->
-            <form autocomplete="off" id="form-signin" action="/oidc/<%= uid %>/signin" method="post" class="mb-4">
+            <form id="form-signin" action="/oidc/<%= uid %>/signin" method="post" class="mb-4">
 
                 <div class="form-group">
                     <label>E-mail:</label>
@@ -176,15 +128,21 @@
                 </div>
                 <div class="form-group">
                     <label>Password:</label>
-                    <input class="form-control" required type="password" value="<%= params.password %>" name="password">
+                    <input class="form-control" required autocomplete type="password" value="<%= params.password %>"
+                           name="password">
                 </div>
 
                 <% if (params.mfaEnabled) { %>
                 <label>MFA code:</label>
                 <input class="form-control mb-4" required name="code">
                 <% } %>
+
+                <% if (params.authRequestMessage) { %>
+                <input type="hidden" name="authRequestMessage" value="<%= params.authRequestMessage %>" />
                 <input type="hidden" name="authRequestSignature" value="" />
-                <input type="hidden" name="authReqeustMessage" value="<%= params.authReqeustMessage %>" />
+                <script type="module" src="/js/signin.js"></script>
+                <% } %>
+
                 <input type="hidden" name="returnUrl" value="<%= params.return_url %>" />
                 <button type="submit" class="btn rounded-pill btn-primary btn-block">
                     Sign in

@@ -30,9 +30,11 @@ const accountSchema = new mongoose.Schema(
         lastName: String,
         organisation: String,
         plan: Number,
-        email: { type: String, unique: true },
+        // email.sparse allows the value to be null and unique if defined
+        email: { type: String, unique: true, sparse: true },
         password: String,
-        address: String,
+        // address.sparse allows the value to be null and unique if defined
+        address: { type: String, unique: true, sparse: true },
         privateKey: String,
         signupToken: String,
         otpSecret: String,

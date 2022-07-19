@@ -4,7 +4,7 @@ import { AUTH_URL, DASHBOARD_URL, WALLET_URL } from './secrets';
 export const helmetInstance = helmet({
     contentSecurityPolicy: {
         directives: {
-            defaultSrc: [AUTH_URL, "'unsafe-eval'"],
+            defaultSrc: [AUTH_URL, "'unsafe-inline'", "'unsafe-eval'"], // FIXME see how we can make this more strict
             frameSrc: [AUTH_URL, WALLET_URL, DASHBOARD_URL],
             frameAncestors: [WALLET_URL, DASHBOARD_URL],
             fontSrc: ['https://fonts.gstatic.com', 'https://ka-f.fontawesome.com/'],
@@ -17,7 +17,9 @@ export const helmetInstance = helmet({
                 'https://unpkg.com/',
                 'https://cdnjs.cloudflare.com',
                 // "'sha256-PEI/gdNohg23HbZboqauC7uLjfrpcON9Z4W9IurYRxk='",
-                "'unsafe-inline'", // TODO Remove and add hash when done with unsafe-inline script
+                // "'sha256-jOpZSqrqP85EQ9xzce9PQ0EFR3DhpJcbc+vVR1OQLHQ='",
+                // "'sha256-5+pexDB9ERu/BGJRRg/9bZuuZwHoAYgdA9L6UuOaIPY='",
+                "'unsafe-inline'",
             ],
             styleSrcElem: [
                 AUTH_URL,

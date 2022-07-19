@@ -123,7 +123,7 @@ export class TwitterService {
         body.append('redirect_uri', TWITTER_REDIRECT_URI);
         body.append('code_verifier', 'challenge');
 
-        const r = await twitterClient({
+        const { data } = await twitterClient({
             url: '/oauth2/token',
             method: 'POST',
             headers: {
@@ -134,11 +134,7 @@ export class TwitterService {
             data: body,
         });
 
-        if (r.status !== 200) {
-            throw new Error('Failed to request access token');
-        }
-
-        return r.data;
+        return data;
     }
 
     static getScopes() {

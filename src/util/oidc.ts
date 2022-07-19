@@ -17,9 +17,7 @@ if (NODE_ENV !== 'production') {
 }
 
 async function getAccountByEmail(email: string) {
-    let account;
-
-    account = await AccountService.getByEmail(email);
+    let account = await AccountService.getByEmail(email);
 
     if ((!account || (account && !account.active)) && validateEmail(email)) {
         account = await AccountService.signup(email, '', true, true, true);

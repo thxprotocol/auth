@@ -125,7 +125,7 @@ export class AccountService {
         return await account.save();
     }
 
-    static async signupWithAddress(address: string) {
+    static async signinWithAddress(address: string) {
         const account = await Account.findOne({ address });
         if (account) return account;
 
@@ -166,7 +166,7 @@ export class AccountService {
         return account;
     }
 
-    static async signupFor(email: string, password: string, address?: string) {
+    static async invite(email: string, password: string, address?: string) {
         const wallet = new Web3().eth.accounts.create();
         const privateKey = address ? null : wallet.privateKey;
         const account = new Account({
@@ -178,8 +178,7 @@ export class AccountService {
             plan: AccountPlanType.Free,
         });
 
-        await account.save();
-        return account;
+        return await account.save();
     }
 
     static async verifySignupToken(signupToken: string) {
@@ -231,16 +230,14 @@ export class AccountService {
         return account._id.toString();
     }
 
-    static async getSubForCredentials(email: string, password: string) {
+    static async signinWithEmailPassword(email: string, password: string) {
         const account: AccountDocument = await Account.findOne({ email });
-
         if (!account) throw new Error(ERROR_NO_ACCOUNT);
-
         if (!account.comparePassword(password)) {
             throw new Error(ERROR_PASSWORD_NOT_MATCHING);
         }
 
-        return account._id.toString();
+        return account;
     }
 
     static async getSubForPasswordResetToken(password: string, passwordConfirm: string, passwordResetToken: string) {

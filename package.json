@@ -149,7 +149,10 @@
             ],
             "quotes": [
                 "error",
-                "single"
+                "single",
+                {
+                    "avoidEscape": true
+                }
             ],
             "no-debugger": "off",
             "no-sparse-arrays": "off",

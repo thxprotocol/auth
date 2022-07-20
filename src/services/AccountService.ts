@@ -96,7 +96,7 @@ export class AccountService {
 
         account.authenticationToken = authenticationToken || account.authenticationToken;
         account.authenticationTokenExpires = authenticationTokenExpires || account.authenticationTokenExpires;
-        account.address = toChecksumAddress(address || account.address);
+        account.address = address || account.address ? toChecksumAddress(address || account.address) : undefined;
         account.privateKey = privateKey || account.privateKey;
 
         if (googleAccess === false) {

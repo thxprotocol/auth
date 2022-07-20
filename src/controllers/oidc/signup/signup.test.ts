@@ -33,6 +33,7 @@ describe('Sign up', () => {
     });
 
     afterAll(async () => {
+        db.truncate();
         db.disconnect();
     });
 

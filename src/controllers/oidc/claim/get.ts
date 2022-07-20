@@ -5,6 +5,8 @@ import { getChannelScopes, getLoginLinkForChannelAction } from '../../../util/so
 import BrandProxy from '../../../proxies/BrandProxy';
 import { BadRequestError } from '../../../util/errors';
 import ClaimProxy from '../../../proxies/ClaimProxy';
+import { AUTH_REQUEST_TYPED_MESSAGE, createTypedMessage } from '../../../util/typedMessage';
+import { AUTH_URL } from '../../../util/secrets';
 
 async function controller(req: Request, res: Response) {
     const { uid, params } = req.interaction;
@@ -21,7 +23,6 @@ async function controller(req: Request, res: Response) {
     const brandData = await BrandProxy.get(claim.poolId);
 
     params.rewardData = claim;
-    params.googleLoginUrl = YouTubeService.getLoginUrl(req.params.uid, YouTubeService.getExpandedScopes());
 
     // Appearance settings for the pool
     params.backgroundImgUrl = brandData?.backgroundImgUrl;
@@ -29,6 +30,9 @@ async function controller(req: Request, res: Response) {
 
     // Render the regular signin page success alert
     if (!claim.rewardCondition || !claim.rewardCondition.channelType) {
+        params.googleLoginUrl = YouTubeService.getLoginUrl(req.params.uid, YouTubeService.getBasicScopes());
+        params.authRequestMessage = createTypedMessage(AUTH_REQUEST_TYPED_MESSAGE, AUTH_URL, uid);
+
         return res.render('signin', {
             uid,
             params,

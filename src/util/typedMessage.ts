@@ -1,3 +1,6 @@
+export const AUTH_REQUEST_TYPED_MESSAGE =
+    "Welcome! Please make sure you have selected your preferred account and sign this message to verify it's ownership.";
+
 export function createTypedMessage(message: string, app: string, nonce: string) {
     return JSON.stringify({
         types: {

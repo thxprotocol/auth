@@ -31,6 +31,7 @@
     },
     "dependencies": {
         "@godaddy/terminus": "^4.10.2",
+        "@metamask/eth-sig-util": "^4.0.1",
         "@sendgrid/mail": "^7.4.2",
         "airtable": "^0.11.2",
         "axios": "^0.21.3",
@@ -148,7 +149,10 @@
             ],
             "quotes": [
                 "error",
-                "single"
+                "single",
+                {
+                    "avoidEscape": true
+                }
             ],
             "no-debugger": "off",
             "no-sparse-arrays": "off",

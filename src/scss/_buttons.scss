@@ -154,7 +154,7 @@
     align-items: center;
     border: 1px solid $gray-400;
     padding: 0;
-
+    
     .logo {
         margin-right: 0.5rem;
         background: white;
@@ -188,10 +188,6 @@
     &:active {
         background-color: #3367d6;
     }
-
-    .label {
-        font-family: Roboto, sans-serif;
-    }
 }
 
 .btn-twitter {
@@ -200,8 +196,20 @@
     &:active {
         background-color: #3367d6;
     }
+}
 
-    .label {
-        font-family: Roboto, sans-serif;
+.btn-spotify {
+    background-color: rgb(29, 117, 222);
+
+    &:active {
+        background-color: rgb(24, 101, 194);
+    }
+}
+
+.btn-metamask {
+    background-color: rgb(3, 125, 214);
+
+    &:active {
+        background-color: rgb(3, 125, 214);
     }
 }

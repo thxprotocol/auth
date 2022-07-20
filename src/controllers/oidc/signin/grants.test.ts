@@ -13,7 +13,7 @@ describe('OAuth2 Grants', () => {
     beforeAll(async () => {
         await db.truncate();
 
-        const account = await AccountService.signupFor(accountEmail, accountSecret);
+        const account = await AccountService.invite(accountEmail, accountSecret);
         accountId = account.id;
     });
 

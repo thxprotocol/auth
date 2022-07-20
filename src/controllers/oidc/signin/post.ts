@@ -1,9 +1,10 @@
 import { AccountService } from '../../../services/AccountService';
 import { MailService } from '../../../services/MailService';
 import { Request, Response } from 'express';
-import { ERROR_ACCOUNT_NOT_ACTIVE, ERROR_AUTH_LINK, OTP_CODE_INVALID } from '../../../util/messages';
+import { ERROR_ACCOUNT_NOT_ACTIVE, ERROR_AUTH_LINK, ERROR_OTP_CODE_INVALID } from '../../../util/messages';
 import { oidc } from '../../../util/oidc';
 import { authenticator } from '@otplib/preset-default';
+import { recoverTypedSignature, SignTypedDataVersion } from '@metamask/eth-sig-util';
 
 async function controller(req: Request, res: Response) {
     function renderLogin(errorMessage: string) {
@@ -17,14 +18,28 @@ async function controller(req: Request, res: Response) {
         });
     }
 
-    let sub;
-    try {
-        sub = await AccountService.getSubForCredentials(req.body.email, req.body.password);
-    } catch (error) {
-        return renderLogin(error.toString());
+    let account;
+    // If signed auth request is available recover the address from the signature and lookup user
+    if (req.body.authRequestMessage && req.body.authRequestSignature) {
+        const recoveredAddress = recoverTypedSignature({
+            data: JSON.parse(req.body.authRequestMessage),
+            signature: req.body.authRequestSignature,
+            version: 'V3' as SignTypedDataVersion,
+        });
+        account = await AccountService.signinWithAddress(recoveredAddress);
     }
-
-    const account = await AccountService.get(sub);
+    // if email and password are available lookup user by these credentials
+    else if (req.body.email && req.body.password) {
+        try {
+            account = await AccountService.signinWithEmailPassword(req.body.email, req.body.password);
+        } catch (error) {
+            return renderLogin(String(error));
+        }
+    }
+    // For all other instances throw an error
+    else {
+        throw new Error('Could not find signature or credential information in the request body.');
+    }
 
     // Make sure to send a new confirmation email for inactive accounts
     if (!account.active) {
@@ -46,10 +61,10 @@ async function controller(req: Request, res: Response) {
         if (!isValid) {
             return res.render('signin', {
                 uid: req.params.uid,
-                params: { return_url: req.body.returnUrl, ...req.body, mfaEnabled: true },
+                params: { ...req.body, return_url: req.body.returnUrl, mfaEnabled: true },
                 alert: {
                     variant: 'danger',
-                    message: OTP_CODE_INVALID,
+                    message: ERROR_OTP_CODE_INVALID,
                 },
             });
         }
@@ -66,7 +81,12 @@ async function controller(req: Request, res: Response) {
     });
 
     // Make to finish the interaction and login with sub
-    return await oidc.interactionFinished(req, res, { login: { accountId: sub } }, { mergeWithLastSubmission: false });
+    return await oidc.interactionFinished(
+        req,
+        res,
+        { login: { accountId: String(account._id) } },
+        { mergeWithLastSubmission: false },
+    );
 }
 
 export default { controller };

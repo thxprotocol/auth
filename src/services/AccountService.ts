@@ -5,6 +5,7 @@ import { decryptString } from '../util/decrypt';
 import { SECURE_KEY } from '../util/secrets';
 import { checkPasswordStrength } from '../util/passwordcheck';
 import Web3 from 'web3';
+import { toChecksumAddress } from 'web3-utils';
 import {
     ERROR_NO_ACCOUNT,
     DURATION_TWENTYFOUR_HOURS,
@@ -95,7 +96,7 @@ export class AccountService {
 
         account.authenticationToken = authenticationToken || account.authenticationToken;
         account.authenticationTokenExpires = authenticationTokenExpires || account.authenticationTokenExpires;
-        account.address = address || account.address;
+        account.address = toChecksumAddress(address || account.address);
         account.privateKey = privateKey || account.privateKey;
 
         if (googleAccess === false) {
@@ -130,7 +131,7 @@ export class AccountService {
         if (account) return account;
 
         return await Account.create({
-            address,
+            address: toChecksumAddress(address),
             acceptTermsPrivacy: true,
             acceptUpdates: false,
             plan: AccountPlanType.Free,

@@ -33,8 +33,8 @@ describe('Sign up', () => {
     });
 
     afterAll(async () => {
-        db.truncate();
-        db.disconnect();
+        await db.truncate();
+        await db.disconnect();
     });
 
     describe('GET /auth', () => {

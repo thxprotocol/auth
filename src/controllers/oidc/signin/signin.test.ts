@@ -16,7 +16,6 @@ describe('Sign In', () => {
 
     beforeAll(async () => {
         await db.truncate();
-
         const res = await http
             .post('/reg')
             .set({ Authorization: `Bearer ${INITIAL_ACCESS_TOKEN}` })
@@ -39,7 +38,7 @@ describe('Sign In', () => {
     });
 
     afterAll(async () => {
-        db.disconnect();
+        await db.disconnect();
     });
 
     describe('GET /auth', () => {

@@ -7,12 +7,12 @@ import db from '../../../util/database';
 import { accountEmail, accountSecret } from '../../../util/jest';
 import { API_URL, INITIAL_ACCESS_TOKEN, SPOTIFY_API_ENDPOINT, TWITTER_API_ENDPOINT } from '../../../util/secrets';
 
-const REDIRECT_URL = 'https://localhost:8082/signin-oidc';
 const http = request.agent(app);
 
 describe('SSO Sign In', () => {
-    let uid = '';
-    let CLIENT_ID = '';
+    let uid = '',
+        CLIENT_ID = '';
+    const REDIRECT_URL = 'https://localhost:8082/signin-oidc';
 
     beforeAll(async () => {
         await db.truncate();
@@ -55,7 +55,8 @@ describe('SSO Sign In', () => {
     });
 
     afterAll(async () => {
-        db.disconnect();
+        await db.disconnect();
+        nock.cleanAll();
     });
 
     describe('Google SSO', () => {

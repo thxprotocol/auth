@@ -18,7 +18,7 @@ describe('OAuth2 Grants', () => {
     });
 
     afterAll(async () => {
-        db.disconnect();
+        await db.disconnect();
     });
 
     describe('GET /.well-known/openid-configuration', () => {

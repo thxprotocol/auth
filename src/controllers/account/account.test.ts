@@ -54,7 +54,7 @@ describe('Account Controller', () => {
     });
 
     afterAll(async () => {
-        db.disconnect();
+        await db.disconnect();
     });
 
     describe('POST /account', () => {

@@ -6,9 +6,14 @@ module.exports = {
         const accounts = await accountsColl.find().toArray();
 
         await Promise.all(
-            accounts.map((account) =>
-                accountsColl.updateOne({ _id: account._id }, { $set: { address: toChecksumAddress(account.address) } }),
-            ),
+            accounts.map((account) => {
+                if (account.address) {
+                    return accountsColl.updateOne(
+                        { _id: account._id },
+                        { $set: { address: toChecksumAddress(account.address) } },
+                    );
+                }
+            }),
         );
     },
 

@@ -1,23 +1,19 @@
 [![CI](https://github.com/thxprotocol/auth/actions/workflows/ci.yml/badge.svg)](https://github.com/thxprotocol/auth/actions/workflows/ci.yml)
 
 # THX Auth
+This repository holds the OAuth2 OpenID Connect provider based on the excellent node-oidc-provider by panva.
 
-## Index
 
-1. Prerequisites
-2. Installing
-3. Testing
-4. Register clients
-5. Interface
-6. Database Schema Migration
+-   [Health](https://localhost:3030/health)
+-   [OIDC config](https://localhost:3030/)
+-   [Developer Documentation](https://docs.thx.network)
 
 ## 1. Prerequisites
 
 -   Docker
 -   [NVM](https://github.com/nvm-sh/nvm)
 
-We use docker to run our dependencies like mongo and ganache in. We run the development server locally, managing a common node version using Node Version Manager.
-You can also manually install the correct node version but usage of NVM is recommended.
+We use docker to run our dependencies like mongo and hardhat in. We run the development server locally, managing a common node version using Node Version Manager. You can also manually install the correct node version but usage of NVM is recommended.
 
 ## 2. Installing
 
@@ -28,77 +24,79 @@ nvm use
 # 2. Provide environment variables
 cp .env.example .env
 
-# 3. Create certificates (Make sure to have openssl@1.1 or openssl@3 installed.)
-openssl req -x509 -newkey rsa:4096 -sha256 -days 3650 -nodes -keyout auth.key -out auth.crt -subj "/CN=localhost" -addext "subjectAltName=DNS:localhost"
+# 3. This readme assumes you have installed the API. 
+# Copy it's `./certs` folder to the root of this project
 
-# 3. Checkout SCSS submodule
+# 4. Create jwks
+npm run build:keys
+
+# 5. Checkout SCSS submodule
 git submodule init
 git submodule update
 
-# 4. Install packages
-npm install --ci
-
-# 5. Start working (docker compose up -d && npm run watch:debug)
-npm run dev
-
-# 6. shut down dependencies
-docker compose down
+# 6. Install packages
+npm ci
 ```
 
-## 3. Testing
+## 3. Usage
+A thx_hardhat container with prefilled wallets and all required contracts will be deployed automatically.
 
 ```
-# Run e2e tests
-npm run test
-```
+# 7. Start containers
+docker compose up
 
-## 4. Register clients
-
-### 4.1 client_credentials example
+# 8. Start process
+npm start
 
 ```
-POST http://localhost:3000/reg
+
+## 4. Testing
+
+```
+#Runs all suites
+npm test 
+
+#Runs a specific test by file name
+npm test <file_name_part>
+```
+
+## 5. Register OAuth clients
+
+### 5.1 client_credentials grant
+Commonly used for data exchange between client and server. Extend `scope` property with required resources.
+
+```
+POST https://localhost:3030/reg
 {
     "application_type": "web",
-    "client_name": "Your App",
     "grant_types": ["client_credentials"],
     "redirect_uris": [],
     "response_types": [],
-    "scope": "openid account:read account:write asset_pools:read asset_pools:write rewards:read members:read members:write withdrawals:write"
+    "scope": "openid"
 }
 ```
 
-### 4.2 authorization_code example
+### 5.2 authorization_code grant
+Commonly used for data exchange between servers. Extend `scope` property with required resources.
 
 ```
-POST http://localhost:3000/reg
+POST https://localhost:3030/reg
 {
     "application_type": "web",
-    "client_name": "THX Wallet",
     "grant_types": ["authorization_code"],
-    "redirect_uris": ["https://dev.wallet.thx.network/signin-oidc"],
-    "post_logout_redirect_uris": ["https://dev.wallet.thx.network"],
+    "redirect_uris": ["https://localhost:8083/signin-oidc"],
+    "post_logout_redirect_uris": ["https://localhost:8083"],
     "response_types": ["code"],
-    "scope": "openid email offline_access deposits:read deposits:write asset_pools:read asset_pools:write rewards:read withdrawals:read"
+    "scope": "openid" 
 }
 ```
 
-## 5. Interface
+## 6. Database Schema Migration
 
-Swagger Documentation is provided in the controllers of the routes and lives at the following endpoints:
-
--   [API Health](https://localhost:3000/v1/health/)
--   [Local API Specs](https://localhost:3000/v1/docs/)
--   [Staging API Specs](https://dev.api.thx.network/v1/docs/)
--   [Production API Specs](https://api.thx.network/v1/docs/)
--   [Developer Documentation](http://docs.thx.network)
-
-## 5. Database Schema Migration
-
-### 5.1 To add a new migration script, use the following CLI command
+### 6.1 Add migrations
 
 ```
-npm run migrate:create name-of-my-script
+npm run migrate:create name-of-my-migration
 ```
 
 A new file will be created inside migrations folder with a corresponding timestamp.
@@ -108,38 +106,15 @@ A new file will be created inside migrations folder with a corresponding timesta
    |- 20210108114324-name-of-my-script.js
 ```
 
-### 5.2 To add a new property to the existing collection
-
-Considering we want to add a quantity property to the products collection, the migration could be as follows:
+### 6.3 Run migrations
 
 ```
-export = {
-    async up(db: Db) {
-        return db.collection('products').updateMany({}, { $set: { quantity: 10 } });
-    },
-
-    async down(db: Db) {
-        return db.collection('products').updateMany({}, { $unset: { quantity: null } });
-    },
-};
-```
-
-### 5.3 Running migrations
-
-To get the migration status
-
-```
+# To get the migration status
 npm run migrate:status
-```
 
-To run your migrations, simply run the command
-
-```
+# To run your migrations, simply run the command
 npm run migrate
-```
 
-To rollback a migration use the down command
-
-```
+# To rollback a migration use the down command
 npm run migrate:undo-last
 ```

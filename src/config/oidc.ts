@@ -104,6 +104,8 @@ const config: Configuration = {
         'swap:write',
         'claims:write',
         'claims:read',
+        'clients:write',
+        'clients:read',
     ],
     claims: {
         openid: ['sub', 'email'],

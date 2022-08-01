@@ -4,6 +4,7 @@ import { TwitterService } from '../../../../services/TwitterService';
 import { AccountDocument } from '../../../../models/Account';
 import { ERROR_NO_ACCOUNT } from '../../../../util/messages';
 import { getAccountByEmail, getInteraction, saveInteraction } from '../../../../util/oidc';
+import { AccountVariant } from '../../../../types/enums/AccountVariant';
 
 export async function controller(req: Request, res: Response) {
     async function getAccountBySub(sub: string) {
@@ -41,7 +42,7 @@ export async function controller(req: Request, res: Response) {
             ? // If so, get account for sub
               await getAccountBySub(interaction.session.accountId)
             : // If not, get account for email claim
-              await getAccountByEmail(email);
+              await getAccountByEmail(email, AccountVariant.SSOGoogle);
 
     // Actions after successfully login
     await AccountService.update(account, {

@@ -1,10 +1,11 @@
 import newrelic from 'newrelic';
-import { Account, AccountDocument, IAccountUpdates } from '../models/Account';
+import Web3 from 'web3';
+import { IAccountUpdates } from '../types/TAccount';
+import { Account, AccountDocument } from '../models/Account';
 import { createRandomToken } from '../util/tokens';
 import { decryptString } from '../util/decrypt';
 import { SECURE_KEY } from '../util/secrets';
 import { checkPasswordStrength } from '../util/passwordcheck';
-import Web3 from 'web3';
 import { toChecksumAddress } from 'web3-utils';
 import {
     ERROR_NO_ACCOUNT,
@@ -20,6 +21,7 @@ import {
 import { YouTubeService } from './YouTubeService';
 import { logger } from '../util/logger';
 import { AccountPlanType } from '../types/enums/AccountPlanType';
+import { AccountVariant } from '../types/enums/AccountVariant';
 
 export class AccountService {
     static get(sub: string) {
@@ -126,12 +128,14 @@ export class AccountService {
         return await account.save();
     }
 
-    static async signinWithAddress(address: string) {
+    static async signinWithAddress(addr: string) {
+        const address = toChecksumAddress(addr);
         const account = await Account.findOne({ address });
         if (account) return account;
 
         return await Account.create({
-            address: toChecksumAddress(address),
+            address,
+            variant: AccountVariant.Metamask,
             acceptTermsPrivacy: true,
             acceptUpdates: false,
             plan: AccountPlanType.Free,
@@ -142,6 +146,7 @@ export class AccountService {
     static async signup(
         email: string,
         password: string,
+        variant: AccountVariant,
         acceptTermsPrivacy: boolean,
         acceptUpdates: boolean,
         active = false,
@@ -154,6 +159,7 @@ export class AccountService {
 
         account.active = active;
         account.email = email;
+        account.variant = variant;
         account.password = password;
         account.acceptTermsPrivacy = acceptTermsPrivacy || false;
         account.acceptUpdates = acceptUpdates || false;

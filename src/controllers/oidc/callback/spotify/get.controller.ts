@@ -4,6 +4,7 @@ import { SpotifyService } from '../../../../services/SpotifyService';
 import { AccountService } from '../../../../services/AccountService';
 import { ERROR_NO_ACCOUNT } from '../../../../util/messages';
 import { getAccountByEmail, getInteraction, saveInteraction } from '../../../../util/oidc';
+import { AccountVariant } from '../../../../types/enums/AccountVariant';
 
 async function updateTokens(account: AccountDocument, tokens: any): Promise<AccountDocument> {
     account.spotifyAccessToken = tokens.access_token || account.spotifyAccessToken;
@@ -40,7 +41,7 @@ async function controller(req: Request, res: Response) {
             ? // If so, get account for sub
               await getAccountBySub(interaction.session.accountId)
             : // If not, get account for email claim
-              await getAccountByEmail(email);
+              await getAccountByEmail(email, AccountVariant.SSOSpotify);
 
     // Actions after successfully login
     await AccountService.update(account, {

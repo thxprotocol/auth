@@ -1,4 +1,5 @@
 import { AccountPlanType } from './enums/AccountPlanType';
+import { AccountVariant } from './enums/AccountVariant';
 
 export interface TAccount {
     firstName: string;
@@ -9,6 +10,7 @@ export interface TAccount {
     email: string;
     password: string;
     address: string;
+    variant: AccountVariant;
     privateKey: string;
     signupToken: string;
     otpSecret: string;
@@ -31,4 +33,20 @@ export interface TAccount {
     acceptUpdates: boolean;
     comparePassword: any;
     createdAt: Date;
+}
+export interface IAccountUpdates {
+    acceptTermsPrivacy?: boolean;
+    acceptUpdates?: boolean;
+    address?: string;
+    privateKey?: string;
+    googleAccess?: boolean;
+    twitterAccess?: boolean;
+    spotifyAccess?: boolean;
+    authenticationToken?: string;
+    authenticationTokenExpires?: number;
+    lastLoginAt?: number;
+    firstName?: string;
+    lastName?: string;
+    plan?: AccountPlanType;
+    organisation?: string;
 }

@@ -3,6 +3,7 @@ import configuration from '../config/oidc';
 import { AUTH_URL, NODE_ENV } from './secrets';
 import { AccountService } from '../services/AccountService';
 import { validateEmail } from './validate';
+import { AccountVariant } from '../types/enums/AccountVariant';
 
 const oidc = new Provider(AUTH_URL, configuration);
 
@@ -16,11 +17,16 @@ if (NODE_ENV !== 'production') {
     };
 }
 
-async function getAccountByEmail(email: string) {
-    let account = await AccountService.getByEmail(email);
+async function getAccountByEmail(email: string, variant: AccountVariant) {
+    // Gets the account for the specified email
+    const account = await AccountService.getByEmail(email);
 
-    if ((!account || (account && !account.active)) && validateEmail(email)) {
-        account = await AccountService.signup(email, '', true, true, true);
+    if (!account) {
+        // Creates a new account for specified variant
+        return await AccountService.signup(email, '', variant, true, true, true);
+    } else if (account && !account.active && validateEmail(email)) {
+        // Creates a new signup token and proceeds
+        return await AccountService.signup(email, '', account.variant, true, true, true);
     }
 
     return account;

@@ -7,6 +7,7 @@ import { getAccountByEmail, saveInteraction } from '../../../../util/oidc';
 import { YouTubeService } from '../../../../services/YouTubeService';
 import { WALLET_URL } from '../../../../util/secrets';
 import { getChannelScopes } from '../../../../util/social';
+import { AccountVariant } from '../../../../types/enums/AccountVariant';
 
 async function updateTokens(account: AccountDocument, tokens: any) {
     account.googleAccessToken = tokens.access_token || account.googleAccessToken;
@@ -65,7 +66,7 @@ export async function controller(req: Request, res: Response) {
             ? // If so, get account for sub
               await AccountService.get(interaction.session.accountId)
             : // If not, get account for email claim
-              await getAccountByEmail(claims.email);
+              await getAccountByEmail(claims.email, AccountVariant.SSOGoogle);
 
     // Actions after successfully login
     await AccountService.update(account, {

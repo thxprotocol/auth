@@ -4,6 +4,7 @@ import { AccountService } from '../../../services/AccountService';
 import db from '../../../util/database';
 import { API_URL, INITIAL_ACCESS_TOKEN } from '../../../util/secrets';
 import { getPath, accountEmail, accountSecret } from '../../../util/jest';
+import { AccountVariant } from '../../../types/enums/AccountVariant';
 
 const REDIRECT_URL = 'https://localhost:8082/signin-oidc';
 const http = request.agent(app);
@@ -31,7 +32,14 @@ describe('Sign In', () => {
         CLIENT_ID = res.body.client_id;
         CLIENT_SECRET = res.body.client_secret;
 
-        const account = await AccountService.signup(accountEmail, accountSecret, true, true, true);
+        const account = await AccountService.signup(
+            accountEmail,
+            accountSecret,
+            AccountVariant.EmailPassword,
+            true,
+            true,
+            true,
+        );
         account.privateKey = undefined;
 
         await account.save();

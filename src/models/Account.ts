@@ -1,25 +1,7 @@
 import bcrypt from 'bcrypt-nodejs';
 import mongoose from 'mongoose';
-import { AccountPlanType } from '../types/enums/AccountPlanType';
 import { TAccount } from '../types/TAccount';
 import { encryptString } from '../util/encrypt';
-
-export interface IAccountUpdates {
-    acceptTermsPrivacy?: boolean;
-    acceptUpdates?: boolean;
-    address?: string;
-    privateKey?: string;
-    googleAccess?: boolean;
-    twitterAccess?: boolean;
-    spotifyAccess?: boolean;
-    authenticationToken?: string;
-    authenticationTokenExpires?: number;
-    lastLoginAt?: number;
-    firstName?: string;
-    lastName?: string;
-    plan?: AccountPlanType;
-    organisation?: string;
-}
 
 export type AccountDocument = mongoose.Document & TAccount;
 
@@ -35,6 +17,7 @@ const accountSchema = new mongoose.Schema(
         password: String,
         // address.sparse allows the value to be null and unique if defined
         address: { type: String, unique: true, sparse: true },
+        variant: Number,
         privateKey: String,
         signupToken: String,
         otpSecret: String,

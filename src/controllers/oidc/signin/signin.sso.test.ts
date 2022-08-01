@@ -1,6 +1,6 @@
 import nock from 'nock';
 import request from 'supertest';
-
+import { AccountVariant } from '../../../types/enums/AccountVariant';
 import app from '../../../app';
 import { AccountService } from '../../../services/AccountService';
 import db from '../../../util/database';
@@ -31,7 +31,14 @@ describe('SSO Sign In', () => {
 
         CLIENT_ID = res.body.client_id;
 
-        const account = await AccountService.signup(accountEmail, accountSecret, true, true, true);
+        const account = await AccountService.signup(
+            accountEmail,
+            accountSecret,
+            AccountVariant.EmailPassword,
+            true,
+            true,
+            true,
+        );
         account.privateKey = undefined;
 
         const params = new URLSearchParams({

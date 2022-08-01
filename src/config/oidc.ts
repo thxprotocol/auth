@@ -108,7 +108,7 @@ const config: Configuration = {
         'clients:read',
     ],
     claims: {
-        openid: ['sub', 'email'],
+        openid: ['sub', 'email', 'variant', 'address'],
     },
     ttl: {
         Interaction: 1 * 60 * 60, // 1 hour in seconds,

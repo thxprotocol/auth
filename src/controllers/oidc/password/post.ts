@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { IAccountUpdates } from '../../../models/Account';
+import { IAccountUpdates } from '../../../types/TAccount';
 import { AccountService } from '../../../services/AccountService';
 import { oidc } from '../../../util/oidc';
 

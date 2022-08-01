@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { AccountVariant } from '../../../types/enums/AccountVariant';
 import { AccountService } from '../../../services/AccountService';
 import { MailService } from '../../../services/MailService';
 import { checkPasswordStrength } from '../../../util/passwordcheck';
@@ -33,6 +34,8 @@ async function controller(req: Request, res: Response) {
     const account = await AccountService.signup(
         req.body.email,
         req.body.password,
+
+        AccountVariant.EmailPassword,
         req.body.acceptTermsPrivacy,
         req.body.acceptUpdates,
     );

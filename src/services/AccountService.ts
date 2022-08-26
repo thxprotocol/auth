@@ -206,6 +206,7 @@ export class AccountService {
         account.signupToken = '';
         account.signupTokenExpires = null;
         account.active = true;
+        account.isEmailVerified = true;
 
         await account.save();
 

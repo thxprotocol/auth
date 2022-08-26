@@ -37,7 +37,7 @@ export class MailService {
         account.signupToken = createRandomToken();
         account.signupTokenExpires = Date.now() + 1000 * 60 * 60 * 24; // 24 hours,
 
-        const verifyUrl = `${returnUrl}/verify?verify_email_token=${account.verifyEmailToken}&return_url=${returnUrl}`;
+        const verifyUrl = `${returnUrl}verify_email?verifyEmailToken=${account.verifyEmailToken}&return_url=${returnUrl}`;
         const html = await ejs.renderFile(
             path.dirname(__dirname) + '/views/mail/emailConfirm.ejs',
             {

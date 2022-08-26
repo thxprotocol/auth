@@ -19,7 +19,7 @@
                         Email:
                     </div>
                     <div class="col-8">
-                        <input class="form-control" name="email" required disabled value="<%= params.email %>"
+                        <input class="form-control" name="email" required value="<%= params.email %>"
                                placeholder="" />
                     </div>
                 </div>
@@ -73,7 +73,6 @@
                 <% if (params.spotifyAccess) { %>
                 <input form="account_update" type="hidden" name="spotifyAccess" value="false" />
                 <% } %>
-
 
                 <div class="row pb-3">
                     <div class="d-flex col-4 align-items-center font-weight-bold">

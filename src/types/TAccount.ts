@@ -7,6 +7,7 @@ export interface TAccount {
     plan: AccountPlanType;
     organisation: string;
     active: boolean;
+    isEmailVerified: boolean;
     email: string;
     password: string;
     address: string;
@@ -28,6 +29,8 @@ export interface TAccount {
     spotifyAccessToken: string;
     spotifyRefreshToken: string;
     spotifyAccessTokenExpires: number;
+    verifyEmailToken: string;
+    verifyEmailTokenExpires: number;
     lastLoginAt: number;
     acceptTermsPrivacy: boolean;
     acceptUpdates: boolean;
@@ -49,4 +52,5 @@ export interface IAccountUpdates {
     lastName?: string;
     plan?: AccountPlanType;
     organisation?: string;
+    email?: string;
 }

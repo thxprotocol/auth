@@ -8,6 +8,7 @@ export type AccountDocument = mongoose.Document & TAccount;
 const accountSchema = new mongoose.Schema(
     {
         active: Boolean,
+        isEmailVerified: Boolean,
         firstName: String,
         lastName: String,
         organisation: String,
@@ -35,6 +36,8 @@ const accountSchema = new mongoose.Schema(
         spotifyAccessToken: String,
         spotifyRefreshToken: String,
         spotifyAccessTokenExpires: Number,
+        verifyEmailToken: String,
+        verifyEmailTokenExpires: Number,
         acceptTermsPrivacy: Boolean,
         acceptUpdates: Boolean,
         lastLoginAt: Date,

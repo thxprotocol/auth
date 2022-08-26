@@ -33,6 +33,31 @@ export class MailService {
         await account.save();
     }
 
+    static async sendVerificationEmail(account: AccountDocument, returnUrl: string) {
+        account.signupToken = createRandomToken();
+        account.signupTokenExpires = Date.now() + 1000 * 60 * 60 * 24; // 24 hours,
+
+        const verifyUrl = `${returnUrl}/verify?verify_email_token=${account.verifyEmailToken}&return_url=${returnUrl}`;
+        const html = await ejs.renderFile(
+            path.dirname(__dirname) + '/views/mail/emailConfirm.ejs',
+            {
+                verifyUrl,
+                returnUrl,
+                baseUrl: AUTH_URL,
+            },
+            { async: true },
+        );
+
+        await this.sendMail(
+            account.email,
+            'Please complete the e-mail verification for your THX Account',
+            html,
+            verifyUrl,
+        );
+
+        await account.save();
+    }
+
     static async sendLoginLinkEmail(account: AccountDocument, password: string) {
         const secureKey = encryptString(password, SECURE_KEY.split(',')[0]);
         const authToken = createRandomToken();

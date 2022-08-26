@@ -17,12 +17,12 @@ import {
     ERROR_PASSWORD_NOT_MATCHING,
     ERROR_PASSWORD_RESET_TOKEN_INVALID_OR_EXPIRED,
     ERROR_PASSWORD_STRENGTH,
+    ERROR_VERIFY_EMAIL_TOKEN_INVALID,
 } from '../util/messages';
 import { YouTubeService } from './YouTubeService';
 import { logger } from '../util/logger';
 import { AccountPlanType } from '../types/enums/AccountPlanType';
 import { AccountVariant } from '../types/enums/AccountVariant';
-
 export class AccountService {
     static get(sub: string) {
         return Account.findById(sub);
@@ -58,8 +58,12 @@ export class AccountService {
             firstName,
             lastName,
             plan,
+            email,
         }: IAccountUpdates,
     ) {
+        if (email) {
+            account.email = email;
+        }
         // No strict checking here since null == undefined
         if (account.acceptTermsPrivacy == null) {
             account.acceptTermsPrivacy = acceptTermsPrivacy == null ? false : account.acceptTermsPrivacy;
@@ -202,6 +206,26 @@ export class AccountService {
         account.signupToken = '';
         account.signupTokenExpires = null;
         account.active = true;
+
+        await account.save();
+
+        return { result: SUCCESS_SIGNUP_COMPLETED, account };
+    }
+
+    static async verifyEmailToken(verifyEmailToken: string) {
+        const account = await Account.findOne({ verifyEmailToken });
+
+        if (!account) {
+            return { error: ERROR_VERIFY_EMAIL_TOKEN_INVALID };
+        }
+
+        if (account.verifyEmailTokenExpires < Date.now()) {
+            return { error: ERROR_VERIFY_EMAIL_TOKEN_INVALID };
+        }
+
+        account.verifyEmailToken = '';
+        account.verifyEmailTokenExpires = null;
+        account.isEmailVerified = true;
 
         await account.save();
 

@@ -57,7 +57,7 @@
         "lusca": "^1.6.1",
         "migrate-mongo": "^8.2.3",
         "mongodb": "^4.3.1",
-        "mongoose": "^6.2.1",
+        "mongoose": "^6.4.6",
         "morgan": "^1.10.0",
         "morgan-json": "^1.1.0",
         "newrelic": "^8.9.0",

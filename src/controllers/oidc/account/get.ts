@@ -20,6 +20,7 @@ async function controller(req: Request, res: Response) {
             email: account.email,
             firstName: account.firstName,
             lastName: account.lastName,
+            profileImg: account.profileImg,
             organisation: account.organisation,
             address: account.address,
             plan: account.plan,

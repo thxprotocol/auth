@@ -1,3 +1,4 @@
+import multer from 'multer';
 import express, { urlencoded } from 'express';
 import ReadOIDC from './get';
 import ReadAbort from './abort/get';
@@ -46,6 +47,8 @@ router.get('/:uid/forgot', assertInteraction, ReadForgot.controller);
 router.post('/:uid/forgot', urlencoded({ extended: false }), assertInteraction, CreateForgot.controller);
 router.post('/:uid/reset', urlencoded({ extended: false }), assertInteraction, CreateReset.controller);
 
+const upload = multer();
+
 // // Routes require auth
 router.get('/:uid/connect', assertInteraction, assertAuthorization, ReadConnect.controller);
 router.get('/:uid/account', assertInteraction, assertAuthorization, ReadAccount.controller);
@@ -67,11 +70,13 @@ router.post(
 router.post(
     '/:uid/account',
     urlencoded({ extended: false }),
+    upload.fields([{ name: 'profile', maxCount: 1 }]),
     assertInteraction,
     assertAuthorization,
     assertInput(UpdateAccount.validation),
     UpdateAccount.controller,
 );
+
 router.get('/:uid/account/totp', assertInteraction, assertAuthorization, ReadAccountTOTP.controller);
 router.post(
     '/:uid/account/totp',

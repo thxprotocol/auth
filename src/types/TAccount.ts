@@ -4,6 +4,7 @@ import { AccountVariant } from './enums/AccountVariant';
 export interface TAccount {
     firstName: string;
     lastName: string;
+    profileImg: string;
     plan: AccountPlanType;
     organisation: string;
     active: boolean;
@@ -49,4 +50,5 @@ export interface IAccountUpdates {
     lastName?: string;
     plan?: AccountPlanType;
     organisation?: string;
+    profileImg?: string;
 }

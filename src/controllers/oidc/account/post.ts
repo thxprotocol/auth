@@ -1,5 +1,7 @@
 import { Request, Response } from 'express';
 import { body } from 'express-validator';
+
+import UploadProxy from '../../../proxies/UploadProxy';
 import { AccountService } from '../../../services/AccountService';
 import { ERROR_NO_ACCOUNT } from '../../../util/messages';
 
@@ -19,9 +21,16 @@ export const validation = [
 export async function controller(req: Request, res: Response) {
     const { uid, session } = req.interaction;
     const account = await AccountService.get(session.accountId);
+    const file = (req.files as any)?.profile?.[0] as Express.Multer.File;
+    const body = { ...req.body };
     if (!account) throw new Error(ERROR_NO_ACCOUNT);
 
-    await AccountService.update(account, req.body);
+    if (file) {
+        const profileImg = await UploadProxy.post(file);
+        body['profileImg'] = profileImg;
+    }
+
+    await AccountService.update(account, body);
 
     res.redirect(`/oidc/${uid}/account`);
 }

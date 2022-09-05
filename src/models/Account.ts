@@ -46,7 +46,7 @@ const accountSchema = new mongoose.Schema(
  * Password hash middleware.
  */
 accountSchema.pre('save', function save(next) {
-    const account = this as AccountDocument;
+    const account = (this as any) as AccountDocument;
 
     if (!account.isModified('password')) {
         return next();

@@ -40,7 +40,9 @@ async function controller(req: Request, res: Response) {
         req.body.acceptUpdates,
     );
 
-    await MailService.sendConfirmationEmail(account, req.body.returnUrl);
+    if (account.email) {
+        await MailService.sendConfirmationEmail(account, req.body.returnUrl);
+    }
 
     res.render('signup', {
         uid: req.params.uid,

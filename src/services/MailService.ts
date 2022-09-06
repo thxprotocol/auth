@@ -14,6 +14,9 @@ if (SENDGRID_API_KEY) {
 
 export class MailService {
     static async sendConfirmationEmail(account: AccountDocument, returnUrl: string) {
+        if (!account.email) {
+            throw new Error('Account email not set.');
+        }
         account.signupToken = createRandomToken();
         account.signupTokenExpires = Date.now() + 1000 * 60 * 60 * 24; // 24 hours,
 
@@ -34,6 +37,9 @@ export class MailService {
     }
 
     static async sendVerificationEmail(account: AccountDocument, returnUrl: string) {
+        if (!account.email) {
+            throw new Error('Account email not set.');
+        }
         account.signupToken = createRandomToken();
         account.signupTokenExpires = Date.now() + 1000 * 60 * 60 * 24; // 24 hours,
 

@@ -36,6 +36,10 @@ export class AccountService {
         return Account.findOne({ address });
     }
 
+    static getByTwitterId(twitterId: string) {
+        return Account.findOne({ twitterId });
+    }
+
     static async isActiveUserByEmail(email: string) {
         const result = await Account.findOne({ email, active: true });
         return Boolean(result);
@@ -147,29 +151,36 @@ export class AccountService {
         });
     }
 
-    static async signup(
-        email: string,
-        password: string,
-        variant: AccountVariant,
-        acceptTermsPrivacy: boolean,
-        acceptUpdates: boolean,
-        active = false,
-    ) {
-        let account = await Account.findOne({ email, active: false });
+    static async signup(data: {
+        email?: string;
+        password: string;
+        variant: AccountVariant;
+        acceptTermsPrivacy: boolean;
+        acceptUpdates: boolean;
+        active?: boolean;
+        twitterId?: string;
+    }) {
+        let account;
+        if (data.email) {
+            account = await Account.findOne({ email: data.email, active: false });
+        } else if (data.twitterId) {
+            account = await Account.findOne({ twitterId: data.twitterId });
+        }
 
         if (!account) {
             account = new Account();
         }
 
-        account.active = active;
-        account.email = email;
-        account.variant = variant;
-        account.password = password;
-        account.acceptTermsPrivacy = acceptTermsPrivacy || false;
-        account.acceptUpdates = acceptUpdates || false;
+        account.active = data.active;
+        account.email = data.email;
+        account.variant = data.variant;
+        account.password = data.password;
+        account.acceptTermsPrivacy = data.acceptTermsPrivacy || false;
+        account.acceptUpdates = data.acceptUpdates || false;
         account.plan = AccountPlanType.Free;
+        account.twitterId = data.twitterId;
 
-        if (!active) {
+        if (!data.active) {
             account.signupToken = createRandomToken();
             account.signupTokenExpires = DURATION_TWENTYFOUR_HOURS;
         }

@@ -33,6 +33,7 @@ const accountSchema = new mongoose.Schema(
         twitterAccessToken: String,
         twitterRefreshToken: String,
         twitterAccessTokenExpires: Number,
+        twitterId: String,
         spotifyAccessToken: String,
         spotifyRefreshToken: String,
         spotifyAccessTokenExpires: Number,

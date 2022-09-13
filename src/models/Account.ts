@@ -11,6 +11,7 @@ const accountSchema = new mongoose.Schema(
         isEmailVerified: Boolean,
         firstName: String,
         lastName: String,
+        profileImg: String,
         organisation: String,
         plan: Number,
         // email.sparse allows the value to be null and unique if defined
@@ -50,7 +51,7 @@ const accountSchema = new mongoose.Schema(
  * Password hash middleware.
  */
 accountSchema.pre('save', function save(next) {
-    const account = this as AccountDocument;
+    const account = (this as any) as AccountDocument;
 
     if (!account.isModified('password')) {
         return next();

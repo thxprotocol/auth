@@ -60,6 +60,7 @@ export class AccountService {
             lastLoginAt,
             organisation,
             firstName,
+            profileImg,
             lastName,
             plan,
             email,
@@ -89,6 +90,10 @@ export class AccountService {
 
         if (lastLoginAt) {
             account.lastLoginAt = lastLoginAt;
+        }
+
+        if (profileImg) {
+            account.profileImg = profileImg;
         }
 
         if (plan) {

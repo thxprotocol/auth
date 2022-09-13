@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
 import { body } from 'express-validator';
 import { MailService } from '../../../services/MailService';
+
+import UploadProxy from '../../../proxies/UploadProxy';
 import { AccountService } from '../../../services/AccountService';
 import { DURATION_TWENTYFOUR_HOURS, ERROR_NO_ACCOUNT } from '../../../util/messages';
 import { createRandomToken } from '../../../util/tokens';
@@ -25,11 +27,19 @@ export const validation = [
 export async function controller(req: Request, res: Response) {
     const { uid, session } = req.interaction;
     const account = await AccountService.get(session.accountId);
+    const file = (req.files as any)?.profile?.[0] as Express.Multer.File;
+    const body = { ...req.body };
+
     if (!account) throw new Error(ERROR_NO_ACCOUNT);
 
     const isEmailChanged = req.body.email && account.email.toLowerCase() != req.body.email.toLowerCase();
 
-    await AccountService.update(account, req.body);
+    if (file) {
+        const profileImg = await UploadProxy.post(file);
+        body['profileImg'] = profileImg;
+    }
+
+    await AccountService.update(account, body);
 
     if (isEmailChanged) {
         account.isEmailVerified = false;

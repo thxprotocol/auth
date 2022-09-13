@@ -1,6 +1,6 @@
 {
     "name": "@thxnetwork/auth",
-    "version": "1.11.10",
+    "version": "1.12.2",
     "repository": {
         "type": "git",
         "url": "https://github.com/thxprotocol/api"
@@ -33,6 +33,8 @@
         "@godaddy/terminus": "^4.10.2",
         "@metamask/eth-sig-util": "^4.0.1",
         "@sendgrid/mail": "^7.4.2",
+        "@types/express-formidable": "^1.2.0",
+        "@types/multer": "^1.4.7",
         "airtable": "^0.11.2",
         "axios": "^0.21.3",
         "axios-better-stacktrace": "^2.1.2",
@@ -45,6 +47,7 @@
         "express": "^4.17.1",
         "express-async-errors": "^3.1.1",
         "express-ejs-layouts": "^2.5.1",
+        "express-formidable": "^1.2.0",
         "express-jwt": "^7.7.5",
         "express-jwt-permissions": "^1.3.6",
         "express-rate-limit": "^5.3.0",
@@ -57,9 +60,10 @@
         "lusca": "^1.6.1",
         "migrate-mongo": "^8.2.3",
         "mongodb": "^4.3.1",
-        "mongoose": "^6.2.1",
+        "mongoose": "^6.4.6",
         "morgan": "^1.10.0",
         "morgan-json": "^1.1.0",
+        "multer": "^1.4.5-lts.1",
         "newrelic": "^8.9.0",
         "oidc-provider": "^7.11.4",
         "otplib": "^12.0.1",

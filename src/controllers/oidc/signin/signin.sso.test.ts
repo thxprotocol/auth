@@ -128,30 +128,4 @@ describe('SSO Sign In', () => {
             expect(res.headers['location']).toContain('/auth/');
         });
     });
-
-    describe('Spotify SSO', () => {
-        beforeAll(async () => {
-            nock('https://accounts.spotify.com/api/token').post(/.*?/).reply(200, {
-                accessToken: 'thisnotgonnawork',
-            });
-            nock(SPOTIFY_API_ENDPOINT + '/me')
-                .get(/.*?/)
-                .reply(200, {
-                    data: {
-                        id: 'thisnotgonnawork',
-                    },
-                });
-        });
-
-        it('GET /oidc/callback/spotify', async () => {
-            const params = new URLSearchParams({
-                code: 'thisnotgonnawork',
-                state: uid,
-            });
-            const res = await http.get('/oidc/callback/spotify?' + params.toString());
-
-            expect(res.status).toBe(302);
-            expect(res.headers['location']).toContain('/auth/');
-        });
-    });
 });

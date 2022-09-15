@@ -27,6 +27,13 @@ cp .env.example .env
 # 3. This readme assumes you have installed the API. 
 # Copy it's `./certs` folder to the root of this project
 
+or use [mkcert](https://github.com/FiloSottile/mkcert) and run
+
+```
+mdir certs
+mkcert -key-file certs/localhost.key -cert-file certs/localhost.crt localhost
+```
+
 # 4. Create jwks
 npm run build:keys
 

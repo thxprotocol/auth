@@ -14,6 +14,9 @@ if (SENDGRID_API_KEY) {
 
 export class MailService {
     static async sendConfirmationEmail(account: AccountDocument, returnUrl: string) {
+        if (!account.email) {
+            throw new Error('Account email not set.');
+        }
         account.signupToken = createRandomToken();
         account.signupTokenExpires = Date.now() + 1000 * 60 * 60 * 24; // 24 hours,
 
@@ -29,6 +32,34 @@ export class MailService {
         );
 
         await this.sendMail(account.email, 'Please complete the sign up for your THX Account', html, verifyUrl);
+
+        await account.save();
+    }
+
+    static async sendVerificationEmail(account: AccountDocument, returnUrl: string) {
+        if (!account.email) {
+            throw new Error('Account email not set.');
+        }
+        account.signupToken = createRandomToken();
+        account.signupTokenExpires = Date.now() + 1000 * 60 * 60 * 24; // 24 hours,
+
+        const verifyUrl = `${returnUrl}verify_email?verifyEmailToken=${account.verifyEmailToken}&return_url=${returnUrl}`;
+        const html = await ejs.renderFile(
+            path.dirname(__dirname) + '/views/mail/emailConfirm.ejs',
+            {
+                verifyUrl,
+                returnUrl,
+                baseUrl: AUTH_URL,
+            },
+            { async: true },
+        );
+
+        await this.sendMail(
+            account.email,
+            'Please complete the e-mail verification for your THX Account',
+            html,
+            verifyUrl,
+        );
 
         await account.save();
     }

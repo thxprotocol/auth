@@ -1,7 +1,6 @@
 import { TwitterService } from '../services/TwitterService';
 import { YouTubeService } from '../services/YouTubeService';
 import { ChannelAction } from '../models/Reward';
-import { SPOTIFY_API_SCOPE, SpotifyService } from '../services/SpotifyService';
 
 function getChannelScopes(channelAction: ChannelAction) {
     switch (channelAction) {
@@ -12,12 +11,6 @@ function getChannelScopes(channelAction: ChannelAction) {
         case ChannelAction.TwitterRetweet:
         case ChannelAction.TwitterFollow:
             return { channelScopes: TwitterService.getScopes() };
-        case ChannelAction.SpotifyPlaylistFollow:
-        case ChannelAction.SpotifyTrackPlaying:
-        case ChannelAction.SpotifyTrackRecent:
-        case ChannelAction.SpotifyTrackSaved:
-        case ChannelAction.SpotifyUserFollow:
-            return { channelScopes: SPOTIFY_API_SCOPE };
     }
 }
 
@@ -30,12 +23,6 @@ function getLoginLinkForChannelAction(uid: string, channelAction: ChannelAction)
         case ChannelAction.TwitterRetweet:
         case ChannelAction.TwitterFollow:
             return { twitterLoginUrl: TwitterService.getLoginURL(uid, {}) };
-        case ChannelAction.SpotifyPlaylistFollow:
-        case ChannelAction.SpotifyTrackPlaying:
-        case ChannelAction.SpotifyTrackRecent:
-        case ChannelAction.SpotifyTrackSaved:
-        case ChannelAction.SpotifyUserFollow:
-            return { spotifyLoginUrl: SpotifyService.getLoginURL(uid, {}) };
     }
 }
 

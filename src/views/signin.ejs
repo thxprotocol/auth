@@ -39,7 +39,7 @@
       </div>
       <% } %>
 
-      <% if (params.rewardData.erc721Id) { %>
+      <% if (params.rewardData && params.rewardData.erc721Id) { %>
       <div style="margin-bottom:15px; display:flex; flex-direction: row;">
         <% if (params.rewardData.nftImageUrl) { %>
         <div><img src="<%- params.rewardData.nftImageUrl %>" width="150px" style="margin-right: 10px;" /></div>

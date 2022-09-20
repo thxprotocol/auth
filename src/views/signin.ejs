@@ -40,16 +40,19 @@
       <% } %>
 
       <% if (params.rewardData.erc721Id) { %>
-      <div style="margin-bottom:15px; text-align:center">
-        <% if (params.rewardData.nftTitle) { %>
-        <p><%- params.rewardData.nftTitle %></p>
-        <% } %>
-        <% if (params.rewardData.nftDescription) { %>
-        <p><%- params.rewardData.nftDescription %></p>
-        <% } %>
+      <div style="margin-bottom:15px; display:flex; flex-direction: row;">
         <% if (params.rewardData.nftImageUrl) { %>
-        <div><img src="<%- params.rewardData.nftImageUrl %>" width="50%" /></div>
+        <div><img src="<%- params.rewardData.nftImageUrl %>" width="150px" style="margin-right: 10px;" /></div>
         <% } %>
+        <div>
+          <% if (params.rewardData.nftTitle) { %>
+          <p><%- params.rewardData.nftTitle %></p>
+          <% } %>
+          <% if (params.rewardData.nftDescription) { %>
+          <p><%- params.rewardData.nftDescription %></p>
+          <% } %>
+        </div>
+
       </div>
       <% } %>
 

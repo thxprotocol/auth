@@ -33,12 +33,17 @@ async function controller(req: Request, res: Response) {
         params.googleLoginUrl = YouTubeService.getLoginUrl(req.params.uid, YouTubeService.getBasicScopes());
         params.authRequestMessage = createTypedMessage(AUTH_REQUEST_TYPED_MESSAGE, AUTH_URL, uid);
 
+        let message = `Sign in and claim your <strong>${claim.withdrawAmount} ${claim.tokenSymbol}</strong>!`;
+        if (params.rewardData.erc721Id) {
+            message = `Sign in and claim your <strong>${claim.tokenSymbol}</strong> NFT!`;
+        }
+
         return res.render('signin', {
             uid,
             params,
             alert: {
                 variant: 'success',
-                message: `Sign in and claim your <strong>${claim.withdrawAmount} ${claim.tokenSymbol}</strong>!`,
+                message,
             },
         });
     }

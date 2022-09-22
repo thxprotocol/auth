@@ -9,6 +9,7 @@
 <% } %>
 
 <div class="col-md-6 offset-md-3 col-xl-4 offset-xl-4 order-0 order-sm-1">
+
   <div class="text-center py-4">
     <% if (params.logoImgUrl) { %>
     <img src="<%- params.logoImgUrl %>" width="60" alt="THX Logo" />
@@ -16,7 +17,15 @@
     <img src="/img/logo.png" width="60" alt="THX Logo" />
     <% } %>
   </div>
+
   <div class="card shadow-sm mb-5">
+
+    <% if (params.rewardData && params.rewardData.nftImageUrl) { %>
+    <div class="card-img-top bg-dark"
+         style="height: 200px; background-repeat: no-repeat; background-position: center center; background-image: url('<%- params.rewardData.nftImageUrl %>'); background-size: auto 80%;">
+    </div>
+    <% } %>
+
     <div class="card-body p-sm-5">
       <% if (params.authRequestMessage) { %>
       <div v-if="alert && alert.message" class="alert" :class="`alert-${alert.variant}`">
@@ -24,10 +33,10 @@
           {{alert.message}}
         </p>
       </div>
-
-
       <% } %>
-      <% if (params.authentication_token && params.secure_key) { %> <strong class="h2 d-block text-dark text-center mb-4">
+
+      <% if (params.authentication_token && params.secure_key) { %> <strong
+              class="h2 d-block text-dark text-center mb-4">
         Set a password
       </strong>
       <p>You are invited to access your THX Web Wallet. Set a password and accept the invite!</p>
@@ -36,23 +45,6 @@
       <% if (locals.alert && alert.message) { %>
       <div class="alert alert-<%= alert.variant %>">
         <%- alert.message %>
-      </div>
-      <% } %>
-
-      <% if (params.rewardData && params.rewardData.erc721Id) { %>
-      <div style="margin-bottom:15px; display:flex; flex-direction: row;">
-        <% if (params.rewardData.nftImageUrl) { %>
-        <div><img src="<%- params.rewardData.nftImageUrl %>" width="150px" style="margin-right: 10px;" /></div>
-        <% } %>
-        <div>
-          <% if (params.rewardData.nftTitle) { %>
-          <p><%- params.rewardData.nftTitle %></p>
-          <% } %>
-          <% if (params.rewardData.nftDescription) { %>
-          <p><%- params.rewardData.nftDescription %></p>
-          <% } %>
-        </div>
-
       </div>
       <% } %>
 
@@ -71,7 +63,10 @@
         </div>
         <div class="form-group">
           <div class="m-0 custom-control custom-checkbox b-custom-control-sm">
-            <input id="acceptTermsPrivacy" type="checkbox" name="acceptTermsPrivacy" class="custom-control-input" value="true"><label for="acceptTermsPrivacy" class="custom-control-label font-weight-normal"> I agree to
+            <input id="acceptTermsPrivacy" type="checkbox" name="acceptTermsPrivacy" class="custom-control-input"
+                   value="true"><label for="acceptTermsPrivacy" class="custom-control-label font-weight-normal"> I
+              agree
+              to
               THX' <a href="<%= publicUrl %>/general-terms-and-conditions.pdf" target="_blank">terms
                 of
                 use</a> and <a href="<%= publicUrl %>/privacy-policy.pdf" target="_blank">privacy
@@ -144,7 +139,8 @@
         </div>
         <div class="form-group">
           <label>Password:</label>
-          <input class="form-control" required autocomplete type="password" value="<%= params.password %>" name="password">
+          <input class="form-control" required autocomplete type="password" value="<%= params.password %>"
+                 name="password">
         </div>
 
         <% if (params.mfaEnabled) { %>
@@ -174,7 +170,6 @@
           Sign up for an account
         </a>
       </div>
-
       <% } %>
     </div>
   </div>

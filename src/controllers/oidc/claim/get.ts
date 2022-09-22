@@ -35,7 +35,7 @@ async function controller(req: Request, res: Response) {
 
         let message = `Sign in and claim your <strong>${claim.withdrawAmount} ${claim.tokenSymbol}</strong>!`;
         if (params.rewardData.erc721Id) {
-            message = `Sign in and claim your <strong>${claim.tokenSymbol}</strong> NFT!`;
+            message = `<i class="fas fa-gift mr-2"></i> Sign in and claim your <strong>${claim.tokenSymbol}</strong> NFT!`;
         }
 
         return res.render('signin', {

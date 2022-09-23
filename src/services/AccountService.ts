@@ -344,4 +344,8 @@ export class AccountService {
             return { error };
         }
     }
+
+    static getActiveAccountsEmail() {
+        return Account.find({ active: true, email: { $ne: null } }, { _id: 1, firstName: 1, email: 1, createdAt: 1 });
+    }
 }

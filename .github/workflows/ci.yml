@@ -14,7 +14,7 @@ jobs:
                   submodules: true
 
             - name: Run test
-              run: docker compose -f docker-compose.yml -f docker-compose.ci.yml run -T auth npm run test
+              run: docker compose -f docker-compose.yml -f docker-compose.ci.yml run -T auth sh -c "npm run lint && npm run test"
 
     bumpVersion:
         name: 'Bump Version on main'

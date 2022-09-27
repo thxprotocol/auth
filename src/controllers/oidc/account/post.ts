@@ -32,7 +32,9 @@ export async function controller(req: Request, res: Response) {
 
     if (!account) throw new Error(ERROR_NO_ACCOUNT);
 
-    const isEmailChanged = req.body.email && account.email.toLowerCase() != req.body.email.toLowerCase();
+    const isEmailChanged =
+        (req.body.email && account.email && account.email.toLowerCase() != req.body.email.toLowerCase()) ||
+        (req.body.email && !account.email);
 
     if (file) {
         const profileImg = await UploadProxy.post(file);

@@ -41,8 +41,7 @@ export class AccountService {
     }
 
     static async isActiveUserByEmail(email: string) {
-        const result = await Account.findOne({ email, active: true });
-        return Boolean(result);
+        return await Account.exists({ email, active: true });
     }
 
     static async update(

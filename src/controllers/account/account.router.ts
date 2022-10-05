@@ -17,11 +17,13 @@ import { getSpotifyUserFollow, getSpotifyPlaylistFollow } from './spotify/get.fo
 import { getSpotifyTrackPlaying, getSpotifyTrackRecent, getSpotifyTrackSaved } from './spotify/get.track.action';
 import { getSpotify } from './spotify/get.action';
 import { createLoginValidation, postLogin } from './login/post.controller';
+import { getActiveAccountsEmail } from './list.action';
 
 const router = express.Router();
 
 router.use(validateJwt);
 router.post('/', guard.check(['account:read', 'account:write']), validate(validations.postAccount), postAccount);
+router.get('/emails/', guard.check(['account:read']), getActiveAccountsEmail);
 router.get('/:id', guard.check(['account:read']), getAccount);
 
 router.get('/:sub/twitter', guard.check(['account:read']), getTwitter);
@@ -41,6 +43,7 @@ router.get('/:sub/spotify/track_recent/:item', guard.check(['account:read']), ge
 router.get('/:sub/spotify/track_saved/:item', guard.check(['account:read']), getSpotifyTrackSaved);
 
 router.get('/address/:address', guard.check(['account:read']), validate([]), getAccountByAddress);
+
 router.get('/email/:email', guard.check(['account:read']), validate([]), getAccountByEmail);
 router.patch('/:id', guard.check(['account:read', 'account:write']), patchAccount);
 router.delete('/:id', guard.check(['account:write']), deleteAccount);

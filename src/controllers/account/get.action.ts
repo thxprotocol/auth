@@ -16,6 +16,7 @@ function formatAccountRes(account: any) {
             company: account.company,
             plan: account.plan,
             email: account.email,
+            active: account.active,
             googleAccess: account.googleAccessToken && account.googleAccessTokenExpires > Date.now(),
             twitterAccess: account.twitterAccessToken && account.twitterAccessTokenExpires > Date.now(),
             spotifyAccess: account.spotifyAccessToken && account.spotifyAccessTokenExpires > Date.now(),

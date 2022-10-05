@@ -18,6 +18,7 @@ import {
     ERROR_PASSWORD_RESET_TOKEN_INVALID_OR_EXPIRED,
     ERROR_PASSWORD_STRENGTH,
     ERROR_VERIFY_EMAIL_TOKEN_INVALID,
+    ERROR_VERIFY_EMAIL_EXPIRED,
 } from '../util/messages';
 import { YouTubeService } from './YouTubeService';
 import { logger } from '../util/logger';
@@ -236,7 +237,7 @@ export class AccountService {
         }
 
         if (account.verifyEmailTokenExpires < Date.now()) {
-            return { error: ERROR_VERIFY_EMAIL_TOKEN_INVALID };
+            return { error: ERROR_VERIFY_EMAIL_EXPIRED };
         }
 
         account.verifyEmailToken = '';

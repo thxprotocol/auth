@@ -28,9 +28,6 @@ export interface TAccount {
     twitterRefreshToken: string;
     twitterAccessTokenExpires: number;
     twitterId?: string;
-    spotifyAccessToken: string;
-    spotifyRefreshToken: string;
-    spotifyAccessTokenExpires: number;
     verifyEmailToken: string;
     verifyEmailTokenExpires: number;
     lastLoginAt: number;
@@ -46,7 +43,6 @@ export interface IAccountUpdates {
     privateKey?: string;
     googleAccess?: boolean;
     twitterAccess?: boolean;
-    spotifyAccess?: boolean;
     authenticationToken?: string;
     authenticationTokenExpires?: number;
     lastLoginAt?: number;

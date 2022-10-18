@@ -54,7 +54,6 @@ export class AccountService {
             privateKey,
             googleAccess,
             twitterAccess,
-            spotifyAccess,
             authenticationToken,
             authenticationTokenExpires,
             lastLoginAt,
@@ -131,13 +130,6 @@ export class AccountService {
             account.twitterRefreshToken = '';
             account.twitterAccessTokenExpires = null;
         }
-
-        if (spotifyAccess === false) {
-            account.spotifyAccessToken = '';
-            account.spotifyRefreshToken = '';
-            account.spotifyAccessTokenExpires = null;
-        }
-
         return await account.save();
     }
 

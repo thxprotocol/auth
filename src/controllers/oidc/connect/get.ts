@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import { oidc } from '../../../util/oidc';
 import { ChannelType } from '../../../models/Reward';
 import { AccountService } from '../../../services/AccountService';
-import { SpotifyService } from '../../../services/SpotifyService';
 import { TwitterService } from '../../../services/TwitterService';
 import { YouTubeService } from '../../../services/YouTubeService';
 
@@ -23,8 +22,6 @@ async function controller(req: Request, res: Response) {
         }
     } else if (params.channel == ChannelType.Twitter && !account.twitterAccessToken) {
         redirect = TwitterService.getLoginURL(uid, {});
-    } else if (params.channel == ChannelType.Spotify && !account.spotifyAccessToken) {
-        redirect = SpotifyService.getLoginURL(uid, {});
     }
 
     if (!redirect) {

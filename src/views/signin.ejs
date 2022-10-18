@@ -89,48 +89,37 @@
         </button>
       </form>
       <% } else { %>
-      <!--
-                    This part is used for regular login flow and only visibile if links are available
-                -->
+      
+      <!-- This part is used for regular login flow and only visibile if links are available -->
       <% if (params.googleLoginUrl) { %>
       <a class="btn btn-sign-in btn-google btn-block" href="<%= params.googleLoginUrl %>" download>
-        <div class="logo">
-          <img src="/img/g-logo.png" alt="Google logo" />
-        </div>
-        <div class="label">Sign in with Google</div>
+          <div class="logo">
+              <img src="/img/g-logo.png" alt="Google logo" />
+          </div>
+          <div class="label">Sign in with Google</div>
       </a>
       <% } %>
       <% if (params.twitterLoginUrl) { %>
       <a class="btn btn-sign-in btn-twitter btn-block" href="<%= params.twitterLoginUrl %>">
-        <div class="logo">
-          <img src="/img/t-logo.png" alt="Twitter logo" />
-        </div>
-        <div class="label">Sign in with Twitter</div>
-      </a>
-      <% } %>
-      <% if (params.spotifyLoginUrl) { %>
-      <a class="btn btn-sign-in btn-spotify btn-block" href="<%= params.spotifyLoginUrl %>">
-        <div class="logo">
-          <img src="/img/s-logo.png" alt="Spotify logo" />
-        </div>
-        <div class="label">Sign in with Spotify</div>
+          <div class="logo">
+              <img src="/img/t-logo.png" alt="Twitter logo" />
+          </div>
+          <div class="label">Sign in with Twitter</div>
       </a>
       <% } %>
       <% if (params.authRequestMessage) { %>
       <a class="btn btn-sign-in btn-metamask btn-block" @click="signin()">
-        <div class="logo">
-          <img src="/img/mm-logo.svg" width="30" height="30" alt="Metamask logo" />
-        </div>
-        <div class="label">
-          Sign in with Metamask
-        </div>
+          <div class="logo">
+              <img src="/img/mm-logo.svg" width="30" height="30" alt="Metamask logo" />
+          </div>
+          <div class="label">
+              Sign in with Metamask
+          </div>
       </a>
       <% } %>
       <hr>
 
-      <!--
-                    This part is used for regular login flow
-                -->
+      <!-- This part is used for regular login flow -->
       <form id="form-signin" action="/oidc/<%= uid %>/signin" method="post" class="mb-4">
 
         <div class="form-group">

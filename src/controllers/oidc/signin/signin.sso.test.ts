@@ -5,7 +5,7 @@ import app from '../../../app';
 import { AccountService } from '../../../services/AccountService';
 import db from '../../../util/database';
 import { accountEmail, accountSecret } from '../../../util/jest';
-import { API_URL, INITIAL_ACCESS_TOKEN, SPOTIFY_API_ENDPOINT, TWITTER_API_ENDPOINT } from '../../../util/secrets';
+import { API_URL, INITIAL_ACCESS_TOKEN, TWITTER_API_ENDPOINT } from '../../../util/secrets';
 
 const http = request.agent(app);
 
@@ -123,32 +123,6 @@ describe('SSO Sign In', () => {
                 state: uid,
             });
             const res = await http.get('/oidc/callback/twitter?' + params.toString());
-
-            expect(res.status).toBe(302);
-            expect(res.headers['location']).toContain('/auth/');
-        });
-    });
-
-    describe('Spotify SSO', () => {
-        beforeAll(async () => {
-            nock('https://accounts.spotify.com/api/token').post(/.*?/).reply(200, {
-                accessToken: 'thisnotgonnawork',
-            });
-            nock(SPOTIFY_API_ENDPOINT + '/me')
-                .get(/.*?/)
-                .reply(200, {
-                    data: {
-                        id: 'thisnotgonnawork',
-                    },
-                });
-        });
-
-        it('GET /oidc/callback/spotify', async () => {
-            const params = new URLSearchParams({
-                code: 'thisnotgonnawork',
-                state: uid,
-            });
-            const res = await http.get('/oidc/callback/spotify?' + params.toString());
 
             expect(res.status).toBe(302);
             expect(res.headers['location']).toContain('/auth/');

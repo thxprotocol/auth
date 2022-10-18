@@ -18,7 +18,6 @@ function formatAccountRes(account: any) {
             email: account.email,
             googleAccess: account.googleAccessToken && account.googleAccessTokenExpires > Date.now(),
             twitterAccess: account.twitterAccessToken && account.twitterAccessTokenExpires > Date.now(),
-            spotifyAccess: account.spotifyAccessToken && account.spotifyAccessTokenExpires > Date.now(),
         },
         ...protectedPrivateKey,
     };
